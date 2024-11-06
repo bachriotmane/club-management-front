@@ -1,12 +1,13 @@
-
+import './index.css'
 
 function App() {
 
 
   return (
     <>
-      <h1>Salam</h1>
-        <h2>Hi</h2>
+        <h1 className="text-3xl font-bold underline">
+            Hello world!
+        </h1>
     </>
   )
 }
