@@ -20,6 +20,17 @@ const DemandesListing = () => {
     );
 };
 
-
+const getStatusClass = (status) => {
+    switch (status) {
+        case 'Accepte':
+            return 'bg-green-400';
+        case 'En cours':
+            return 'bg-yellow-400';
+        case 'Rejete':
+            return 'bg-red-400';
+        default:
+            return 'bg-gray-200';
+    }
+};
 
 export default DemandesListing;
