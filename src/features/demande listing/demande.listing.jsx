@@ -1,4 +1,3 @@
-import React from 'react';
 const imageTest = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyzTWQoCUbRNdiyorem5Qp1zYYhpliR9q0Bw&s';
 const demandes = [
     { id: 1, date: '13/05/2024', demandeur: { name: 'John Doe', image: imageTest }, status: 'Accepte' },
