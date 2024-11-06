@@ -11,9 +11,42 @@ const demandes = [
 const DemandesListing = () => {
     return (
         <div className="p-6 bg-white shadow-lg rounded-lg">
-
+            <h1 className='my-2 text-2xl' >Demandes</h1>
             <table className="min-w-full border">
-
+                <thead className="bg-gray-100">
+                <tr>
+                    <th className="px-4 py-2 border">ID</th>
+                    <th className="px-4 py-2 border">Demandeur</th>
+                    <th className="px-4 py-2 border">Date</th>
+                    <th className="px-4 py-2 border">Status</th>
+                    <th className="px-4 py-2 border">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {demandes.map((demande) => (
+                    <tr key={demande.id} className="hover:bg-gray-100">
+                        <td className="px-4 py-2 border text-center">#{demande.id}</td>
+                        <td className="px-4 py-2 border flex items-center space-x-2">
+                            <img src={demande.demandeur.image} alt="Demandeur" className="w-8 h-8 rounded-full" />
+                            <span>{demande.demandeur.name}</span>
+                        </td>
+                        <td className="px-4 py-2 border text-center">{demande.date}</td>
+                        <td className="px-4 py-2 border text-center">
+                <span className={`px-3 py-1 rounded-full text-white ${getStatusClass(demande.status)}`}>
+                  {demande.status}
+                </span>
+                        </td>
+                        <td className="px-4 py-2 border text-center">
+                            <button className="text-green-500 hover:text-green-700 mx-1">
+                                &#10004;
+                            </button>
+                            <button className="text-red-500 hover:text-red-700 mx-1">
+                                &#10006;
+                            </button>
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
             </table>
 
         </div>
