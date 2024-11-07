@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaMapMarkerAlt, FaCalendarAlt, FaDollarSign } from 'react-icons/fa';
+
 /**
  * Carte d'événement : Affiche les informations d'un événement.
  * 
@@ -11,31 +12,42 @@ import { FaMapMarkerAlt, FaCalendarAlt, FaDollarSign } from 'react-icons/fa';
  * - Lieu de l'événement
  * - Budget de l'événement
  */
-const EventCard = ({ event }) => {
+const EventCard = ({ item, size = "grand" }) => {
+  
+  const cardHeight = "h-[550px]"; 
+  
+  const widthClass = size === "petit" ? "w-60" : "w-full";
+
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 mb-4 max-w-xs mx-auto hover:shadow-xl transition-shadow duration-300 ease-in-out w-full h-auto">
+    <div className={`bg-white shadow-lg rounded-lg p-6 mb-4 max-w-xs mx-auto ${widthClass} hover:shadow-xl transition-shadow duration-300 ease-in-out ${cardHeight}`}>
       <img 
-        src={event.image} 
-        alt={event.nom} 
+        src={item.image || "default-image.jpg"}
+        alt={item.nom} 
         className="w-full h-64 object-cover rounded-md mb-4" 
       />
 
-      <h3 className="text-xl font-semibold text-gray-800 hover:text-indigo-600 transition-colors duration-200">{event.nom}</h3>
+      <h3 className="text-xl font-semibold text-gray-800 hover:text-indigo-600 transition-colors duration-200 truncate">
+        {item.nom}
+      </h3>
 
-      <p className="text-gray-600 mt-2 line-clamp-3">{event.description}</p>
+      <div className="relative mt-2 h-16 overflow-hidden">
+        <p className="text-gray-600 line-clamp-3">
+          {item.description || "Aucune description disponible"}
+        </p>
+      </div>
 
       <div className="mt-4">
         <p className="text-gray-500 flex items-center">
           <FaCalendarAlt className="mr-2 text-indigo-600" /> 
-          <span><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</span>
+          <span><strong>Date:</strong> {new Date(item.date).toLocaleDateString()}</span>
         </p>
         <p className="text-gray-500 flex items-center mt-2">
           <FaMapMarkerAlt className="mr-2 text-green-600" /> 
-          <span><strong>Location:</strong> {event.location}</span>
+          <span><strong>Location:</strong> {item.location}</span>
         </p>
         <p className="text-gray-500 flex items-center mt-2">
           <FaDollarSign className="mr-2 text-yellow-600" /> 
-          <span><strong>Budget:</strong> ${event.budget}</span>
+          <span><strong>Budget:</strong> ${item.budget}</span>
         </p>
       </div>
     </div>
