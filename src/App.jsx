@@ -1,17 +1,14 @@
-import "../index.css";
-import DemandesListing from "./features/demande listing/demande.listing.jsx";
-import DemandeDetails from "./features/demande details/demande.details.jsx";
-import ClubsListingPage from "./features/clubs listing/clubs.listing.page.jsx";
-import EventsListing from "./features/events listing/event.listing.jsx";
-import ClubDetails from "./features/club details/club.details.jsx";
-import EventDetails from "./features/event details/event.details.jsx";
 
-function App() {
+import '../index.css';
+
+import Home from './features/home/home.jsx';
+
+const App = () => {
+
+
   return (
-    <>
-      <EventDetails></EventDetails>
-    </>
+      <Home/>
   );
-}
+};
 
 export default App;
