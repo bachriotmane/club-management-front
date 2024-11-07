@@ -1,10 +1,8 @@
-import React from "react";
 import { Typography } from "@material-tailwind/react";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { BiEditAlt } from "react-icons/bi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import logo from "../../assets/bac.jpeg";
-// This is a Simple Comment for Test
 const ClubDetails = () => {
   const club = {
     name: "Club de Photographie",
