@@ -5,7 +5,6 @@ import { BiEditAlt } from "react-icons/bi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import logo from "../../assets/bac.jpeg";
 // This is a Simple Comment for Test
-// TEST 2
 const ClubDetails = () => {
   const club = {
     name: "Club de Photographie",
