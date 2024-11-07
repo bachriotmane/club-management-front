@@ -21,20 +21,21 @@ const DemandeDetails = () => {
                 &larr; Back
             </button>
             <h2 className="text-2xl font-bold mb-4">Demande Details</h2>
+            <h4 className="text-xl font-semibold mb-4">Demande de creation d'un nouvel clubs</h4>
+            <div className="mb-6 p-2 rounded-2xl flex items-center space-x-4 bg-gray-200">
+                <img src={demande.demandeur.image} alt="Demandeur" className="w-16 h-16 rounded-full"/>
+                <div>
+                    <p className="font-semibold">{demande.demandeur.name}</p>
+                </div>
+            </div>
             <div className="mb-6">
                 <p><span className="font-semibold">ID:</span> #{demande.id}</p>
-                <p><span className="font-semibold">Date:</span> {demande.date}</p>
+                <p className="my-3"><span className="font-semibold">Date:</span> {demande.date}</p>
                 <p><span className="font-semibold">Status:</span>
                     <span className={`ml-2 px-3 py-1 rounded-full text-white ${getStatusClass(demande.status)}`}>
             {demande.status}
           </span>
                 </p>
-            </div>
-            <div className="mb-6 flex items-center space-x-4">
-                <img src={demande.demandeur.image} alt="Demandeur" className="w-16 h-16 rounded-full" />
-                <div>
-                    <p className="font-semibold">{demande.demandeur.name}</p>
-                </div>
             </div>
             <div className="mb-6">
                 <h3 className="font-semibold text-lg">Description:</h3>
