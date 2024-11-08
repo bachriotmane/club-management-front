@@ -21,7 +21,7 @@ const getFormattedTime = (date) => {
 };
 
 const PublicationCard = ({ item, size = "grand" }) => {
-  const widthClass = size === "petit" ? "w-60" : "w-full";
+  const widthClass = size === "petit" ? "w-60" : "w-[300px]";
   
   const cardHeight = "h-[500px]"; 
 
@@ -37,9 +37,9 @@ const PublicationCard = ({ item, size = "grand" }) => {
         {item.titre}
       </h3>
 
-      <div className="relative mt-2 h-16 overflow-hidden">
+      <div className="relative mt-2 h-18 overflow-hidden">
         <p className="text-gray-600 line-clamp-3">
-          {item.description || "Aucune description disponible"}
+          {item.description || ""}
         </p>
       </div>
 

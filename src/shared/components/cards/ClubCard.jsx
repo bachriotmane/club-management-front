@@ -16,7 +16,7 @@ const ClubCard = ({ item, size = "grand" }) => {
   
   const cardHeight = "h-[400px]"; 
   
-  const widthClass = size === "petit" ? "w-60" : "w-full";
+  const widthClass = size === "petit" ? "w-60" : "w-[300px]";
 
   return (
     <div className={`relative bg-white shadow-lg rounded-lg p-6 mb-6 ${widthClass} mx-auto hover:shadow-2xl transition-shadow duration-300 ease-in-out ${cardHeight}`}>
@@ -30,9 +30,9 @@ const ClubCard = ({ item, size = "grand" }) => {
         {item.nom}
       </h3>
       
-      <div className="relative mt-3 h-16 overflow-hidden">
+      <div className="relative mt-3 h-18 overflow-hidden">
         <p className="text-gray-600 text-center line-clamp-3">
-          {item.description || "Aucune description disponible"}
+          {item.description || ""}
         </p>
       </div>
 
