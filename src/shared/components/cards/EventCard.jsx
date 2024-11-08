@@ -16,7 +16,7 @@ const EventCard = ({ item, size = "grand" }) => {
   
   const cardHeight = "h-[550px]"; 
   
-  const widthClass = size === "petit" ? "w-60" : "w-full";
+  const widthClass = size === "petit" ? "w-60" : "w-[300px]";
 
   return (
     <div className={`bg-white shadow-lg rounded-lg p-6 mb-4 max-w-xs mx-auto ${widthClass} hover:shadow-xl transition-shadow duration-300 ease-in-out ${cardHeight}`}>
@@ -30,9 +30,9 @@ const EventCard = ({ item, size = "grand" }) => {
         {item.nom}
       </h3>
 
-      <div className="relative mt-2 h-16 overflow-hidden">
+      <div className="relative mt-2 h-18 overflow-hidden">
         <p className="text-gray-600 line-clamp-3">
-          {item.description || "Aucune description disponible"}
+          {item.description || ""}
         </p>
       </div>
 
