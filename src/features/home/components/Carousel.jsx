@@ -1,62 +1,75 @@
-import React, { useState } from 'react';
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import React, { useState, useRef } from 'react';
 
 const Carousel = ({ items, CardComponent, title }) => {
-  const [startIndex, setStartIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0); // Indice des éléments visibles dans la boîte
+  const itemsPerPage = 5; // Nombre d'éléments visibles à la fois
+  const itemWidth = 250; // Largeur de chaque élément
+  const carouselRef = useRef(null);
 
-  const scrollLeftHandler = () => {
-    if (startIndex > 0) {
-      setStartIndex(startIndex - 5);
+  // Fonction pour déplacer à gauche
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1); // Déplacer d'un élément à gauche
     }
   };
 
-  const scrollRightHandler = () => {
-    if (startIndex < items.length - 5) {
-      setStartIndex(startIndex + 5);
+  // Fonction pour déplacer à droite
+  const handleNext = () => {
+    if (currentIndex < items.length - itemsPerPage) {
+      setCurrentIndex(currentIndex + 1); // Déplacer d'un élément à droite
     }
   };
-
-  const scrollToListHandler = () => {
-    setStartIndex(0); 
-  };
-
-  const itemsToShow = items.slice(startIndex, startIndex + 5);
 
   return (
-    <div className="relative w-full max-w-full  mmx-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-left ml-[150px] text-[28px] font-bold">{title}</h2>
-        
-        <button 
-          onClick={scrollToListHandler}
-          className="text-yellow-500 mr-20 hover:text-yellow-600 transition-all text-[25px] font-semibold"
-        >
-          Voir tous
-        </button>
+    <div className="relative w-full mx-auto">
+      <div className="flex justify-between items-center w-full mb-4 px-5">
+        <h2 className="text-left text-[28px] font-bold">{title}</h2>
+        {/* Bouton "Voir tous" */}
+        {currentIndex < items.length - itemsPerPage && (
+          <button
+            className="text-yellow-500 font-bold hover:underline"
+            onClick={() => console.log('Voir tous clicked')}
+          >
+            Voir tous
+          </button>
+        )}
       </div>
-      
-      <div className="flex items-center relative">
-        <button
-          onClick={scrollLeftHandler}
-          className="p-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-all absolute left-0 z-10"
-        >
-          <FaArrowLeft />
-        </button>
 
-        <div className="flex overflow-hidden space-x-2 px-4 scrollbar-hidden ml-12">
-          {itemsToShow.map((item) => (
-            <div key={item.id} className="px-4 ml-11">
+      <div className="relative w-full overflow-hidden">
+        <div
+          ref={carouselRef}
+          className="flex transition-all duration-300"
+          style={{
+            transform: `translateX(-${currentIndex * itemWidth}px)`, // Applique le décalage horizontal en fonction de l'indice actuel
+          }}
+        >
+          {/* Conteneur des cartes */}
+          {items.map((item) => (
+            <div key={item.id} className="flex-shrink-0" style={{ width: `${itemWidth}px` }}>
               <CardComponent item={item} size="petit" />
             </div>
           ))}
         </div>
 
-        <button
-          onClick={scrollRightHandler}
-          className="p-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-all absolute right-0 z-10"
-        >
-          <FaArrowRight />
-        </button>
+        {/* Bouton gauche */}
+        {currentIndex > 0 && (
+          <button
+            onClick={handlePrev}
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-500 text-white px-3 py-2 rounded-full"
+          >
+            &lt;
+          </button>
+        )}
+
+        {/* Bouton droit */}
+        {currentIndex < items.length - itemsPerPage && (
+          <button
+            onClick={handleNext}
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-500 text-white px-3 py-2 rounded-full"
+          >
+            &gt;
+          </button>
+        )}
       </div>
     </div>
   );
