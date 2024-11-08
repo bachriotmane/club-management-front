@@ -22,13 +22,12 @@ const getFormattedTime = (date) => {
 
 const PublicationCard = ({ item, size = "grand" }) => {
   const widthClass = size === "petit" ? "w-60" : "w-[300px]";
-  
   const cardHeight = "h-[500px]"; 
 
   return (
-    <div className={`bg-white shadow-lg rounded-lg p-6 mb-4 max-w-sm mx-auto ${widthClass} ${cardHeight} hover:shadow-xl transition-shadow duration-300 ease-in-out`}>
+    <div className={`relative bg-white shadow-lg rounded-lg cursor-pointer p-6 mb-4 max-w-xs mx-auto ${widthClass} hover:shadow-xl transition-shadow duration-300 ease-in-out ${cardHeight}`}>
       <img 
-        src={item.image|| "default-image.jpg"}
+        src={item.image || "default-image.jpg"}
         alt={item.titre} 
         className="w-full h-56 object-cover rounded-md mb-4"
       />
@@ -43,29 +42,32 @@ const PublicationCard = ({ item, size = "grand" }) => {
         </p>
       </div>
 
-      <div className="flex items-center mt-2 text-gray-500">
-        <FaCalendarAlt className="mr-2 text-blue-500 hover:text-blue-700" /> 
-        <span>{new Date(item.date).toLocaleDateString()}</span>
-      </div>
-      <div className="flex items-center mt-1 text-gray-500">
-        <FaRegClock className="mr-2 text-yellow-500 hover:text-yellow-700" />
-        <span>Publié à: {getFormattedTime(item.date)}</span>
-      </div>
+      {/* Container pour la date, statut de la publication et actions */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 shadow-inner flex flex-col space-y-2">
+        <div className="flex items-center text-gray-500">
+          <FaCalendarAlt className="mr-2 text-blue-500 hover:text-blue-700" />
+          <span>{new Date(item.date).toLocaleDateString()}</span>
+        </div>
+        <div className="flex items-center text-gray-500">
+          <FaRegClock className="mr-2 text-yellow-500 hover:text-yellow-700" />
+          <span>Publié à: {getFormattedTime(item.date)}</span>
+        </div>
 
-      <div className="flex justify-between items-center mt-4">
-        <p className={`text-sm ${item.isPublic ? 'text-green-600' : 'text-red-600'}`}>
-          {item.isPublic ? 'Public' : 'Privé'}
-        </p>
-        <div className="flex space-x-4">
-          <button className="text-gray-600 hover:text-red-600">
-            <FaRegHeart className="text-xl text-pink-500 hover:text-pink-700" /> 
-          </button>
-          <button className="text-gray-600 hover:text-blue-500">
-            <FaComment className="text-xl text-blue-500 hover:text-blue-700" />
-          </button>
-          <button className="text-gray-600 hover:text-green-500">
-            <FaShareAlt className="text-xl text-green-500 hover:text-green-700" /> 
-          </button>
+        <div className="flex justify-between items-center mt-4">
+          <p className={`text-sm ${item.isPublic ? 'text-green-600' : 'text-red-600'}`}>
+            {item.isPublic ? 'Public' : 'Privé'}
+          </p>
+          <div className="flex space-x-4">
+            <button className="text-gray-600 hover:text-red-600">
+              <FaRegHeart className="text-xl text-pink-500 hover:text-pink-700" />
+            </button>
+            <button className="text-gray-600 hover:text-blue-500">
+              <FaComment className="text-xl text-blue-500 hover:text-blue-700" />
+            </button>
+            <button className="text-gray-600 hover:text-green-500">
+              <FaShareAlt className="text-xl text-green-500 hover:text-green-700" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

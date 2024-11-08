@@ -15,11 +15,10 @@ import { FaInstagram, FaCalendarAlt } from 'react-icons/fa';
 const ClubCard = ({ item, size = "grand" }) => {
   
   const cardHeight = "h-[400px]"; 
-  
   const widthClass = size === "petit" ? "w-60" : "w-[300px]";
-
+  
   return (
-    <div className={`relative bg-white shadow-lg rounded-lg p-6 mb-6 ${widthClass} mx-auto hover:shadow-2xl transition-shadow duration-300 ease-in-out ${cardHeight}`}>
+    <div className={`relative bg-white cursor-pointer shadow-lg rounded-lg p-6 mb-6 ${widthClass} mx-auto hover:shadow-2xl transition-shadow duration-300 ease-in-out ${cardHeight}`}>
       <img 
         src={item.logo || "default-image.jpg"}      
         alt={`${item.nom} logo`} 
@@ -30,13 +29,13 @@ const ClubCard = ({ item, size = "grand" }) => {
         {item.nom}
       </h3>
       
-      <div className="relative mt-3 h-18 overflow-hidden">
-        <p className="text-gray-600 text-center line-clamp-3">
+      <div className="relative mt-3 h-18 overflow-hidden ">
+        <p className="text-gray-600 text-left line-clamp-3">
           {item.description || ""}
         </p>
       </div>
 
-      <div className="flex items-center justify-between mt-4">
+      <div className="absolute bottom-0 left-0 right-0 p-4 bg-white shadow-inner flex items-center justify-between mt-4">
         <p className="text-gray-500 flex items-center">
           <FaCalendarAlt className="mr-2 text-indigo-600" /> 
           <span><strong>Créé le:</strong> {new Date(item.createdAt).toLocaleDateString()}</span>

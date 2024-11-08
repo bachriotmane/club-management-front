@@ -1,22 +1,41 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const Carousel = ({ items, CardComponent, title }) => {
-  const [currentIndex, setCurrentIndex] = useState(0); // Indice des éléments visibles dans la boîte
-  const itemsPerPage = 5; // Nombre d'éléments visibles à la fois
-  const itemWidth = 250; // Largeur de chaque élément
+  const [currentIndex, setCurrentIndex] = useState(0); 
+  const itemWidth = 250;  
+  const marginRight = 16; 
   const carouselRef = useRef(null);
+  const [itemsPerPage, setItemsPerPage] = useState(5);  
 
-  // Fonction pour déplacer à gauche
+  useEffect(() => {
+    const updateItemsPerPage = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) {
+        setItemsPerPage(5);  
+      } else if (width >= 768) {
+        setItemsPerPage(4);  
+      } else if (width >= 480) {
+        setItemsPerPage(3);  
+      } else {
+        setItemsPerPage(2);  
+      }
+    };
+
+    updateItemsPerPage(); 
+
+    window.addEventListener('resize', updateItemsPerPage);  
+    return () => window.removeEventListener('resize', updateItemsPerPage);  
+  }, []);
+
   const handlePrev = () => {
     if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1); // Déplacer d'un élément à gauche
+      setCurrentIndex(currentIndex - 1); 
     }
   };
 
-  // Fonction pour déplacer à droite
   const handleNext = () => {
-    if (currentIndex < items.length - itemsPerPage) {
-      setCurrentIndex(currentIndex + 1); // Déplacer d'un élément à droite
+    if (currentIndex < items.length - itemsPerPage) { 
+      setCurrentIndex(currentIndex + 1); 
     }
   };
 
@@ -24,15 +43,12 @@ const Carousel = ({ items, CardComponent, title }) => {
     <div className="relative w-full mx-auto">
       <div className="flex justify-between items-center w-full mb-4 px-5">
         <h2 className="text-left text-[28px] font-bold">{title}</h2>
-        {/* Bouton "Voir tous" */}
-        {currentIndex < items.length - itemsPerPage && (
           <button
             className="text-yellow-500 font-bold hover:underline"
             onClick={() => console.log('Voir tous clicked')}
           >
             Voir tous
           </button>
-        )}
       </div>
 
       <div className="relative w-full overflow-hidden">
@@ -40,18 +56,20 @@ const Carousel = ({ items, CardComponent, title }) => {
           ref={carouselRef}
           className="flex transition-all duration-300"
           style={{
-            transform: `translateX(-${currentIndex * itemWidth}px)`, // Applique le décalage horizontal en fonction de l'indice actuel
+            transform: `translateX(-${(currentIndex * (itemWidth + marginRight))}px)`,  
           }}
         >
-          {/* Conteneur des cartes */}
           {items.map((item) => (
-            <div key={item.id} className="flex-shrink-0" style={{ width: `${itemWidth}px` }}>
+            <div
+              key={item.id}
+              className="flex-shrink-0 mr-4" 
+              style={{ width: `${itemWidth}px` }}
+            >
               <CardComponent item={item} size="petit" />
             </div>
           ))}
         </div>
 
-        {/* Bouton gauche */}
         {currentIndex > 0 && (
           <button
             onClick={handlePrev}
@@ -61,7 +79,6 @@ const Carousel = ({ items, CardComponent, title }) => {
           </button>
         )}
 
-        {/* Bouton droit */}
         {currentIndex < items.length - itemsPerPage && (
           <button
             onClick={handleNext}

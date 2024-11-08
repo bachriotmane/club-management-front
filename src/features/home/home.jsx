@@ -51,7 +51,7 @@ const Home = () => {
     { id: "20", nom: "Exposition de Mode", description: "Des créateurs de mode marocains présentent leurs collections.", image: "/bac.jpeg", date: "2024-12-03", location: "Palais des Expositions, Fès", budget: 15000 },
   ];
   const publications = [
-    { id: "1", titre: "L'Art de la Photographie", auteur: "Jean Dupont", date: "2024-03-10", image: "/bac.jpeg", description: "Une exploration approfondie de la photographie." },
+    { id: "1", titre: "L'Art de la Photographie", auteur: "Jean Dupont", date: "2024-03-10", image: "/bac.jpeg", description: "Une exploration approfondie de la photographie.",isPublic: true },
     { id: "2", titre: "Les Nouvelles Technologies", auteur: "Marc Lefevre", date: "2023-11-01", image: "/bac.jpeg", description: "Un regard sur l'avenir des technologies." },
     { id: "3", titre: "La Cuisine Marocaine", auteur: "Fatima El Amrani", date: "2024-02-25", image: "/bac.jpeg", description: "Recettes et traditions culinaires du Maroc." },
     { id: "4", titre: "Voyager Autrement", auteur: "Amine Benali", date: "2024-04-10", image: "/bac.jpeg", description: "Des idées de voyages en dehors des sentiers battus." },
@@ -80,8 +80,6 @@ const Home = () => {
         <Carousel items={clubs}  CardComponent={ClubCard} title="Liste des Clubs"/>
         <Carousel items={events}  CardComponent={EventCard} title="Liste des Events"/>
         <Carousel items={publications}  CardComponent={PublicationCard} title="Liste des Publications"/>
-
-
       </div>
     );
   };
