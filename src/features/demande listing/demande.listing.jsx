@@ -1,3 +1,5 @@
+import {useNavigate} from "react-router-dom";
+
 const imageTest = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyzTWQoCUbRNdiyorem5Qp1zYYhpliR9q0Bw&s';
 const demandes = [
     { id: 1, date: '13/05/2024', demandeur: { name: 'John Doe', image: imageTest }, status: 'Accepte' },
@@ -8,6 +10,7 @@ const demandes = [
 ];
 
 const DemandesListing = () => {
+    const navigate = useNavigate();
     return (
         <div className="p-6 bg-white shadow-lg rounded-lg">
             <h1 className='my-2 text-2xl'>Demandes</h1>
@@ -23,11 +26,11 @@ const DemandesListing = () => {
                 </thead>
                 <tbody>
                 {demandes.map((demande) => (
-                    <tr key={demande.id} className="hover:bg-gray-100">
+                    <tr key={demande.id} onClick={()=>navigate("/demandes/1")} className="cursor-pointer hover:bg-gray-100">
                         <td className="px-4 py-2 border text-center">#{demande.id}</td>
                         <td className="px-4 py-2 border flex items-center space-x-2">
                             <img src={demande.demandeur.image} alt="Demandeur" className="w-8 h-8 rounded-full"/>
-                            <span>{demande.demandeur.name}</span>
+                            <span className=" hover:underline hover:text-blue-700">{demande.demandeur.name}</span>
                         </td>
                         <td className="px-4 py-2 border text-center">{demande.date}</td>
                         <td className="px-4 py-2 border text-center">
