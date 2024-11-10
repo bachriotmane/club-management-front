@@ -11,6 +11,7 @@ import Login from "./shared/components/auth/Login.jsx";
 import Unauthorized from "./shared/components/auth/Unauthorized.jsx";
 import NotFound from "./shared/components/auth/NotFound.jsx";
 import SideBarLayout from "./shared/components/SideBarLayout.jsx";
+import Home from "./features/home/home.jsx";
 function App() {
   return (
     <Router>
@@ -18,20 +19,20 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route element={<SideBarLayout/>}>
-          <Route index element={<DemandesListing />} />
-          <Route path="/demande" element={<DemandesListing />} />
+          <Route index element={<Home />} />
+          <Route path="/demandes" element={<DemandesListing />} />
           <Route path="/demande/:id" element={<DemandeDetails />} />
           <Route path="/club/:id" element={<ClubDetails />} />
           <Route path="/events" element={<EventsListing />} />
           <Route path="/event/:id" element={<EventDetails />} />
-          <Route element={<PrivateRoute roles={['ROLE_ADMIN']} />}>
+          {/* <Route element={<PrivateRoute roles={['ROLE_ADMIN']} />}> */}
             <Route path="/clubs" element={<ClubsListingPage />} />
-          </Route>
+          {/* </Route> */}
         </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
   );
-}
+};
 
 export default App;

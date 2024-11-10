@@ -33,7 +33,6 @@ const events = [
     location: "Rabat, Maroc",
     budget: 3000,
   },
-  // Ajoutez plus d'événements ici...
 ];
 
 const EventsListing = () => {

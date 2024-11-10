@@ -8,17 +8,17 @@ import { BellIcon } from '@heroicons/react/24/solid'
 function SideBarLayout() {
 
     const user = {
-        firstName: 'John',
-        lastName: 'Doe'
+        firstName: 'Mohammed',
+        lastName: 'ARAMALI'
     }
     const count = 3;
 
   return (
-        <div className={`flex h-[100vh] overflow-hidden gap-3  bg-white`}>
-          <div className='mr-2'>
+        <div className={`flex h-[100vh] overflow-hidden gap-3 w-[100%] bg-white`}>
+          <div className='mr-2 w-[21%] h-[100vh] overflow-hidden'>
               <Sidebar/>
           </div>
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 w-[78%] flex flex-col overflow-hidden">
                 <header className="flex items-center justify-center bg-white shadow-md p-4">
                     {/* <button className="text-gray-600 focus:outline-none md:hidden" onClick={toggleSidebar}>
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,7 +40,7 @@ function SideBarLayout() {
                         <UserProfile user={{ name: user.firstName, email: user.lastName, avatar: loadedImageUrl }} />
                     </div>
                 </header>
-                <main className="flex-1 overflow-y-auto p-6 bg-gray-100">
+                <main className="overflow-y-auto p-6 bg-white overflow-x-hidden">
                     <Outlet />
                 </main>
             </div>
