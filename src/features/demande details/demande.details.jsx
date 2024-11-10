@@ -1,3 +1,4 @@
+import {useNavigate} from "react-router-dom";
 
 const imageTest = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyzTWQoCUbRNdiyorem5Qp1zYYhpliR9q0Bw&s';
 const demandes = [
@@ -6,6 +7,7 @@ const demandes = [
 ];
 
 const DemandeDetails = () => {
+    const navigate = useNavigate();
 
     const demande = demandes[0];
 
@@ -16,6 +18,7 @@ const DemandeDetails = () => {
     return (
         <div className="w-full h-screen p-6 bg-gray-50">
             <button
+                onClick={()=> navigate("/demandes")}
                 className="text-blue-500 mb-4"
             >
                 &larr; Back

@@ -21,7 +21,7 @@ function App() {
         <Route element={<SideBarLayout/>}>
           <Route index element={<Home />} />
           <Route path="/demandes" element={<DemandesListing />} />
-          <Route path="/demande/:id" element={<DemandeDetails />} />
+          <Route path="/demandes/:id" element={<DemandeDetails />} />
           <Route path="/club/:id" element={<ClubDetails />} />
           <Route path="/events" element={<EventsListing />} />
           <Route path="/event/:id" element={<EventDetails />} />
