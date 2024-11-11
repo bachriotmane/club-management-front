@@ -23,7 +23,7 @@ const getFormattedTime = (date) => {
 
 const PublicationCard = ({ item, size = "grand" }) => {
   const widthClass = size === "petit" ? "w-60" : "w-[300px]";
-  const cardHeight = "h-[500px]"; 
+  const cardHeight = "h-[460px]"; 
   const navigate = useNavigate();
   const handleNavigation = () => {
     navigate(`/club/${item.id}`);  
@@ -33,7 +33,7 @@ const PublicationCard = ({ item, size = "grand" }) => {
       <img 
         src={item.image || "default-image.jpg"}
         alt={item.titre} 
-        className="w-full h-56 object-cover rounded-md mb-4"
+        className="w-full h-48 object-cover rounded-md mb-4"
         onClick={handleNavigation}
       />
       

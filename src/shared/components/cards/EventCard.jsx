@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
  */
 const EventCard = ({ item, size = "grand" }) => {
   
-  const cardHeight = "h-[550px]"; 
+  const cardHeight = "h-[480px]"; 
   const widthClass = size === "petit" ? "w-60" : "w-[300px]";
   const navigate = useNavigate();
   const handleNavigation = () => {
@@ -26,7 +26,7 @@ const EventCard = ({ item, size = "grand" }) => {
       <img 
         src={item.image || "default-image.jpg"}
         alt={item.nom} 
-        className="w-full h-64 object-cover rounded-md mb-4" 
+        className="w-full h-48 object-cover rounded-md mb-4" 
         onClick={handleNavigation}
       />
 
