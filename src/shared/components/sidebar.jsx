@@ -29,7 +29,7 @@ import fsts from "../../assets/fsts.png";
  
 export function Sidebar() {
   const [isOpened, setIsOpened] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const handleItemClick = (index) => {
     setActiveIndex(index);
@@ -141,6 +141,7 @@ export function Sidebar() {
             <div>
             {
                 sidebar.map((item, index) => (
+                    <Link to={item.to}>
                     <ListItem
                      onClick={() => handleItemClick(index)}
                      className={`flex justify-start mr-3 gap-6 ${activeIndex === index ? 'bg-white w-[235px] rounded-l-3xl font-bold  mr-3'  : ''}`}
@@ -148,8 +149,9 @@ export function Sidebar() {
                         <ListItemPrefix>
                             {item.icon}
                         </ListItemPrefix>
-                        <Link to={item.to}>{item.title}</Link>
+                        {item.title}
                     </ListItem>
+                    </Link>
                 ))
             }
             </div>
