@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaRegHeart, FaComment, FaShareAlt, FaRegClock, FaCalendarAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Carte publicitaire : Affiche les informations d'une publication.
@@ -23,17 +24,22 @@ const getFormattedTime = (date) => {
 const PublicationCard = ({ item, size = "grand" }) => {
   const widthClass = size === "petit" ? "w-60" : "w-[300px]";
   const cardHeight = "h-[500px]"; 
-
+  const navigate = useNavigate();
+  const handleNavigation = () => {
+    navigate(`/club/${item.id}`);  
+     };
   return (
     <div className={`relative bg-white shadow-lg rounded-lg cursor-pointer p-6 mb-4 max-w-xs mx-auto ${widthClass} hover:shadow-xl transition-shadow duration-300 ease-in-out ${cardHeight}`}>
       <img 
         src={item.image || "default-image.jpg"}
         alt={item.titre} 
         className="w-full h-56 object-cover rounded-md mb-4"
+        onClick={handleNavigation}
       />
       
       <h3 className="text-xl font-semibold text-gray-800 truncate">
         {item.titre}
+        onClick={handleNavigation}
       </h3>
 
       <div className="relative mt-2 h-18 overflow-hidden">
@@ -42,7 +48,6 @@ const PublicationCard = ({ item, size = "grand" }) => {
         </p>
       </div>
 
-      {/* Container pour la date, statut de la publication et actions */}
       <div className="absolute bottom-0 left-0 right-0 p-4 shadow-inner flex flex-col space-y-2">
         <div className="flex items-center text-gray-500">
           <FaCalendarAlt className="mr-2 text-blue-500 hover:text-blue-700" />

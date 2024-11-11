@@ -18,7 +18,7 @@ const StatCard = ({ title, number, color }) => {
 
   return (
     <div className={`${bgColor} text-white rounded-2xl p-6 flex flex-col justify-between items-start w-96 shadow-lg`}>
-      <h3 className="text-xl font-semibold text-left">{title}</h3>
+      <h3 className="text-base font-semibold text-left">{title}</h3>
       <div className="text-5xl font-bold mt-2 text-left">{number}</div>
     </div>
   );

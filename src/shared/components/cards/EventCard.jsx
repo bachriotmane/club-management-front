@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaMapMarkerAlt, FaCalendarAlt, FaDollarSign } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Carte d'événement : Affiche les informations d'un événement.
@@ -15,19 +16,23 @@ import { FaMapMarkerAlt, FaCalendarAlt, FaDollarSign } from 'react-icons/fa';
 const EventCard = ({ item, size = "grand" }) => {
   
   const cardHeight = "h-[550px]"; 
-  
   const widthClass = size === "petit" ? "w-60" : "w-[300px]";
-
+  const navigate = useNavigate();
+  const handleNavigation = () => {
+    navigate(`/event/${item.id}`);  
+     };
   return (
     <div className={`relative bg-white shadow-lg rounded-lg cursor-pointer p-6 mb-4 max-w-xs mx-auto ${widthClass} hover:shadow-xl transition-shadow duration-300 ease-in-out ${cardHeight}`}>
       <img 
         src={item.image || "default-image.jpg"}
         alt={item.nom} 
         className="w-full h-64 object-cover rounded-md mb-4" 
+        onClick={handleNavigation}
       />
 
       <h3 className="text-xl font-semibold text-gray-800 hover:text-indigo-600 transition-colors duration-200 truncate">
         {item.nom}
+        onClick={handleNavigation}
       </h3>
 
       <div className="relative mt-2  overflow-hidden">
@@ -36,7 +41,6 @@ const EventCard = ({ item, size = "grand" }) => {
         </p>
       </div>
 
-      {/* Container pour la date, lieu et budget */}
       <div className="absolute bottom-0 left-0 right-0 p-4  shadow-inner flex flex-col space-y-2">
         <p className="text-gray-500 flex items-center">
           <FaCalendarAlt className="mr-2 text-indigo-600" /> 
