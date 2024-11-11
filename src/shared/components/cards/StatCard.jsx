@@ -17,9 +17,11 @@ const StatCard = ({ title, number, color }) => {
   }
 
   return (
-    <div className={`${bgColor} text-white rounded-2xl p-6 flex flex-col justify-between items-start w-96 shadow-lg`}>
-      <h3 className="text-base font-semibold text-left">{title}</h3>
-      <div className="text-5xl font-bold mt-2 text-left">{number}</div>
+    <div className={`${bgColor} text-white rounded-2xl p-6 flex flex-col justify-between items-start w-full sm:w-96 md:w-96 shadow-lg`}>
+      <h3 className="text-xs sm:text-sm md:text-base font-semibold text-left">{title}</h3>
+      <div className="text-3xl sm:text-4xl md:text-5xl font-bold mt-2 text-left">
+        {number}
+      </div>
     </div>
   );
 };
