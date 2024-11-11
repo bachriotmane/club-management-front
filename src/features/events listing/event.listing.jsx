@@ -1,11 +1,12 @@
 import React from "react";
 import EventCard from "../../shared/components/cards/EventCard";
+import logo from "../../assets/bac.jpeg";
 
 // Exemple de données pour les événements
 const events = [
   {
     id: 1,
-    image: "https://example.com/image1.jpg",
+    image: logo,
     nom: "Festival de Musique",
     description:
       "Un festival de musique avec de nombreux artistes locaux et internationaux.",
@@ -15,7 +16,7 @@ const events = [
   },
   {
     id: 2,
-    image: "https://example.com/image2.jpg",
+    image: logo,
     nom: "Conférence Tech",
     description:
       "Une conférence pour les passionnés de technologie et les développeurs.",
@@ -25,7 +26,7 @@ const events = [
   },
   {
     id: 3,
-    image: "https://example.com/image3.jpg",
+    image: logo,
     nom: "Salon de l'Art",
     description:
       "Un salon dédié aux amateurs d'art, avec des expositions de divers artistes.",

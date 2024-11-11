@@ -1,18 +1,24 @@
-import React from 'react';
-import { FaRegHeart, FaComment, FaShareAlt, FaRegClock, FaCalendarAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import {
+  FaRegHeart,
+  FaComment,
+  FaShareAlt,
+  FaRegClock,
+  FaCalendarAlt,
+} from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const getFormattedTime = (date) => {
   const time = new Date(date);
-  const hours = time.getHours().toString().padStart(2, '0');
-  const minutes = time.getMinutes().toString().padStart(2, '0');
+  const hours = time.getHours().toString().padStart(2, "0");
+  const minutes = time.getMinutes().toString().padStart(2, "0");
   return `${hours}:${minutes}`;
 };
 
 const PublicationCard = ({ item }) => {
   const navigate = useNavigate();
   const handleNavigation = () => {
-    navigate(`/club/${item.id}`);
+    navigate(`/publication/${item.id}`);
   };
 
   return (
@@ -25,7 +31,10 @@ const PublicationCard = ({ item }) => {
         />
       </div>
 
-      <h3 className="mt-4 text-sm sm:text-lg md:text-xl font-semibold text-gray-800 truncate cursor-pointer" onClick={handleNavigation}>
+      <h3
+        className="mt-4 text-sm sm:text-lg md:text-xl font-semibold text-gray-800 truncate cursor-pointer"
+        onClick={handleNavigation}
+      >
         {item.titre}
       </h3>
 
@@ -38,17 +47,25 @@ const PublicationCard = ({ item }) => {
       <div className="mt-4 space-y-2 text-gray-500">
         <div className="flex items-center">
           <FaCalendarAlt className="mr-2 text-blue-500 hover:text-blue-700 text-xs sm:text-sm md:text-base" />
-          <span className="text-xs sm:text-sm">{new Date(item.date).toLocaleDateString()}</span>
+          <span className="text-xs sm:text-sm">
+            {new Date(item.date).toLocaleDateString()}
+          </span>
         </div>
         <div className="flex items-center">
           <FaRegClock className="mr-2 text-yellow-500 hover:text-yellow-700 text-xs sm:text-sm md:text-base" />
-          <span className="text-xs sm:text-sm">Publié à: {getFormattedTime(item.date)}</span>
+          <span className="text-xs sm:text-sm">
+            Publié à: {getFormattedTime(item.date)}
+          </span>
         </div>
       </div>
 
       <div className="flex justify-between items-center mt-4">
-        <p className={`text-xs sm:text-sm ${item.isPublic ? 'text-green-600' : 'text-red-600'}`}>
-          {item.isPublic ? 'Public' : 'Privé'}
+        <p
+          className={`text-xs sm:text-sm ${
+            item.isPublic ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          {item.isPublic ? "Public" : "Privé"}
         </p>
         <div className="flex space-x-2 sm:space-x-4">
           <button className="text-gray-600 hover:text-red-600">
