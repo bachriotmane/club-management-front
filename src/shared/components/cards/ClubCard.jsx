@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaInstagram, FaCalendarAlt } from 'react-icons/fa';
+import {useNavigate} from "react-router-dom";
 
 /**
  * Card de club : Affiche les informations d'un club.
@@ -13,21 +14,28 @@ import { FaInstagram, FaCalendarAlt } from 'react-icons/fa';
  */
 
 const ClubCard = ({ item, size = "grand" }) => {
-  
-  const cardHeight = "h-[400px]"; 
-  const widthClass = size === "petit" ? "w-60" : "w-[300px]";
-  
+    const navigate = useNavigate();
+    const cardHeight = "h-[400px]";
+    const widthClass = size === "petit" ? "w-60" : "w-[300px]";
+    const handleNavigation = () => {
+    navigate(`/club/${item.id}`);  
+     };
   return (
     <div className={`relative bg-white cursor-pointer shadow-lg rounded-lg p-6 mb-6 ${widthClass} mx-auto hover:shadow-2xl transition-shadow duration-300 ease-in-out ${cardHeight}`}>
       <img 
         src={item.logo || "default-image.jpg"}      
         alt={`${item.nom} logo`} 
         className="w-full h-48 object-cover rounded-md mb-4"
+        onClick={handleNavigation}
       />
       
-      <h3 className="text-2xl font-semibold text-gray-800 text-center hover:text-blue-600 transition-colors duration-200 truncate">
-        {item.nom}
+      <h3 
+    className="text-2xl font-semibold text-gray-800 text-center hover:text-blue-600 transition-colors duration-200 truncate" 
+    onClick={handleNavigation}
+     >
+    {item.nom}
       </h3>
+
       
       <div className="relative mt-3 h-18 overflow-hidden ">
         <p className="text-gray-600 text-left line-clamp-3">
