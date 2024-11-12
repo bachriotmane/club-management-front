@@ -1,9 +1,10 @@
 import { Typography } from "@material-tailwind/react";
-import { AiOutlineInstagram } from "react-icons/ai";
-import { BiEditAlt } from "react-icons/bi";
+import {AiOutlineClockCircle, AiOutlineInstagram} from "react-icons/ai";
+import {BiArrowBack, BiEditAlt} from "react-icons/bi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import logo from "../../assets/bac.jpeg";
 import { useNavigate } from "react-router-dom";
+import {MdLocationOn} from "react-icons/md";
 
 const event = {
   name: "Paris Through the Lens",
@@ -24,11 +25,11 @@ const EventDetails = () => {
 
   return (
       <header className="bg-white p-8 min-h-screen">
-        <button onClick={() => navigate(-1)} className="text-blue-500 mb-4">
-          &larr; Back
+        <button onClick={() => navigate(-1)} className="flex items-center text-black text-xl mb-4 space-x-2">
+          <BiArrowBack size={30}></BiArrowBack>
+          <span>Back</span>
         </button>
         <div className="container mx-auto flex flex-col lg:flex-row items-start gap-10 w-full h-full">
-          {/* Left Image Section */}
           <div className="flex-shrink-0 w-full lg:w-1/3 h-full lg:h-screen">
             <img
                 src={event.image}
@@ -61,11 +62,11 @@ const EventDetails = () => {
             </Typography>
             <div className="space-y-3 text-gray-600">
               <div className="flex items-center space-x-3">
-                <p className="text-gray-900 font-bold text-xl">Date</p>
+                <AiOutlineClockCircle size={30} color={"black"} />
                 <span className="text-lg italic">{event.date}</span>
               </div>
               <div className="flex items-center space-x-3">
-                <p className="text-gray-900 font-bold text-xl">Localization</p>
+                <MdLocationOn size={30} color={"black"} ></MdLocationOn>
                 <span className="text-lg italic">{event.place}</span>
               </div>
             </div>
