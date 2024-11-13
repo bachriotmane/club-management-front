@@ -20,11 +20,15 @@ import Home from "./features/home/home.jsx";
 import PublicationsList from "./features/publication listing/publication.listing.jsx";
 import PublicationDetails from "./features/publication details/publication.details.jsx";
 import Profile from "./shared/components/auth/Profile.jsx";
+import EnterEmail from "./shared/components/auth/EnterEmailPage.jsx";
+import ForgetPassword from "./shared/components/auth/ForgetPassword.jsx";
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/enter-email" element={<EnterEmail />} />
+        <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route element={<SideBarLayout />}>
           <Route index element={<Home />} />
