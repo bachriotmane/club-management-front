@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../../../auth/auth';
 
-const UserProfile = ({ user, nom }) => {
+const UserProfile = ({ user}) => {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -29,10 +29,10 @@ const UserProfile = ({ user, nom }) => {
                         <p className="text-gray-600 text-sm">{user.email}</p>
                     </div>
                     <div className="p-2">
-                        <Link to={`${nom}/profile`} className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        <Link to={`/profile`} className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                             profile
                         </Link>
-                        <Link to={`${nom}/change-password`} className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        <Link to={`/change-password`} className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                             changePassword
                         </Link>
                         <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={getOut}>

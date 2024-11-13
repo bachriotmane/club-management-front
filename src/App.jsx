@@ -19,6 +19,7 @@ import SideBarLayout from "./shared/components/SideBarLayout.jsx";
 import Home from "./features/home/home.jsx";
 import PublicationsList from "./features/publication listing/publication.listing.jsx";
 import PublicationDetails from "./features/publication details/publication.details.jsx";
+import Profile from "./shared/components/auth/Profile.jsx";
 function App() {
   return (
     <Router>
@@ -37,6 +38,8 @@ function App() {
           {/* </Route> */}
           <Route path="/publications" element={<PublicationsList />} />
           <Route path="/publication/:id" element={<PublicationDetails />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:id" element={<Profile />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
