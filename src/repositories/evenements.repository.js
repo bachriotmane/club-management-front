@@ -1,0 +1,1 @@
+// The different functions for clubs repository
