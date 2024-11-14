@@ -65,7 +65,7 @@ const EventDetails = () => {
                             <span className="text-lg italic">{event.date}</span>
                         </div>
                         <div className="flex items-center space-x-3">
-                            <MdLocationOn size={30} color={"4207F2"}></MdLocationOn>
+                            <MdLocationOn size={34} color={"F27907"}></MdLocationOn>
                             <span className="text-lg italic">{event.place}</span>
                         </div>
                         <a className="flex items-center space-x-3" href={event.instagram} >
@@ -77,10 +77,10 @@ const EventDetails = () => {
                     {/* Actions */}
                     <div className="flex items-center space-x-4 mt-4">
                         <button className="text-gray-600 hover:text-gray-800">
-                            <BiEditAlt size={24}/>
+                            <BiEditAlt size={30}/>
                         </button>
                         <button className="text-red-600 hover:text-red-800">
-                            <RiDeleteBinLine size={24}/>
+                            <RiDeleteBinLine size={30}/>
                         </button>
                     </div>
                 </div>
