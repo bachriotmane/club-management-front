@@ -1,13 +1,7 @@
-import React from "react";
-import {
-  FaRegHeart,
-  FaComment,
-  FaShareAlt,
-  FaRegClock,
-  FaCalendarAlt,
-} from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import PublicationCard from "../../shared/components/cards/PublicationCard";
+import FilterHeader from "./components/filter-header.jsx";
+import {useState} from "react";
+import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
 
 const publications = [
   {
@@ -66,9 +60,19 @@ const publications = [
 ];
 
 const PublicationsList = () => {
+  const [currentTab, setCurrentTab] = useState("All");
+  const [isLoading, setIsLoading] = useState(false);
+  const [filterDate, setFilterDate] = useState("last24Hours");
+  const [searchKey, setSearchKey] = useState("");
+
+  if(isLoading){
+    return <div className="">
+      <LoadingSpinner></LoadingSpinner>
+    </div>
+  }
   return (
     <div className="container mx-auto py-8 px-4">
-      <h2 className="text-2xl font-bold mb-6 text-center">Nos Clubs</h2>
+      <FilterHeader searchTerm={searchKey} setSearchTerm={setSearchKey} activeTab={currentTab} setActiveTab={setCurrentTab} filterDate={filterDate} setFilterDate={setFilterDate}></FilterHeader>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {publications.map((item) => (
           <PublicationCard key={item.id} item={item} />

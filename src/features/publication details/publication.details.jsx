@@ -1,5 +1,5 @@
 import {Typography} from "@material-tailwind/react";
-import {AiOutlineClockCircle, AiOutlineInstagram} from "react-icons/ai";
+import {AiOutlineClockCircle} from "react-icons/ai";
 import {BiArrowBack, BiEditAlt} from "react-icons/bi";
 import {RiDeleteBinLine} from "react-icons/ri";
 import logo from "../../assets/bac.jpeg";
