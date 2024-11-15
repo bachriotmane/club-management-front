@@ -1,54 +1,35 @@
-import "../index.css";
-import DemandesListing from "./features/demande listing/demande.listing.jsx";
-import DemandeDetails from "./features/demande details/demande.details.jsx";
-import ClubsListingPage from "./features/clubs listing/clubs.listing.page.jsx";
-import EventsListing from "./features/events listing/event.listing.jsx";
-import ClubDetails from "./features/club details/club.details.jsx";
-import EventDetails from "./features/event details/event.details.jsx";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Outlet,
-} from "react-router-dom";
-import PrivateRoute from "./shared/components/auth/PrivateRoute.jsx";
-import Login from "./shared/components/auth/Login.jsx";
-import Unauthorized from "./shared/components/auth/Unauthorized.jsx";
-import NotFound from "./shared/components/auth/NotFound.jsx";
-import SideBarLayout from "./shared/components/SideBarLayout.jsx";
-import Home from "./features/home/home.jsx";
-import PublicationsList from "./features/publication listing/publication.listing.jsx";
-import PublicationDetails from "./features/publication details/publication.details.jsx";
-import Profile from "./shared/components/auth/Profile.jsx";
-import EnterEmail from "./shared/components/auth/EnterEmailPage.jsx";
-import ForgetPassword from "./shared/components/auth/ForgetPassword.jsx";
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+
 function App() {
+  const [count, setCount] = useState(0)
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/enter-email" element={<EnterEmail />} />
-        <Route path="/forget-password" element={<ForgetPassword />} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route element={<SideBarLayout />}>
-          <Route index element={<Home />} />
-          <Route path="/demandes" element={<DemandesListing />} />
-          <Route path="/demandes/:id" element={<DemandeDetails />} />
-          <Route path="/club/:id" element={<ClubDetails />} />
-          <Route path="/events" element={<EventsListing />} />
-          <Route path="/event/:id" element={<EventDetails />} />
-          {/* <Route element={<PrivateRoute roles={['ROLE_ADMIN']} />}> */}
-          <Route path="/clubs" element={<ClubsListingPage />} />
-          {/* </Route> */}
-          <Route path="/publications" element={<PublicationsList />} />
-          <Route path="/publication/:id" element={<PublicationDetails />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/profile/:id" element={<Profile />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
-  );
+    <>
+      <div>
+        <a href="https://vite.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
+      </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>
+          Edit <code>src/App.jsx</code> and save to test HMR
+        </p>
+      </div>
+      <p className="read-the-docs">
+        Click on the Vite and React logos to learn more
+      </p>
+    </>
+  )
 }
 
-export default App;
+export default App
