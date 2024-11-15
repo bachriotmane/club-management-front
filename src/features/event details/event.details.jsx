@@ -1,78 +1,92 @@
-import React from "react";
-import { Typography } from "@material-tailwind/react";
-import { FaMapMarkerAlt, FaCalendarAlt, FaDollarSign } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import {Typography} from "@material-tailwind/react";
+import {AiOutlineClockCircle, AiOutlineInstagram} from "react-icons/ai";
+import {BiArrowBack, BiEditAlt} from "react-icons/bi";
+import {RiDeleteBinLine} from "react-icons/ri";
 import logo from "../../assets/bac.jpeg";
+import {useNavigate} from "react-router-dom";
+import {MdLocationOn} from "react-icons/md";
 
-function EventDetails() {
-  const event = {
-    name: "Conférence Tech 2024",
-    description:
-      "Une conférence dédiée aux dernières tendances en technologie, avec des conférenciers renommés et des ateliers interactifs.",
-    date: "2024-11-15",
-    location: "Palais des Congrès, Paris",
-    budget: 1500,
-    image: logo, // Remplace par l'URL de l'image réelle
-  };
-  const navigate = useNavigate();
-  return (
-    <header className="bg-white p-8">
-      <button onClick={() => navigate(-1)} className="text-blue-500 mb-4">
-        &larr; Back
-      </button>
-      <div className="container mx-auto grid h-full gap-10 min-h-[60vh] w-full grid-cols-1 items-center lg:grid-cols-2">
-        {/* Texte de l'événement */}
-        <div className="row-start-2 lg:row-auto">
-          {/* Nom de l'événement */}
-          <Typography
-            variant="h1"
-            color="blue-gray"
-            className="mb-6 text-black text-7xl font-bold leading-tight"
-          >
-            {event.name}
-          </Typography>
+const event = {
+    name: "Paris Through the Lens",
+    description: "Join us for an extraordinary photography event where we explore the hidden gems and iconic sights of Paris. 'Paris Through the Lens' invites photographers of all skill levels to capture the city's beauty in a guided tour led by professional photographers. Enjoy hands-on workshops, meet fellow enthusiasts, and participate in a photo contest with exciting prizes for the best shots of the day!",
+    date: "Saturday, 16th December 2024",
+    time: "10:00 AM - 4:00 PM",
+    place: "Montmartre, Paris, France",
+    organiser: {
+        name: "Marie Claire",
+        image: logo
+    },
+    instagram: "https://www.instagram.com/club__impact_",
+    image: "https://www.telecom-paris.fr/wp-content-EvDsK19/uploads/2020/10/semaine-integration-1200x800-1.jpg",
+};
 
-          {/* Description de l'événement */}
-          <Typography
-            variant="lead"
-            className="mb-6 text-gray-700 md:pr-16 xl:pr-28 text-lg font-light tracking-wider"
-          >
-            {event.description}
-          </Typography>
+const EventDetails = () => {
+    const navigate = useNavigate();
 
-          {/* Détails de l'événement */}
-          <div className="mt-4 space-y-4">
-            <p className="text-gray-500 flex items-center">
-              <FaCalendarAlt className="mr-2 text-indigo-600" />
-              <span>
-                <strong>Date:</strong>{" "}
-                {new Date(event.date).toLocaleDateString()}
+    return (
+        <header className="bg-white p-8 min-h-screen">
+            <button onClick={() => navigate(-1)} className="flex items-center text-black text-xl mb-4 space-x-2">
+                <BiArrowBack size={30}></BiArrowBack>
+                <span>Back</span>
+            </button>
+            <div className="container mx-auto flex flex-col lg:flex-row items-start gap-10 w-full h-full">
+                <div className="flex-shrink-0 w-full lg:w-1/3 h-1/3">
+                    <img
+                        src={event.image}
+                        alt="Event"
+                        className="w-full h-full object-cover rounded-xl"
+                    />
+                </div>
+
+                <div className="flex-grow w-full lg:w-1/2 space-y-3">
+                    <div className="flex items-center space-x-1">
+                        <img
+                            src={event.organiser.image}
+                            alt={event.organiser.name}
+                            className="w-12 h-12 rounded-full object-cover border-2 border-amber-500"
+                        />
+                        <div className="flex flex-col" onClick={()=> navigate("/club/1")}>
+              <span className="text-lg font-bold text-gray-800 hover:underline cursor-pointer hover:text-blue-600">
+                {event.organiser.name}
               </span>
-            </p>
-            <p className="text-gray-500 flex items-center">
-              <FaMapMarkerAlt className="mr-2 text-green-600" />
-              <span>
-                <strong>Lieu:</strong> {event.location}
-              </span>
-            </p>
-            <p className="text-gray-500 flex items-center">
-              <FaDollarSign className="mr-2 text-yellow-600" />
-              <span>
-                <strong>Budget:</strong> ${event.budget}
-              </span>
-            </p>
-          </div>
-        </div>
+                            <span className="text-xs font-bold text-gray-700">120 members</span>
+                        </div>
+                    </div>
 
-        {/* Image de l'événement */}
-        <img
-          src={event.image}
-          alt="Event"
-          className="h-[36rem] w-full rounded-xl object-cover"
-        />
-      </div>
-    </header>
-  );
-}
+                    <Typography variant="h1" color="blue-gray" className="text-4xl font-bold text-black">
+                        {event.name}
+                    </Typography>
+                    <Typography variant="lead" className="text-gray-700 text-lg">
+                        {event.description}
+                    </Typography>
+                    <div className="space-y-3 text-gray-600">
+                        <div className="flex items-center space-x-3">
+                            <AiOutlineClockCircle size={30} color={"4207F2"}/>
+                            <span className="text-lg italic">{event.date}</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                            <MdLocationOn size={34} color={"F27907"}></MdLocationOn>
+                            <span className="text-lg italic">{event.place}</span>
+                        </div>
+                        <a className="flex items-center space-x-3" href={event.instagram} >
+                            <AiOutlineInstagram size={30} color="F20707"/>
+                            <span className="text-lg italic hover:text-blue-500">@{event.instagram.split('/')[event.instagram.split('/').length-1]}</span>
+                        </a>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center space-x-4 mt-4">
+                        <button className="text-gray-600 hover:text-gray-800">
+                            <BiEditAlt size={30}/>
+                        </button>
+                        <button className="text-red-600 hover:text-red-800">
+                            <RiDeleteBinLine size={30}/>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+    );
+};
 
 export default EventDetails;

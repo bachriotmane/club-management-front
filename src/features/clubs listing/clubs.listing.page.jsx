@@ -1,94 +1,95 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import {jwtDecode} from "jwt-decode"; 
 import ClubCard from "../../shared/components/cards/ClubCard";
-import logo from "../../assets/bac.jpeg";
-
-// Sample club data
-const allClubs = [
-  {
-    id: 1,
-    logo: logo,
-    nom: "Club de Photographie",
-    description: "Un club pour les amateurs de photographie. Un club pour les amateurs de photographieUn club pour les amateurs de photographie",
-    createdAt: "2022-01-15",
-    instagramme: "club_photo",
-  },
-  {
-    id: 2,
-    logo: logo,
-    nom: "Club de Programmation",
-    description: "Un club pour les passionnés de programmation.",
-    createdAt: "2021-09-10",
-    instagramme: "club_programmation",
-  },
-  {
-    id: 3,
-    logo: logo,
-    nom: "Club de Programmation",
-    description: "Un club pour les passionnés de programmation.",
-    createdAt: "2021-09-10",
-    instagramme: "club_programmation",
-  },
-  {
-    id: 4,
-    logo: logo,
-    nom: "Club de Programmation",
-    description: "Un club pour les passionnés de programmation.",
-    createdAt: "2021-09-10",
-    instagramme: "club_programmation",
-  },
-  {
-    id: 5,
-    logo: logo,
-    nom: "Club de Programmation",
-    description: "Un club pour les passionnés de programmation.",
-    createdAt: "2021-09-10",
-    instagramme: "club_programmation",
-  },
-  {
-    id: 6,
-    logo: logo,
-    nom: "Club de Programmation",
-    description: "Un club pour les passionnés de programmation.",
-    createdAt: "2021-09-10",
-    instagramme: "club_programmation",
-  },
-];
+import { getClubs } from "../../repositories/clubs.repository";
 
 const ClubsListingPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeView, setActiveView] = useState("all"); // Track active button
+  const [clubs, setClubs] = useState([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [activeView, setActiveView] = useState("all");
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const handleSearch = (e) => setSearchQuery(e.target.value);
+  const fetchClubs = useCallback(async (page, size, nomClub = "", idUser = 0) => {
+    setLoading(true);
+    try {
+      const data = await getClubs({ page, size, nomClub, idUser });
+      setClubs((prevClubs) => [...prevClubs, ...data.data]);
+      setTotalItems(data.totalItems);
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      console.error("Error fetching clubs", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const filteredClubs = allClubs.filter((club) => {
-    // Show all clubs or user's clubs based on `activeView`
-    return activeView === "all" || club.isUserClub;
-  });
+  const handleScroll = (e) => {
+    const bottom = e.target.scrollHeight === e.target.scrollTop + e.target.clientHeight;
+    if (bottom && !loading && currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const getUserIdFromToken = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        return decodedToken.id || 0; 
+      } catch (error) {
+        console.error("Invalid token format", error);
+      }
+    }
+    return 0;
+  };
+
+  useEffect(() => {
+    const idUser = activeView === "all" ? 0 : getUserIdFromToken();
+    fetchClubs(currentPage, 3, searchQuery, idUser);
+  }, [currentPage, searchQuery, fetchClubs, activeView]);
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    setClubs([]);
+    setCurrentPage(0);
+  };
+
+  const handleViewChange = (view) => {
+    setActiveView(view);
+    setClubs([]);
+    setCurrentPage(0);
+  };
+
+  const token = "eyJhbGciOiJIUzM4NCJ9.eyJmdWxsTmFtZSI6IlNvdWZpYW5lIEJvdXJpY2giLCJpZCI6MSwiYWNjb3VudENvbXBsZXRlZCI6dHJ1ZSwic3ViIjoiYm91cmljaC5zb3UuZnN0QHVocC5hYy5tYSIsImlhdCI6MTczMTY3MDU1MiwiZXhwIjoxNzMxNjc5MTkyLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXX0.S3riYb8_uIm5OJAhVjCWcqyYr2kA-khShmXZn8fc6YgtiF05zx_4V2XjzhA4A71B";
+  localStorage.setItem("authToken", token);
+  sessionStorage.setItem("authToken", token);
+
 
   return (
-    <div className="container mx-auto p-6">
+    <div
+      className="container mx-auto p-6"
+      onScroll={handleScroll}
+      style={{ height: "80vh", overflowY: "auto" }}
+    >
       <div className="flex justify-between items-center mb-6">
-        {/* Toggle buttons for view selection */}
         <div className="flex space-x-4">
           <button
-            onClick={() => setActiveView("all")}
-            className={`px-4 py-2 rounded-full font-semibold ${
-              activeView === "all" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"
-            }`}
+            onClick={() => handleViewChange("all")}
+            className={`px-4 py-2 rounded-full font-semibold ${activeView === "all" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}
           >
             Tous les clubs
           </button>
           <button
-            onClick={() => setActiveView("myClubs")}
-            className={`px-4 py-2 rounded-full font-semibold ${
-              activeView === "myClubs" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"
-            }`}
+            onClick={() => handleViewChange("myClubs")}
+            className={`px-4 py-2 rounded-full font-semibold ${activeView === "myClubs" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}
           >
             Mes Clubs
           </button>
         </div>
 
-        {/* Search box */}
         <input
           type="text"
           placeholder="Rechercher un club..."
@@ -98,12 +99,17 @@ const ClubsListingPage = () => {
         />
       </div>
 
-      {/* Display filtered clubs */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredClubs.map((club) => (
-          <ClubCard key={club.id} item={club} />
+        {clubs.map((club) => (
+          <ClubCard key={club.uuid} item={club} />
         ))}
       </div>
+
+      {loading && (
+        <div className="flex justify-center mt-6">
+          <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+        </div>
+      )}
     </div>
   );
 };
