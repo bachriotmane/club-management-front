@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {jwtDecode} from "jwt-decode"; 
+import {jwtDecode} from "jwt-decode";
 import ClubCard from "../../shared/components/cards/ClubCard";
 import { getClubs } from "../../repositories/clubs.repository";
+import noFindImage from "../../assets/bac.jpeg";// Assurez-vous du chemin correct
 
 const ClubsListingPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,7 +16,7 @@ const ClubsListingPage = () => {
   const fetchClubs = useCallback(async (page, size, nomClub = "", idUser = 0) => {
     setLoading(true);
     try {
-      console.log("userid is   ",idUser);
+      console.log("userid is   ", idUser);
       const data = await getClubs({ page, size, nomClub, idUser });
       setClubs((prevClubs) => [...prevClubs, ...data.data]);
       setTotalItems(data.totalItems);
@@ -39,7 +40,7 @@ const ClubsListingPage = () => {
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
-        return decodedToken.id || 0; 
+        return decodedToken.id || 0;
       } catch (error) {
         console.error("Invalid token format", error);
       }
@@ -64,7 +65,6 @@ const ClubsListingPage = () => {
     setCurrentPage(0);
   };
 
- 
   return (
     <div
       className="container mx-auto p-6"
@@ -75,13 +75,17 @@ const ClubsListingPage = () => {
         <div className="flex space-x-4">
           <button
             onClick={() => handleViewChange("all")}
-            className={`px-4 py-2 rounded-full font-semibold ${activeView === "all" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
+            className={`px-4 py-2 rounded-full font-semibold ${
+              activeView === "all" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"
+            }`}
           >
             Tous les clubs
           </button>
           <button
             onClick={() => handleViewChange("myClubs")}
-            className={`px-4 py-2 rounded-full font-semibold ${activeView === "myClubs" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
+            className={`px-4 py-2 rounded-full font-semibold ${
+              activeView === "myClubs" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"
+            }`}
           >
             Mes Clubs
           </button>
@@ -95,14 +99,18 @@ const ClubsListingPage = () => {
           className="p-3 border border-gray-300 rounded-full w-1/3"
         />
       </div>
-      {clubs.length === 0 ?
-                <span className="flex justify-center font-bold text-2xl">Oops pas de clubs!</span>  :
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {clubs.map((club) => (
-          <ClubCard key={club.uuid} item={club} />
-        ))}
-      </div>
-}
+      {clubs.length === 0 && !loading ? (
+        <div className="flex flex-col items-center mt-6">
+          <img src={noFindImage} alt="Aucun résultat trouvé" className="w-1/2 h-auto" />
+          <span className="mt-4 text-xl font-semibold">Aucun club trouvé pour votre recherche</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {clubs.map((club) => (
+            <ClubCard key={club.uuid} item={club} />
+          ))}
+        </div>
+      )}
 
       {loading && (
         <div className="flex justify-center mt-6">
