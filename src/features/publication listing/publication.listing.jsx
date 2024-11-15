@@ -8,42 +8,46 @@ import FilterHeader from "../../shared/components/utili/filter-header.jsx";
 const PublicationsList = () => {
     const [currentTab, setCurrentTab] = useState("All");
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [filterDate, setFilterDate] = useState("last24Hours");
     const [searchKey, setSearchKey] = useState("");
     const [pubs, setPubs] = useState([]);
     const [page, setPage] = useState(0);
     const [error, setError] = useState(null);
+    const [hasMore, setHasMore] = useState(true);
 
     const fetchPubs = async ()=>{
-        setIsLoading(true);
+        setIsLoadingMore(true);
+        const scrollPosition = window.scrollY;
         try {
-            const scrollPosition = window.scrollY;
             const response = await getPublications(
             {
                 page :page
             });
-            setPubs(prevProducts => [...prevProducts, ...response]);
+            setHasMore(response && !response.last)
+            setPubs(prevProducts => [...prevProducts, ...response.content]);
             setPage(prevPage => prevPage + 1);
         } catch (error) {
-            console.log(
-                "error", error.message
-            )
             setError(error.message);
         } finally {
-            setIsLoading(false);
+            setIsLoadingMore(false);
             window.scrollTo(0, scrollPosition);
         }
     }
     useEffect(() => {
-        fetchPubs().then();
+        setIsLoading(true)
+        fetchPubs().then(() => {
+            setIsLoading(false);
+        });
     }, []);
+
     if(error){
-        return <div>
-            {error + ""}
+        return <div className="flex mt-20 text-2xl font-bold bg-red-100 text-red-950 p-2 rounded-xl justify-center items-center">
+            {error}
         </div>
     }
     return (
-        <div className="container w-full mx-auto py-8 px-4">
+        <> { !isLoading ? <div className="container w-full mx-auto py-8 px-4">
             <FilterHeader searchTerm={searchKey} setSearchTerm={setSearchKey} activeTab={currentTab}
                           setActiveTab={setCurrentTab} filterDate={filterDate}
                           setFilterDate={setFilterDate}></FilterHeader>
@@ -53,25 +57,27 @@ const PublicationsList = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {
                             pubs.map(
-                                (item, index)=>{
+                                (item, index) => {
                                     return <PublicationCard key={index} item={item}/>;
-                        }
+                                }
                             )
                         }
                     </div>
-                    <div className="flex justify-center">
-                        <button type="button" onClick={()=>{
-                            fetchPubs();
-
-                        }} disabled={isLoading} className="text-gray-900 bg-white border border-gray-300 rounded-xl p-2">
+                    {hasMore && <div className="flex justify-center">
+                        <button type="button" onClick={fetchPubs} disabled={isLoadingMore}
+                                className="text-gray-900 bg-white border border-gray-300 rounded-xl p-2">
                             {
-                                isLoading ? <LoadingSpinner></LoadingSpinner> : "Load More"
+                                isLoadingMore ? <LoadingSpinner></LoadingSpinner> : "Load More"
                             }
                         </button>
-                    </div>
+                    </div>}
                 </>}
 
+        </div> :
+        <div>
+            <LoadingSpinner></LoadingSpinner>
         </div>
+        }</>
     );
 };
 
