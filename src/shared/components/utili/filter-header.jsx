@@ -1,4 +1,9 @@
-const FilterHeader = ({title, activeTab = "All", setActiveTab, filterDate, setFilterDate, searchTerm, setSearchTerm }) => {
+const FilterHeader = ({title, activeTab = "All", setActiveTab, filterDate, setFilterDate, searchTerm, setSearchTerm,onSearchComplete }) => {
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            onSearchComplete();
+        }
+    };
     return (
         <div className="flex justify-between items-center mb-6 bg-white p-4 shadow-md rounded-lg">
             <div className="flex space-x-4">
@@ -38,6 +43,7 @@ const FilterHeader = ({title, activeTab = "All", setActiveTab, filterDate, setFi
                     type="text"
                     placeholder="Search"
                     value={searchTerm}
+                    onKeyDown={handleKeyDown}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="px-4 py-2 rounded-lg border border-gray-300 bg-white shadow-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition duration-300"
                 />

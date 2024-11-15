@@ -20,7 +20,6 @@ const PublicationCard = ({ item }) => {
   const handleNavigation = () => {
     navigate(`/publication/${item.id}`);
   };
-  console.log(item)
   return (
     <> {item && <div
         className="bg-white shadow-lg rounded-lg p-4 mb-6 mx-auto w-full max-w-full sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl h-auto hover:shadow-xl transition-shadow duration-300 ease-in-out">
