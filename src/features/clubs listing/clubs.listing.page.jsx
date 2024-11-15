@@ -15,6 +15,7 @@ const ClubsListingPage = () => {
   const fetchClubs = useCallback(async (page, size, nomClub = "", idUser = 0) => {
     setLoading(true);
     try {
+      console.log("userid is   ",idUser);
       const data = await getClubs({ page, size, nomClub, idUser });
       setClubs((prevClubs) => [...prevClubs, ...data.data]);
       setTotalItems(data.totalItems);
@@ -63,9 +64,9 @@ const ClubsListingPage = () => {
     setCurrentPage(0);
   };
 
-  const token = "eyJhbGciOiJIUzM4NCJ9.eyJmdWxsTmFtZSI6IlNvdWZpYW5lIEJvdXJpY2giLCJpZCI6MSwiYWNjb3VudENvbXBsZXRlZCI6dHJ1ZSwic3ViIjoiYm91cmljaC5zb3UuZnN0QHVocC5hYy5tYSIsImlhdCI6MTczMTY3MDU1MiwiZXhwIjoxNzMxNjc5MTkyLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXX0.S3riYb8_uIm5OJAhVjCWcqyYr2kA-khShmXZn8fc6YgtiF05zx_4V2XjzhA4A71B";
-  localStorage.setItem("authToken", token);
-  sessionStorage.setItem("authToken", token);
+  const token = "eyJhbGciOiJIUzM4NCJ9.eyJmdWxsTmFtZSI6IkJvdXJpY2ggU291ZmlhbmUiLCJpZCI6MSwiYWNjb3VudENvbXBsZXRlZCI6dHJ1ZSwic3ViIjoiYm91cmljaC5zb3UuZnN0QHVocC5hYy5tYSIsImlhdCI6MTczMTY4MzkwNywiZXhwIjoxNzMxNjkyNTQ3LCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXX0.iBm8YyKJXF-wxnWCyWjqu1GqPadrH4nz3N7tDGd0Z1gwNaZGzMD3NWgbY6kDF3yD";
+  localStorage.setItem("token", token);
+  sessionStorage.setItem("token", token);
 
 
   return (
