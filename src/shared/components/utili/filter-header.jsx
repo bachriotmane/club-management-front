@@ -1,4 +1,4 @@
-const FilterHeader = ({ activeTab = "All", setActiveTab, filterDate, setFilterDate, searchTerm, setSearchTerm }) => {
+const FilterHeader = ({title, activeTab = "All", setActiveTab, filterDate, setFilterDate, searchTerm, setSearchTerm }) => {
     return (
         <div className="flex justify-between items-center mb-6 bg-white p-4 shadow-md rounded-lg">
             <div className="flex space-x-4">
@@ -23,9 +23,8 @@ const FilterHeader = ({ activeTab = "All", setActiveTab, filterDate, setFilterDa
                     For me
                 </button>
             </div>
-
+            <div className="text-xl font-bold">Publications</div>
             <div className="flex space-x-4 items-center">
-                {/* Date Filter */}
                 <select
                     value={filterDate}
                     onChange={(e) => setFilterDate(e.target.value)}
