@@ -1,12 +1,11 @@
 import axiosInstance from "../auth/axios.js";
 const apiUrl = "/publications";
 
-export const getPublications = async ({ page, size = 3, search = "", fromDate = "", toDate = "" , isPublic = true, userId = null}) => {
+export const getPublications = async ({ page, size = 3, search = "", fromDate = "", toDate = "" }) => {
     try {
         const resp = await axiosInstance.get(
-            `${apiUrl}?page=${page}&size=${size}&keyword=${search}&fromDate=${fromDate}&toDate=${toDate}&userId=${userId}&isPublic=${isPublic}`,
+            `${apiUrl}?page=${page}&size=${size}&keyword=${search}&fromDate=${fromDate}&toDate=${toDate}`
         );
-        console.log(resp)
         return resp.data;
     } catch (error) {
         throw error;
