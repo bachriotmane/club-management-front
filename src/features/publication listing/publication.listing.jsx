@@ -16,7 +16,7 @@ const PublicationsList = () => {
     const [page, setPage] = useState(0);
     const [error, setError] = useState(null);
     const [hasMore, setHasMore] = useState(true);
-    const userId = 1;
+
     const fetchPubs = async (reset = false) => {
         if (reset) {
             setPubs([]);
@@ -32,8 +32,6 @@ const PublicationsList = () => {
                 search: searchKey,
                 fromDate,
                 toDate,
-                isPublic : currentTab === "All",
-                userId : userId
             });
             setHasMore(response && !response.last);
             setPubs((prevPubs) => (reset ? response.content : [...prevPubs, ...response.content]));
@@ -60,16 +58,8 @@ const PublicationsList = () => {
         });
     }, [filterDate]);
 
-    useEffect(() => {
-        console.log(currentTab);
-        setIsLoading(true);
-        fetchPubs(true).then(() => {
-            setIsLoading(false);
-        });
-    }, [currentTab]);
-
     const handleSearch = () => {
-        fetchPubs(true).then();
+        fetchPubs(true);
     };
 
     if (error) {
@@ -83,6 +73,7 @@ const PublicationsList = () => {
 
     return (
         <>
+            {!isLoading ? (
                 <div className="container w-full mx-auto py-8 px-4">
                     <FilterHeader
                         searchTerm={searchKey}
@@ -98,15 +89,12 @@ const PublicationsList = () => {
                             <img className="w-1/6 h-1/4 object-cover" src={logo} alt="salam"/>
                             <span className="font-bold text-2xl">Oops pas de publications!</span>
                         </div>
-                    ) : isLoading ? <div className="h-screen flex justify-center items-start mt-36">
-                        <LoadingSpinner></LoadingSpinner>
-                    </div> : (
+                    ) : (
                         <>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {
-                                    pubs.map((item, index) => ( <PublicationCard key={index} item={item}/>
-                            ))
+                                    pubs.map((item, index) => (<PublicationCard key={index} item={item}/>))
                                 }
                             </div>
 
@@ -125,6 +113,11 @@ const PublicationsList = () => {
                         </>
                     )}
                 </div>
+            ) : (
+                <div>
+                    <LoadingSpinner/>
+                </div>
+            )}
         </>
     );
 };
