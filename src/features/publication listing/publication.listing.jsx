@@ -16,7 +16,7 @@ const PublicationsList = () => {
     const [page, setPage] = useState(0);
     const [error, setError] = useState(null);
     const [hasMore, setHasMore] = useState(true);
-    const userId = 1;
+    const userId = 'bb4a46c7-7b33-4e32-9ff7-3a50efa4ed1b';
     const fetchPubs = async (reset = false) => {
         if (reset) {
             setPubs([]);
