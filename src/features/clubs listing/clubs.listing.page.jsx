@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import ClubCard from "../../shared/components/cards/ClubCard";
 import { getClubs } from "../../repositories/clubs.repository";
-import noFindImage from "../../assets/bac.jpeg";// Assurez-vous du chemin correct
+import noFindImage from "../../assets/not-items-found.png";
+import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
 
 const ClubsListingPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,17 +13,18 @@ const ClubsListingPage = () => {
   const [loading, setLoading] = useState(false);
   const [activeView, setActiveView] = useState("all");
   const [currentPage, setCurrentPage] = useState(0);
+  const [error, setError] = useState(null);
 
   const fetchClubs = useCallback(async (page, size, nomClub = "", idUser = 0) => {
+    console.log(idUser + " name club " + nomClub);
     setLoading(true);
     try {
-      console.log("userid is   ", idUser);
       const data = await getClubs({ page, size, nomClub, idUser });
-      setClubs((prevClubs) => [...prevClubs, ...data.data]);
+      setClubs((prevClubs) => [...prevClubs, ...data.data]); // Ajouter les nouveaux clubs à ceux déjà présents
       setTotalItems(data.totalItems);
       setTotalPages(data.totalPages);
     } catch (error) {
-      console.error("Error fetching clubs", error);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -50,20 +52,42 @@ const ClubsListingPage = () => {
 
   useEffect(() => {
     const idUser = activeView === "all" ? 0 : getUserIdFromToken();
-    fetchClubs(currentPage, 3, searchQuery, idUser);
-  }, [currentPage, searchQuery, fetchClubs, activeView]);
+    setClubs([]); 
+    setCurrentPage(0); 
+    fetchClubs(0, 3, searchQuery, idUser); 
+  }, [activeView, searchQuery, fetchClubs]);
+
+  // Effect pour charger plus de clubs lorsque la page actuelle change
+  useEffect(() => {
+    if (currentPage > 0) {
+      const idUser = activeView === "all" ? 0 : getUserIdFromToken();
+      fetchClubs(currentPage, 3, searchQuery, idUser);
+    }
+  }, [currentPage, fetchClubs, searchQuery, activeView]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setClubs([]);
+    setClubs([]); 
     setCurrentPage(0);
   };
 
   const handleViewChange = (view) => {
+    if (view === activeView) return;
+    
     setActiveView(view);
     setClubs([]);
     setCurrentPage(0);
   };
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center w-full h-20 bg-red-200 rounded-lg mt-20">
+        <div className="text-center text-black font-bold text-2xl">
+          Oops! Something went wrong: {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -75,17 +99,13 @@ const ClubsListingPage = () => {
         <div className="flex space-x-4">
           <button
             onClick={() => handleViewChange("all")}
-            className={`px-4 py-2 rounded-full font-semibold ${
-              activeView === "all" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"
-            }`}
+            className={`px-4 py-2 rounded-full font-semibold ${activeView === "all" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
           >
             Tous les clubs
           </button>
           <button
             onClick={() => handleViewChange("myClubs")}
-            className={`px-4 py-2 rounded-full font-semibold ${
-              activeView === "myClubs" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"
-            }`}
+            className={`px-4 py-2 rounded-full font-semibold ${activeView === "myClubs" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
           >
             Mes Clubs
           </button>
@@ -99,9 +119,10 @@ const ClubsListingPage = () => {
           className="p-3 border border-gray-300 rounded-full w-1/3"
         />
       </div>
+
       {clubs.length === 0 && !loading ? (
         <div className="flex flex-col items-center mt-6">
-          <img src={noFindImage} alt="Aucun résultat trouvé" className="w-1/2 h-auto" />
+          <img src={noFindImage} alt="Aucun résultat trouvé" className="w-80 h-auto" />
           <span className="mt-4 text-xl font-semibold">Aucun club trouvé pour votre recherche</span>
         </div>
       ) : (
@@ -114,7 +135,7 @@ const ClubsListingPage = () => {
 
       {loading && (
         <div className="flex justify-center mt-6">
-          <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+          <LoadingSpinner />
         </div>
       )}
     </div>
