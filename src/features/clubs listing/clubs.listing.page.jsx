@@ -15,12 +15,12 @@ const ClubsListingPage = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [error, setError] = useState(null);
 
-  const fetchClubs = useCallback(async (page, size, nomClub = "", idUser = 0) => {
+  const fetchClubs = useCallback(async (page, size, nomClub = "", idUser = "") => {
     console.log(idUser + " name club " + nomClub);
     setLoading(true);
     try {
       const data = await getClubs({ page, size, nomClub, idUser });
-      setClubs((prevClubs) => [...prevClubs, ...data.data]); // Ajouter les nouveaux clubs à ceux déjà présents
+      setClubs((prevClubs) => [...prevClubs, ...data.data]); 
       setTotalItems(data.totalItems);
       setTotalPages(data.totalPages);
     } catch (error) {
@@ -42,7 +42,7 @@ const ClubsListingPage = () => {
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
-        return decodedToken.id || 0;
+        return decodedToken.id || "";
       } catch (error) {
         console.error("Invalid token format", error);
       }
@@ -51,16 +51,15 @@ const ClubsListingPage = () => {
   };
 
   useEffect(() => {
-    const idUser = activeView === "all" ? 0 : getUserIdFromToken();
+    const idUser = activeView === "all" ? "" : getUserIdFromToken();
     setClubs([]); 
     setCurrentPage(0); 
     fetchClubs(0, 3, searchQuery, idUser); 
   }, [activeView, searchQuery, fetchClubs]);
 
-  // Effect pour charger plus de clubs lorsque la page actuelle change
   useEffect(() => {
     if (currentPage > 0) {
-      const idUser = activeView === "all" ? 0 : getUserIdFromToken();
+      const idUser = activeView === "all" ? "" : getUserIdFromToken();
       fetchClubs(currentPage, 3, searchQuery, idUser);
     }
   }, [currentPage, fetchClubs, searchQuery, activeView]);
