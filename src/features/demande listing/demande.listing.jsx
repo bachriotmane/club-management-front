@@ -1,42 +1,27 @@
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const imageTest =
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyzTWQoCUbRNdiyorem5Qp1zYYhpliR9q0Bw&s";
-const demandes = [
-  {
-    id: 1,
-    date: "13/05/2024",
-    demandeur: { name: "John Doe", image: imageTest },
-    status: "Accepte",
-  },
-  {
-    id: 2,
-    date: "22/05/2024",
-    demandeur: { name: "Jane Smith", image: imageTest },
-    status: "Accepte",
-  },
-  {
-    id: 3,
-    date: "15/06/2024",
-    demandeur: { name: "Alice Johnson", image: imageTest },
-    status: "En cours",
-  },
-  {
-    id: 4,
-    date: "06/09/2024",
-    demandeur: { name: "Bob Brown", image: imageTest },
-    status: "En cours",
-  },
-  {
-    id: 5,
-    date: "25/09/2024",
-    demandeur: { name: "Charlie Black", image: imageTest },
-    status: "Rejete",
-  },
-];
+import api from "../../apiAymen"; // Import de l'instance Axios
 
 const DemandesListing = () => {
+  const [demandes, setDemandes] = useState([]); // État pour stocker les demandes
   const navigate = useNavigate();
+
+  // Fonction pour récupérer les demandes depuis le backend
+  const fetchDemandes = async () => {
+    try {
+      const response = await api.get("/"); // Appel à l'API GET /demandes
+      setDemandes(response.data); // Mise à jour de l'état avec les données
+    } catch (error) {
+      console.error("Erreur lors de la récupération des demandes :", error);
+    }
+  };
+  console.log(demandes);
+
+  // Appeler fetchDemandes au chargement du composant
+  useEffect(() => {
+    fetchDemandes();
+  }, []);
+
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
       <h1 className="my-2 text-2xl">Demandes</h1>
@@ -54,28 +39,25 @@ const DemandesListing = () => {
           {demandes.map((demande) => (
             <tr
               key={demande.id}
-              onClick={() => navigate("/demandes/1")}
+              onClick={() => navigate(`/demandes/${demande.id}`)}
               className="cursor-pointer hover:bg-gray-100"
             >
               <td className="px-4 py-2 border text-center">#{demande.id}</td>
               <td className="px-4 py-2 border flex items-center space-x-2">
-                <img
-                  src={demande.demandeur.image}
-                  alt="Demandeur"
-                  className="w-8 h-8 rounded-full"
-                />
                 <span className=" hover:underline hover:text-blue-700">
-                  {demande.demandeur.name}
+                  {demande.etudiantDemandeur?.name || "Inconnu"}
                 </span>
               </td>
-              <td className="px-4 py-2 border text-center">{demande.date}</td>
+              <td className="px-4 py-2 border text-center">
+                {new Date(demande.date).toLocaleDateString()}
+              </td>
               <td className="px-4 py-2 border text-center">
                 <span
                   className={`px-3 py-1 rounded-full text-white ${getStatusClass(
-                    demande.status
+                    demande.statutDemande
                   )}`}
                 >
-                  {demande.status}
+                  {demande.statutDemande}
                 </span>
               </td>
               <td className="px-4 py-2 border text-center">
@@ -95,19 +77,19 @@ const DemandesListing = () => {
         <button className="px-2 py-1 rounded bg-gray-200">2</button>
         <span className="px-2 py-1">...</span>
         <button className="px-2 py-1 rounded bg-gray-200">10</button>
-        <h1>HAHAHAH</h1>
       </div>
     </div>
   );
 };
 
+// Fonction pour déterminer la classe CSS selon le statut
 const getStatusClass = (status) => {
   switch (status) {
-    case "Accepte":
+    case "ACCEPTE":
       return "bg-green-400";
-    case "En cours":
+    case "EN_COURS":
       return "bg-yellow-400";
-    case "Rejete":
+    case "REJETE":
       return "bg-red-400";
     default:
       return "bg-gray-200";
