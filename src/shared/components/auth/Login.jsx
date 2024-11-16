@@ -4,7 +4,7 @@ import backgroundImage from "../../../assets/fstsImg.jpg";
 import campusImage from "../../../assets/fstsImg.jpg";
 
 import { toast, ToastContainer } from "react-toastify";
-import { login } from "../../../auth/auth";
+import { getUser, login } from "../../../auth/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");

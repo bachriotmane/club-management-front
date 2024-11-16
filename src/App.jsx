@@ -24,19 +24,21 @@ import EnterEmail from "./shared/components/auth/EnterEmailPage.jsx";
 import ForgetPassword from "./shared/components/auth/ForgetPassword.jsx";
 import SignUp from "./shared/components/auth/SignUp.jsx";
 import Confirmation from "./shared/components/auth/Confirmation.jsx";
+import ChangePasswordPage from "./shared/components/auth/ChangePassword.jsx";
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/enter-email" element={<EnterEmail />} />
-        <Route path="/forget-password" element={<ForgetPassword />} />
+        <Route path="/forgot-password" element={<EnterEmail />} />
+        <Route path="/reset-password" element={<ForgetPassword />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/confirmation" element={<Confirmation />} />
 
         <Route element={<SideBarLayout />}>
           <Route index element={<Home />} />
+          <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/demandes" element={<DemandesListing />} />
           <Route path="/demandes/:id" element={<DemandeDetails />} />
           <Route path="/club/:id" element={<ClubDetails />} />
