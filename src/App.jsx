@@ -22,6 +22,8 @@ import PublicationDetails from "./features/publication details/publication.detai
 import Profile from "./shared/components/auth/Profile.jsx";
 import EnterEmail from "./shared/components/auth/EnterEmailPage.jsx";
 import ForgetPassword from "./shared/components/auth/ForgetPassword.jsx";
+import SignUp from "./shared/components/auth/SignUp.jsx";
+import Confirmation from "./shared/components/auth/Confirmation.jsx";
 function App() {
   return (
     <Router>
@@ -30,6 +32,9 @@ function App() {
         <Route path="/enter-email" element={<EnterEmail />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/confirmation" element={<Confirmation />} />
+
         <Route element={<SideBarLayout />}>
           <Route index element={<Home />} />
           <Route path="/demandes" element={<DemandesListing />} />
