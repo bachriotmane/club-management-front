@@ -63,6 +63,7 @@ const PublicationsList = () => {
     useEffect(() => {
         console.log(currentTab);
         setIsLoading(true);
+        setFilterDate("")
         fetchPubs(true).then(() => {
             setIsLoading(false);
         });
