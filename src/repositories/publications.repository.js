@@ -12,3 +12,14 @@ export const getPublications = async ({ page, size = 3, search = "", fromDate = 
         throw error;
     }
 };
+
+export const getPublicationById = async (userId) => {
+    try {
+        const resp = await axiosInstance.get(
+            `${apiUrl}/${userId}`,
+        );
+        return resp;
+    } catch (error) {
+        throw error;
+    }
+};
