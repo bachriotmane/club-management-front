@@ -1,121 +1,134 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { jwtDecode } from "jwt-decode"; 
-import ClubCard from "../../shared/components/cards/ClubCard";
-import { getClubs } from "../../repositories/clubs.repository";
-import LoadingSpinner from "../../shared/components/utili/LoadingCompnent";
+import {Typography} from "@material-tailwind/react";
+import {AiOutlineClockCircle} from "react-icons/ai";
+import {BiArrowBack, BiEditAlt} from "react-icons/bi";
+import {RiDeleteBinLine} from "react-icons/ri";
+import logo from "../../assets/bac.jpeg";
+import {useNavigate, useParams} from "react-router-dom";
+import {MdPrivacyTip, MdPublic} from "react-icons/md";
+import {useEffect, useState} from "react";
+import {getPublicationById} from "../../repositories/publications.repository.js";
+import {format} from "date-fns";
+import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
+import ErrorComponent from "../../shared/components/utili/ErrorComponent.jsx";
 
-const ClubsListingPage = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [clubs, setClubs] = useState([]);
-  const [totalItems, setTotalItems] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [activeView, setActiveView] = useState("all");
-  const [currentPage, setCurrentPage] = useState(0);
-
-  const fetchClubs = useCallback(async (page, size, nomClub = "", idUser = 0) => {
-    setLoading(true);
-    try {
-      const data = await getClubs({ page, size, nomClub, idUser });
-      setClubs((prevClubs) => [...prevClubs, ...data.data]);
-      setTotalItems(data.totalItems);
-      setTotalPages(data.totalPages);
-    } catch (error) {
-      console.error("Error fetching clubs", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const handleScroll = (e) => {
-    const bottom = e.target.scrollHeight === e.target.scrollTop + e.target.clientHeight;
-    if (bottom && !loading && currentPage < totalPages) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  };
-
-  const getUserIdFromToken = () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        return decodedToken.id || 0; 
-      } catch (error) {
-        console.error("Invalid token format", error);
-      }
-    }
-    return 0;
-  };
-
-  useEffect(() => {
-    const idUser = activeView === "all" ? 0 : getUserIdFromToken();
-    fetchClubs(currentPage, 3, searchQuery, idUser);
-  }, [currentPage, searchQuery, fetchClubs, activeView]);
-
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-    setClubs([]);
-    setCurrentPage(0);
-  };
-
-  const handleViewChange = (view) => {
-    setActiveView(view);
-    setClubs([]);
-    setCurrentPage(0);
-  };
-
-  return (
-    <div
-      className="container mx-auto p-6"
-      onScroll={handleScroll}
-      style={{ height: "80vh", overflowY: "auto" }}
-    >
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex space-x-4">
-          <button
-            onClick={() => handleViewChange("all")}
-            className={`px-4 py-2 rounded-full font-semibold ${activeView === "all" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
-          >
-            Tous les clubs
-          </button>
-          <button
-            onClick={() => handleViewChange("myClubs")}
-            className={`px-4 py-2 rounded-full font-semibold ${activeView === "myClubs" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
-          >
-            Mes Clubs
-          </button>
-        </div>
-
-        <input
-          type="text"
-          placeholder="Rechercher un club..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className="p-3 border border-gray-300 rounded-full w-1/3"
-        />
-      </div>
-
-      {loading && (
-        <div className="flex justify-center mt-6">
-          <LoadingSpinner />
-        </div>
-      )}
-
-      {!loading && clubs.length === 0 && (
-        <div className="flex justify-center mt-6">
-          <LoadingSpinner />
-        </div>
-      )}
-
-      {!loading && clubs.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {clubs.map((club) => (
-            <ClubCard key={club.uuid} item={club} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
+const publication = {
+    title: "Paris Through the Lens",
+    description: "Join us for an extraordinary photography event where we explore the hidden gems and iconic sights of Paris. 'Paris Through the Lens' invites photographers of all skill levels to capture the city's beauty in a guided tour led by professional photographers. Enjoy hands-on workshops, meet fellow enthusiasts, and participate in a photo contest with exciting prizes for the best shots of the day!",
+    date: "Saturday, 16th December 2024",
+    organiser: {
+        name: "Marie Claire",
+        image: logo
+    },
+    isPublic: true,
+    image: "https://vnmanpower.com/upload_images/images/2024/10/01/two-people-in-productive-business-meeting-addresses-agenda-items-and-to-do-list.jpg"
 };
 
-export default ClubsListingPage;
+const PublicationDetails = () => {
+    const navigate = useNavigate();
+    const [publicationDetails, setPublicationDetails] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(undefined);
+    const params = useParams();
+
+    const fetchPublication = async () => {
+        const resp = await getPublicationById(params.id);
+        setPublicationDetails(resp.data);
+    };
+    useEffect(() => {
+        try {
+            setIsLoading(true);
+            fetchPublication().then(() => {
+                    setIsLoading(false);
+                }
+            ).catch(err=>setError(err));
+        } catch (err) {
+            setError(err);
+            console.log("Error : ",err)
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    if (error){
+        return <div className="mt-36">
+            <ErrorComponent description={error.response ? error.response.data.errorMessage : "Erreur"} title="404!"></ErrorComponent>
+        </div>
+    }
+
+    if(!publicationDetails || isLoading) {
+        return <div className="flex justify-center items-center mt-36">
+            <LoadingSpinner></LoadingSpinner>
+        </div>
+    }
+
+        return (
+
+            <header className="bg-white p-8 min-h-screen">
+                <button onClick={() => navigate(-1)} className="flex items-center text-black text-xl mb-4 space-x-2">
+                    <BiArrowBack size={30}></BiArrowBack>
+                    <span>Back</span>
+                </button>
+                <div className="container mx-auto flex flex-col lg:flex-row items-start gap-10 w-full h-full">
+                    <div className="flex-shrink-0 w-full lg:w-1/3 h-1/3">
+                        <img
+                            src={publication.image}
+                            alt="Event"
+                            className="w-full h-full object-cover rounded-xl"
+                        />
+                    </div>
+
+                    <div className="flex-grow w-full lg:w-1/2 space-y-3">
+                        <div className="flex items-center space-x-1">
+                            <img
+                                src={publication.organiser.image}
+                                alt={publication.organiser.name}
+                                className="w-12 h-12 rounded-full object-cover border-2 border-amber-500"
+                            />
+                            <div className="flex flex-col" onClick={() => navigate("/club/1")}>
+              <span className="text-lg font-bold text-gray-800 hover:underline cursor-pointer hover:text-blue-600">
+                {publicationDetails.publisher}
+              </span>
+                                <span
+                                    className="text-xs font-bold text-gray-700">{publicationDetails.membersLength} members</span>
+                            </div>
+                        </div>
+
+                        <Typography variant="h1" color="blue-gray" className="text-4xl font-bold text-black">
+                            {publicationDetails.title}
+                        </Typography>
+                        <Typography variant="lead" className="text-gray-700 text-lg">
+                            {publicationDetails.description}
+                        </Typography>
+                        <div className="space-y-3 text-gray-600">
+                            <div className="flex items-center space-x-3">
+                                <AiOutlineClockCircle size={34} color={"gray"}/>
+                                <span
+                                    className="text-lg italic">{format(new Date("2024-12-22T18:00:00"), "MMMM dd, yyyy - hh:mm a")}</span>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                {publicationDetails.isPublic ? <MdPublic size={34} color={"gray"}></MdPublic> :
+                                    <MdPrivacyTip size={34} color={"gray"}></MdPrivacyTip>}
+                                {publicationDetails.isPublic ?
+                                    <span
+                                        className="text-green-800 font-bold text-lg border-2 px-2 rounded-xl bg-green-100">public</span> :
+                                    <span
+                                        className="text-red-800 font-bold text-lg border-2 px-2 rounded-xl bg-red-100">private</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div className="flex items-center space-x-4 mt-4">
+                            <button className="text-gray-600 hover:text-gray-800">
+                                <BiEditAlt size={30}/>
+                            </button>
+                            <button className="text-red-600 hover:text-red-800">
+                                <RiDeleteBinLine size={30}/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        );
+};
+
+export default PublicationDetails;
