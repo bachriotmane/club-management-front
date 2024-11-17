@@ -41,3 +41,17 @@ export const getClubMembers = async ({ uuidClub, page, size, studentName }) => {
     throw error;
   }
 };
+
+export const getClubsForUser = async (user) => {
+  try {
+    const response = await axiosInstance.get(
+        `${apiUrl}/${user}/admin`,
+        {
+          params: { page : 0,size : 40 },
+        }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
