@@ -22,6 +22,7 @@ import PublicationDetails from "./features/publication details/publication.detai
 import Profile from "./shared/components/auth/Profile.jsx";
 import EnterEmail from "./shared/components/auth/EnterEmailPage.jsx";
 import ForgetPassword from "./shared/components/auth/ForgetPassword.jsx";
+import ClubMembersListing from "./features/club members listing/ClubMembersListing.jsx";
 function App() {
   return (
     <Router>
@@ -34,7 +35,8 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/demandes" element={<DemandesListing />} />
           <Route path="/demandes/:id" element={<DemandeDetails />} />
-          <Route path="/club/:id" element={<ClubDetails />} />
+          <Route path="/club/:uuid" element={<ClubDetails />} />
+          <Route path="/club/:uuid/membres" element={<ClubMembersListing />} />
           <Route path="/events" element={<EventsListing />} />
           <Route path="/event/:id" element={<EventDetails />} />
           {/* <Route element={<PrivateRoute roles={['ROLE_ADMIN']} />}> */}
