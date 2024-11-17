@@ -3,7 +3,6 @@ import axiosInstance from './axios';
 export const login = async (email, password, rememberMe) => {
     try {
         const response = await axiosInstance.post('/auth/authenticate', { email, password });
-        console.log(response.data);
         const {jwttoken } = response.data;
 
         if (rememberMe) {
@@ -35,6 +34,7 @@ export const getToken = () => {
 
 export const getUser = () => {
     const token = getToken();
+
     if (!token) {
         return null;
     }

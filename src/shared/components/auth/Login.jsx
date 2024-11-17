@@ -5,11 +5,14 @@ import campusImage from "../../../assets/fstsImg.jpg";
 
 import { toast, ToastContainer } from "react-toastify";
 import { getUser, login } from "../../../auth/auth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
@@ -21,6 +24,10 @@ const Login = () => {
       console.error("Login error", error);
       toast.error("Invalid email or password");
     }
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
   };
 
   return (
@@ -45,15 +52,24 @@ const Login = () => {
               />
             </div>
             <div className="mb-4">
-              <label htmlFor="password" className="block text-gray-700">Password</label>
-              <input
-                type="password"
-                id="password"
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+                <label className="block text-gray-700">Password</label>
+                <div className="relative">
+                    <input
+                        type={showPasswords ? 'text' : 'password'}
+                        name="password"
+                        value={password}
+                        onChange={handlePasswordChange}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        required
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowPasswords(!showPasswords)}
+                        className="absolute inset-y-0 right-0 flex items-center px-3"
+                    >
+                        <FontAwesomeIcon icon={showPasswords ? faEyeSlash : faEye} />
+                    </button>
+                </div>
             </div>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
