@@ -23,3 +23,15 @@ export const getPublicationById = async (userId) => {
         throw error;
     }
 };
+
+export const createNewPublication = async (publication) => {
+    try {
+        const resp = await axiosInstance.post(
+            `${apiUrl}`,
+            publication
+        );
+        return resp;
+    } catch (error) {
+        throw error;
+    }
+};

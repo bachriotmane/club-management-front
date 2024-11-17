@@ -23,10 +23,10 @@ import Profile from "./shared/components/auth/Profile.jsx";
 import EnterEmail from "./shared/components/auth/EnterEmailPage.jsx";
 import ForgetPassword from "./shared/components/auth/ForgetPassword.jsx";
 import ClubMembersListing from "./features/club members listing/ClubMembersListing.jsx";
+import CreatePublication from "./features/create-new-pub/CreatePublication.jsx";
 import SignUp from "./shared/components/auth/SignUp.jsx";
 import Confirmation from "./shared/components/auth/Confirmation.jsx";
 import ChangePasswordPage from "./shared/components/auth/ChangePassword.jsx";
-
 
 function App() {
   return (
@@ -53,6 +53,7 @@ function App() {
           {/* </Route> */}
           <Route path="/publications" element={<PublicationsList />} />
           <Route path="/publication/:id" element={<PublicationDetails />} />
+          <Route path="/publication/create" element={<CreatePublication />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<Profile />} />
         </Route>
