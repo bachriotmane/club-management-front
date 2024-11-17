@@ -20,6 +20,7 @@ const PublicationsList = () => {
     const fetchPubs = async (reset = false) => {
         if (reset) {
             setPubs([]);
+            setFilterDate("")
             setPage(0);
         }
 
@@ -86,6 +87,8 @@ const PublicationsList = () => {
         <>
                 <div className="container w-full mx-auto py-8 px-4">
                     <FilterHeader
+                        onTitleClicked={()=>fetchPubs(true)}
+                        title="Publications"
                         searchTerm={searchKey}
                         setSearchTerm={setSearchKey}
                         activeTab={currentTab}
