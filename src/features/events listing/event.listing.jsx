@@ -54,7 +54,7 @@ const EventListing = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetchEvents(true).then(() => {
+    fetchEvents().then(() => {
       setIsLoading(false);
     });
   }, [filterDate]);
