@@ -27,13 +27,17 @@ export const getClubById = async (uuid) => {
     throw error;
   }
 };
-
-export const getClubMembers = async ({ uuidClub, page, size, studentName }) => {
+export const getClubMembers = async ({ uuid, page, size, studentName ="" }) => {
   try {
+    console.log("studentName="+studentName);
     const response = await axiosInstance.get(
-      `${apiUrl}/${uuidClub}/members`,
+      `${apiUrl}/club/${uuid}/members`,
       {
-        params: { page, size, studentName },
+        params: {
+          page: page, 
+          size: size, 
+          studentName: studentName 
+        },
       }
     );
     return response.data;
@@ -41,3 +45,18 @@ export const getClubMembers = async ({ uuidClub, page, size, studentName }) => {
     throw error;
   }
 };
+
+export const getClubsForUser = async (user) => {
+  try {
+    const response = await axiosInstance.get(
+        `${apiUrl}/${user}/admin`,
+        {
+          params: { page : 0,size : 40 },
+        }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+

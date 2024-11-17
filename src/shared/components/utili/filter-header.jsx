@@ -1,4 +1,4 @@
-const FilterHeader = ({title, activeTab = "All", setActiveTab, filterDate, setFilterDate, searchTerm, setSearchTerm,onSearchComplete }) => {
+const FilterHeader = ({title,onTitleClicked, activeTab = "All", setActiveTab, filterDate, setFilterDate, searchTerm, setSearchTerm,onSearchComplete }) => {
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             onSearchComplete();
@@ -6,7 +6,7 @@ const FilterHeader = ({title, activeTab = "All", setActiveTab, filterDate, setFi
     };
     return (
         <div className="flex justify-between items-center mb-6 bg-white p-4 shadow-md rounded-lg">
-            <div className="flex space-x-4">
+            {setActiveTab && <div className="flex space-x-4">
                 <button
                     onClick={() => setActiveTab("All")}
                     className={`px-6 py-2 rounded-lg font-semibold transition duration-300 ${
@@ -27,8 +27,8 @@ const FilterHeader = ({title, activeTab = "All", setActiveTab, filterDate, setFi
                 >
                     For me
                 </button>
-            </div>
-            <div className="text-xl font-bold">Publications</div>
+            </div>}
+            <div onClick={()=>onTitleClicked()} className="text-xl font-bold cursor-pointer">{title}</div>
             <div className="flex space-x-4 items-center">
                 <select
                     value={filterDate}

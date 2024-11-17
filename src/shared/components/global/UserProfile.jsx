@@ -30,13 +30,13 @@ const UserProfile = ({ user}) => {
                     </div>
                     <div className="p-2">
                         <Link to={`/profile`} className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                            profile
+                            Profile
                         </Link>
                         <Link to={`/change-password`} className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                            changePassword
+                            Change Password
                         </Link>
                         <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={getOut}>
-                            logout
+                            Logout
                         </button>
                     </div>
                 </div>

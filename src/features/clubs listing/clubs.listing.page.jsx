@@ -16,11 +16,10 @@ const ClubsListingPage = () => {
   const [error, setError] = useState(null);
 
   const fetchClubs = useCallback(async (page, size, nomClub = "", idUser = "") => {
-    console.log(idUser + " name club " + nomClub);
     setLoading(true);
     try {
       const data = await getClubs({ page, size, nomClub, idUser });
-      setClubs((prevClubs) => [...prevClubs, ...data.data]); 
+      setClubs((prevClubs) => [...prevClubs, ...data.data]);
       setTotalItems(data.totalItems);
       setTotalPages(data.totalPages);
     } catch (error) {
@@ -47,14 +46,14 @@ const ClubsListingPage = () => {
         console.error("Invalid token format", error);
       }
     }
-    return 0;
+    return "";
   };
 
   useEffect(() => {
     const idUser = activeView === "all" ? "" : getUserIdFromToken();
-    setClubs([]); 
-    setCurrentPage(0); 
-    fetchClubs(0, 3, searchQuery, idUser); 
+    setClubs([]);
+    setCurrentPage(0);
+    fetchClubs(0, 3, searchQuery, idUser);
   }, [activeView, searchQuery, fetchClubs]);
 
   useEffect(() => {
@@ -66,13 +65,12 @@ const ClubsListingPage = () => {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setClubs([]); 
+    setClubs([]);
     setCurrentPage(0);
   };
 
   const handleViewChange = (view) => {
     if (view === activeView) return;
-    
     setActiveView(view);
     setClubs([]);
     setCurrentPage(0);
@@ -126,10 +124,11 @@ const ClubsListingPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {clubs.map((club) => (
-            <ClubCard key={club.uuid} item={club} />
-          ))}
-        </div>
+        {clubs.map((club, index) => (
+          <ClubCard key={`${club.uuid}-${index}`} item={club} />
+        ))}
+      </div>
+      
       )}
 
       {loading && (
