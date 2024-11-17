@@ -36,11 +36,8 @@ const ClubDetails = () => {
           throw new Error(data.errorMessage);
         }
 
-        console.log("Détails du club:", data.data);
         setClub(data.data);
       } catch (err) {
-        console.error("Erreur lors de la récupération des détails du club:", err.message);
-
         const errorMessage = apiErrorHandler(err); 
         setError(errorMessage); 
       } finally {
