@@ -32,7 +32,7 @@ const ClubMembersListing = () => {
           studentName: studentName,
         });
 
-        const { nomClub, logo ,nbrStudent} = data.data;
+        const { nomClub, logo, nbrStudent } = data.data;
         setNom(nomClub);
         setLogo(logo || "/default-image.jpg");
         setNbrStudent(nbrStudent || 0);
@@ -40,8 +40,8 @@ const ClubMembersListing = () => {
         setMembers(data.data.membersListDTO.data);
         setTotalPages(data.data.membersListDTO.totalPages);
       } catch (err) {
-        const errorMessage = apiErrorHandler(err); 
-        setError(errorMessage); 
+        const errorMessage = apiErrorHandler(err);
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -63,9 +63,6 @@ const ClubMembersListing = () => {
     navigate(-1);
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   if (error) {
     return <ErrorMessage title="Erreur" description={error} />;
@@ -73,39 +70,40 @@ const ClubMembersListing = () => {
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
-    <button
-      onClick={handleBackClick}
-      className="text-gray-500 hover:text-blue-700 mb-4"
-    >
-      &#8592; Retour
-    </button>
-  
-    <div className="flex items-center justify-between mb-4">
-      <div className="flex items-center">
-        <img
-          src={logo}
-          alt="Club Logo"
-          className="w-12 h-12 mr-6" 
-        />
-        <h1 className="text-2xl font-semibold mr-8 whitespace-nowrap">
-          {nom}
-        </h1>
+      <button
+        onClick={handleBackClick}
+        className="text-gray-500 hover:text-blue-700 mb-4"
+      >
+        &#8592; Retour
+      </button>
+
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center">
+          <img
+            src={logo}
+            alt="Club Logo"
+            className="w-12 h-12 mr-6"
+          />
+          <h1 className="text-2xl font-semibold mr-8 whitespace-nowrap">
+            {nom}
+          </h1>
+        </div>
+
+        <div className="flex justify-end w-1/3">
+          <input
+            type="text"
+            placeholder="Rechercher par nom"
+            value={studentName}
+            onChange={(e) => setStudentName(e.target.value)}
+            className="px-4 py-2 border rounded-md w-full"
+          />
+        </div>
       </div>
-  
-      <div className="flex justify-end w-1/3">
-        <input
-          type="text"
-          placeholder="Rechercher par nom"
-          value={studentName}
-          onChange={(e) => setStudentName(e.target.value)}
-          className="px-4 py-2 border rounded-md w-full"
-        />
+
+      <div className="mt-2 text-gray-600">
+        <strong>Total des étudiants : </strong> {nbrStudent}
       </div>
-    </div>
-  
-    <div className="mt-2 text-gray-600">
-      <strong>Total des étudiants : </strong> {nbrStudent}
-    </div>
+
       <table className="min-w-full border">
         <thead className="bg-gray-100">
           <tr>
@@ -163,33 +161,38 @@ const ClubMembersListing = () => {
           ))}
         </tbody>
       </table>
-{members.length>0 && (
 
-      <div className="flex justify-center space-x-2 mt-4">
-        <button
-          disabled={page === 1}
-          onClick={() => handlePageChange(page - 1)}
-          className={`px-2 py-1 rounded ${page === 1 ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-400"}`}
-        >
-          Précédent
-        </button>
-        {[...Array(totalPages)].map((_, i) => (
+      {members.length > 0 && (
+        <div className="flex justify-center space-x-2 mt-4">
           <button
-            key={i}
-            onClick={() => handlePageChange(i + 1)}
-            className={`px-2 py-1 rounded ${page === i + 1 ? "bg-blue-400 text-white" : "bg-gray-200"}`}
+            disabled={page === 1}
+            onClick={() => handlePageChange(page - 1)}
+            className={`px-2 py-1 rounded ${page === 1 ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-400"}`}
           >
-            {i + 1}
+            Précédent
           </button>
-        ))}
-        <button
-          disabled={page === totalPages}
-          onClick={() => handlePageChange(page + 1)}
-          className={`px-2 py-1 rounded ${page === totalPages ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-400"}`}
-        >
-          Suivant
-        </button>
-      </div>
+          {[...Array(totalPages)].map((_, i) => (
+            <button
+              key={i}
+              onClick={() => handlePageChange(i + 1)}
+              className={`px-2 py-1 rounded ${page === i + 1 ? "bg-blue-400 text-white" : "bg-gray-200"}`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            disabled={page === totalPages}
+            onClick={() => handlePageChange(page + 1)}
+            className={`px-2 py-1 rounded ${page === totalPages ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-400"}`}
+          >
+            Suivant
+          </button>
+        </div>
+      )}
+         {loading && (
+        <div className="flex justify-center mt-6">
+          <LoadingSpinner />
+        </div>
       )}
     </div>
   );
