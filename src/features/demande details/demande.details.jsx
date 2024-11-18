@@ -31,6 +31,7 @@ const DemandeDetails = () => {
   useEffect(() => {
     const foundDemande = demandes.find((d) => d.id === parseInt(id));
     setDemande(foundDemande);
+    setDemande(demandes[0])
   }, [id]);
 
   if (!demande) {
