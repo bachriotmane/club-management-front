@@ -5,8 +5,11 @@ import {getPublications} from "../../repositories/publications.repository.js";
 import PublicationCard from "../../shared/components/cards/PublicationCard.jsx";
 import {getDateRange} from "../../shared/components/utili/mappers.js";
 import logo from '../../assets/not-items-found.png';
+import {useNavigate} from "react-router-dom";
+import {getUser} from "../../auth/auth.js";
 
 const PublicationsList = () => {
+    const navigate = useNavigate();
     const [currentTab, setCurrentTab] = useState("All");
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -16,7 +19,7 @@ const PublicationsList = () => {
     const [page, setPage] = useState(0);
     const [error, setError] = useState(null);
     const [hasMore, setHasMore] = useState(true);
-
+    const userId = getUser().id;
     const fetchPubs = async (reset = false) => {
         if (reset) {
             setPubs([]);
@@ -32,6 +35,8 @@ const PublicationsList = () => {
                 search: searchKey,
                 fromDate,
                 toDate,
+                isPublic : currentTab === "All",
+                userId : userId
             });
             setHasMore(response && !response.last);
             setPubs((prevPubs) => (reset ? response.content : [...prevPubs, ...response.content]));
@@ -58,8 +63,16 @@ const PublicationsList = () => {
         });
     }, [filterDate]);
 
+    useEffect(() => {
+        setIsLoading(true);
+        setFilterDate("")
+        fetchPubs(true).then(() => {
+            setIsLoading(false);
+        });
+    }, [currentTab]);
+
     const handleSearch = () => {
-        fetchPubs(true);
+        fetchPubs(true).then();
     };
 
     if (error) {
@@ -73,51 +86,62 @@ const PublicationsList = () => {
 
     return (
         <>
-            {!isLoading ? (
-                <div className="container w-full mx-auto py-8 px-4">
-                    <FilterHeader
-                        searchTerm={searchKey}
-                        setSearchTerm={setSearchKey}
-                        activeTab={currentTab}
-                        setActiveTab={setCurrentTab}
-                        filterDate={filterDate}
-                        setFilterDate={setFilterDate}
-                        onSearchComplete={handleSearch}
-                    />
-                    {pubs.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center mt-20 ">
-                            <img className="w-1/6 h-1/4 object-cover" src={logo} alt="salam"/>
-                            <span className="font-bold text-2xl">Oops pas de publications!</span>
+            <div className="container w-full mx-auto py-8 px-4">
+                <div className="flex mb-2.5 justify-end items-center w-full">
+                    <button
+                        onClick={()=>navigate("/publication/create")}
+                        className="px-6 bg-orange-500 py-3 text-white font-semibold rounded-lg shadow-md hover:bg-orange-700 "
+                    >
+                        Create New Publication
+                    </button>
+                </div>
+
+            <FilterHeader
+                onTitleClicked={() => {
+                    setFilterDate("");
+                    fetchPubs(true);
+                }}
+                    title="Publications"
+                    searchTerm={searchKey}
+                    setSearchTerm={setSearchKey}
+                    activeTab={currentTab}
+                    setActiveTab={setCurrentTab}
+                    filterDate={filterDate}
+                    setFilterDate={setFilterDate}
+                    onSearchComplete={handleSearch}
+                />
+                {pubs.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center mt-20 ">
+                        <img className="w-1/6 h-1/4 object-cover" src={logo} alt="salam"/>
+                        <span className="font-bold text-2xl">Oops pas de publications!</span>
+                    </div>
+                ) : isLoading ? <div className="h-screen flex justify-center items-start mt-36">
+                    <LoadingSpinner></LoadingSpinner>
+                </div> : (
+                    <>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {
+                                pubs.map((item, index) => (<PublicationCard key={index} item={item}/>
+                                ))
+                            }
                         </div>
-                    ) : (
-                        <>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {
-                                    pubs.map((item, index) => (<PublicationCard key={index} item={item}/>))
-                                }
+                        {hasMore && (
+                            <div className="flex justify-center">
+                                <button
+                                    type="button"
+                                    onClick={() => fetchPubs()}
+                                    disabled={isLoadingMore}
+                                    className="text-gray-900 bg-white border border-gray-300 rounded-xl p-2"
+                                >
+                                    {isLoadingMore ? <LoadingSpinner/> : "Load More"}
+                                </button>
                             </div>
-
-                            {hasMore && (
-                                <div className="flex justify-center">
-                                    <button
-                                        type="button"
-                                        onClick={() => fetchPubs()}
-                                        disabled={isLoadingMore}
-                                        className="text-gray-900 bg-white border border-gray-300 rounded-xl p-2"
-                                    >
-                                        {isLoadingMore ? <LoadingSpinner/> : "Load More"}
-                                    </button>
-                                </div>
-                            )}
-                        </>
-                    )}
-                </div>
-            ) : (
-                <div>
-                    <LoadingSpinner/>
-                </div>
-            )}
+                        )}
+                    </>
+                )}
+            </div>
         </>
     );
 };

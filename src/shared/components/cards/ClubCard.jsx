@@ -8,7 +8,7 @@ const ClubCard = ({ item, size = "grand" }) => {
     const widthClass = size === "petit" ? "max-w-xs" : "max-w-md"; 
 
     const handleNavigation = () => {
-        navigate(`/club/${item.id}`);
+        navigate(`/club/${item.uuid}`);
     };
 
     return (
