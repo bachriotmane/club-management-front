@@ -1,81 +1,149 @@
-import React from "react";
-import {
-  FaRegHeart,
-  FaComment,
-  FaShareAlt,
-  FaRegClock,
-  FaCalendarAlt,
-} from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import PublicationCard from "../../shared/components/cards/PublicationCard";
-
-const publications = [
-  {
-    id: 1,
-    titre: "Club de Photographie",
-    description:
-      "Découvrez le monde à travers l'objectif avec notre club de photographie.",
-    date: "2024-11-11T09:30:00",
-    image: "bac.jpeg",
-    isPublic: true,
-  },
-  {
-    id: 2,
-    titre: "Club de Robotique",
-    description: "Apprenez à construire et à programmer des robots avec nous !",
-    date: "2024-11-12T14:00:00",
-    image: "bac.jpeg",
-    isPublic: true,
-  },
-  {
-    id: 3,
-    titre: "Club de Cuisine",
-    description:
-      "Partagez des recettes et apprenez des techniques de cuisine avec les meilleurs.",
-    date: "2024-11-13T10:00:00",
-    image: "bac.jpeg",
-    isPublic: false,
-  },
-  {
-    id: 4,
-    titre: "Club de Lecture",
-    description:
-      "Rejoignez-nous pour discuter de vos livres préférés et découvrir de nouvelles lectures.",
-    date: "2024-11-14T16:30:00",
-    image: "bac.jpeg",
-    isPublic: true,
-  },
-  {
-    id: 5,
-    titre: "Club de Musique",
-    description:
-      "Explorez différents styles de musique et développez vos compétences musicales.",
-    date: "2024-11-15T18:00:00",
-    image: "bac.jpeg",
-    isPublic: true,
-  },
-  {
-    id: 6,
-    titre: "Club de Théâtre",
-    description:
-      "Développez votre expression et apprenez les bases de l'art dramatique.",
-    date: "2024-11-16T19:00:00",
-    image: "bac.jpeg",
-    isPublic: false,
-  },
-];
+import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
+import {useEffect, useState} from "react";
+import FilterHeader from "../../shared/components/utili/filter-header.jsx";
+import {getPublications} from "../../repositories/publications.repository.js";
+import PublicationCard from "../../shared/components/cards/PublicationCard.jsx";
+import {getDateRange} from "../../shared/components/utili/mappers.js";
+import logo from '../../assets/not-items-found.png';
+import {useNavigate} from "react-router-dom";
+import {getUser} from "../../auth/auth.js";
 
 const PublicationsList = () => {
-  return (
-    <div className="container mx-auto py-8 px-4">
-      <h2 className="text-2xl font-bold mb-6 text-center">Nos Clubs</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {publications.map((item) => (
-          <PublicationCard key={item.id} item={item} />
-        ))}
-      </div>
-    </div>
-  );
+    const navigate = useNavigate();
+    const [currentTab, setCurrentTab] = useState("All");
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [filterDate, setFilterDate] = useState("");
+    const [searchKey, setSearchKey] = useState("");
+    const [pubs, setPubs] = useState([]);
+    const [page, setPage] = useState(0);
+    const [error, setError] = useState(null);
+    const [hasMore, setHasMore] = useState(true);
+    const userId = getUser().id;
+    const fetchPubs = async (reset = false) => {
+        if (reset) {
+            setPubs([]);
+            setPage(0);
+        }
+
+        setIsLoadingMore(true);
+        const currentScrollPosition = window.scrollY;
+        const { fromDate, toDate } = getDateRange(filterDate);
+        try {
+            const response = await getPublications({
+                page: reset ? 0 : page,
+                search: searchKey,
+                fromDate,
+                toDate,
+                isPublic : currentTab === "All",
+                userId : userId
+            });
+            setHasMore(response && !response.last);
+            setPubs((prevPubs) => (reset ? response.content : [...prevPubs, ...response.content]));
+            setPage((prevPage) => (reset ? 1 : prevPage + 1));
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setIsLoadingMore(false);
+            window.scrollTo(0, currentScrollPosition);
+        }
+    };
+
+    useEffect(() => {
+        setIsLoading(true);
+        fetchPubs(true).then(() => {
+            setIsLoading(false);
+        });
+    }, []);
+
+    useEffect(() => {
+        setIsLoading(true);
+        fetchPubs(true).then(() => {
+            setIsLoading(false);
+        });
+    }, [filterDate]);
+
+    useEffect(() => {
+        setIsLoading(true);
+        setFilterDate("")
+        fetchPubs(true).then(() => {
+            setIsLoading(false);
+        });
+    }, [currentTab]);
+
+    const handleSearch = () => {
+        fetchPubs(true).then();
+    };
+
+    if (error) {
+        return (
+            <div
+                className="flex mt-20 text-2xl font-bold bg-red-100 text-red-950 p-2 rounded-xl justify-center items-center">
+                {error}
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <div className="container w-full mx-auto py-8 px-4">
+                <div className="flex mb-2.5 justify-end items-center w-full">
+                    <button
+                        onClick={()=>navigate("/publication/create")}
+                        className="px-6 bg-orange-500 py-3 text-white font-semibold rounded-lg shadow-md hover:bg-orange-700 "
+                    >
+                        Create New Publication
+                    </button>
+                </div>
+
+            <FilterHeader
+                onTitleClicked={() => {
+                    setFilterDate("");
+                    fetchPubs(true);
+                }}
+                    title="Publications"
+                    searchTerm={searchKey}
+                    setSearchTerm={setSearchKey}
+                    activeTab={currentTab}
+                    setActiveTab={setCurrentTab}
+                    filterDate={filterDate}
+                    setFilterDate={setFilterDate}
+                    onSearchComplete={handleSearch}
+                />
+                {pubs.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center mt-20 ">
+                        <img className="w-1/6 h-1/4 object-cover" src={logo} alt="salam"/>
+                        <span className="font-bold text-2xl">Oops pas de publications!</span>
+                    </div>
+                ) : isLoading ? <div className="h-screen flex justify-center items-start mt-36">
+                    <LoadingSpinner></LoadingSpinner>
+                </div> : (
+                    <>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {
+                                pubs.map((item, index) => (<PublicationCard key={index} item={item}/>
+                                ))
+                            }
+                        </div>
+
+                        {hasMore && (
+                            <div className="flex justify-center">
+                                <button
+                                    type="button"
+                                    onClick={() => fetchPubs()}
+                                    disabled={isLoadingMore}
+                                    className="text-gray-900 bg-white border border-gray-300 rounded-xl p-2"
+                                >
+                                    {isLoadingMore ? <LoadingSpinner/> : "Load More"}
+                                </button>
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
+        </>
+    );
 };
 
 export default PublicationsList;

@@ -2,17 +2,14 @@ import axiosInstance from './axios';
 
 export const login = async (email, password, rememberMe) => {
     try {
-        const response = await axiosInstance.post('/auth/login', { email, password });
-        const { accessToken, refreshToken } = response.data;
+        const response = await axiosInstance.post('/auth/authenticate', { email, password });
+        const {jwttoken } = response.data;
 
         if (rememberMe) {
-            localStorage.setItem('token', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
+            localStorage.setItem('token', jwttoken);
         } else {
-            sessionStorage.setItem('token', accessToken);
-            sessionStorage.setItem('refreshToken', refreshToken);
+            sessionStorage.setItem('token', jwttoken);
         }
-
         return response.data;
     } catch (error) {
         console.error('Login error', error);
@@ -37,6 +34,7 @@ export const getToken = () => {
 
 export const getUser = () => {
     const token = getToken();
+
     if (!token) {
         return null;
     }
