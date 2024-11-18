@@ -124,16 +124,16 @@ const DemandesListing = () => {
             <th className="px-4 py-2 border">Date</th>
             <th className="px-4 py-2 border">Status</th>
             <th className="px-4 py-2 border">Action</th>
+            <th className="px-4 py-2 border">Historiques</th>
           </tr>
         </thead>
         <tbody>
           {demandes.map((demande) => (
             <tr
-              key={demande.id}
-              onClick={() => navigate(`/demandes/${demande.id}`)} // Cela ne se produira que lorsque vous cliquez sur les autres colonnes
+              key={demande.id}// Cela ne se produira que lorsque vous cliquez sur les autres colonnes
               className="cursor-pointer hover:bg-gray-100"
             >
-              <td className="px-4 py-2 border text-center">#{demande.id}</td>
+              <td className="px-4 py-2 border text-center" onClick={() => navigate(`/demandes/${demande.id}`)} >#{demande.id}</td>
               <td className="px-4 py-2 border text-center">
                 {demande.cne || "Non spécifié"}
               </td>
@@ -189,6 +189,9 @@ const DemandesListing = () => {
                     <span className="text-gray-500">Action terminée</span>
                   )}
                 </div>
+              </td>
+              <td className="text-center">
+                <button onClick={()=>navigate(`/historiques/${demande.id}`)} className="bg-orange-500 p-2 text-white font-bold rounded-xl">historique</button>
               </td>
             </tr>
           ))}

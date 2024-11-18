@@ -27,6 +27,7 @@ import CreatePublication from "./features/create-new-pub/CreatePublication.jsx";
 import SignUp from "./shared/components/auth/SignUp.jsx";
 import Confirmation from "./shared/components/auth/Confirmation.jsx";
 import ChangePasswordPage from "./shared/components/auth/ChangePassword.jsx";
+import Historiques from "./features/historiques/historiques.jsx";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
           <Route path="/clubs" element={<ClubsListingPage />} />
           {/* </Route> */}
           <Route path="/publications" element={<PublicationsList />} />
+          <Route path="/historiques/:id" element={<Historiques />} />
           <Route path="/publication/:id" element={<PublicationDetails />} />
           <Route path="/publication/create" element={<CreatePublication />} />
           <Route path="/profile" element={<Profile />} />
