@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom'
 import UserProfile from './global/UserProfile'
 import loadedImageUrl from "../../assets/user7.jpg"
 import { BellIcon } from '@heroicons/react/24/solid'
+import {getUser} from "../../auth/auth.js";
 
 function SideBarLayout() {
 
@@ -37,7 +38,7 @@ function SideBarLayout() {
                             </span>
                           )}
                         </div>
-                        <UserProfile user={{ name: user.firstName, email: user.lastName, avatar: loadedImageUrl }} />
+                        <UserProfile user={{ name: getUser().fullName, email: user.sub, avatar: loadedImageUrl }} />
                     </div>
                 </header>
                 <main className="overflow-y-auto p-6 bg-white overflow-x-hidden">
