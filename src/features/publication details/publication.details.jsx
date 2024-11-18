@@ -84,7 +84,7 @@ const PublicationDetails = () => {
                                 alt={publication.organiser.name}
                                 className="w-12 h-12 rounded-full object-cover border-2 border-amber-500"
                             />
-                            <div className="flex flex-col" onClick={() => navigate("/club/1")}>
+                            <div className="flex flex-col" onClick={() => navigate(`/club/${publicationDetails.clubId}`)}>
               <span className="text-lg font-bold text-gray-800 hover:underline cursor-pointer hover:text-blue-600">
                 {publicationDetails.publisher}
               </span>

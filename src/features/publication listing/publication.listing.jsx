@@ -6,6 +6,7 @@ import PublicationCard from "../../shared/components/cards/PublicationCard.jsx";
 import {getDateRange} from "../../shared/components/utili/mappers.js";
 import logo from '../../assets/not-items-found.png';
 import {useNavigate} from "react-router-dom";
+import {getUser} from "../../auth/auth.js";
 
 const PublicationsList = () => {
     const navigate = useNavigate();
@@ -18,7 +19,7 @@ const PublicationsList = () => {
     const [page, setPage] = useState(0);
     const [error, setError] = useState(null);
     const [hasMore, setHasMore] = useState(true);
-    const userId = 'c459dceb-23b6-4bda-803d-e3f07d27f903';
+    const userId = getUser().id;
     const fetchPubs = async (reset = false) => {
         if (reset) {
             setPubs([]);

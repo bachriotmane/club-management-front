@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getClubsForUser } from "../../repositories/clubs.repository.js";
 import { createNewPublication } from "../../repositories/publications.repository.js"; // Ensure the path is correct
 import { useNavigate } from "react-router-dom";
+import {getUser} from "../../auth/auth.js";
 
 const CreatePublication = () => {
     const navigate = useNavigate();
@@ -17,11 +18,12 @@ const CreatePublication = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
-
+    console.log()
     const fetchClubs = async () => {
         try {
             setIsLoading(true);
-            const resp = await getClubsForUser("16289e7e-141e-4033-b2d5-b735c5e9bdfd");
+            console.log("Current user : ",getUser())
+            const resp = await getClubsForUser(getUser().id);
             setClubsList(resp.data);
         } catch (err) {
             setError(err.message || "Failed to load clubs.");
