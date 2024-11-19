@@ -42,6 +42,16 @@ const Carousel = ({ items, CardComponent, title }) => {
     }
   };
 
+  // Vérification 
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return (
+      <div className="relative w-full mx-auto">
+        <h2 className="text-left text-[28px] font-bold">{title}</h2>
+        <div>Aucun élément à afficher.</div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full mx-auto">
       <div className="flex justify-between items-center w-full mb-4 px-5">
