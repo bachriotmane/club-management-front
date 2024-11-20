@@ -5,6 +5,7 @@ import Carousel from './components/Carousel';
 import ClubCard from '../../shared/components/cards/ClubCard';
 import EventCard from '../../shared/components/cards/EventCard';
 import PublicationCard from '../../shared/components/cards/PublicationCard';
+import {getUser} from "../../auth/auth.js";
 const Home = () => {
   const clubs = [
     { id: "1", nom: "Club de Danse", description: "Un club pour les passionnés de danse.", createdAt: "2022-01-10", logo: null, instagramme: "https://www.instagram.com/" },
@@ -72,8 +73,8 @@ const Home = () => {
     { id: "19", titre: "Les Sciences Sociales", auteur: "Nadia Ait", date: "2024-02-20", image: "/bac.jpeg", description: "Une approche des sciences sociales dans la société moderne." },
     { id: "20", titre: "La Mode Durable", auteur: "Sara Jada", date: "2024-04-01", image: "/bac.jpeg", description: "Comment la mode peut devenir plus durable." },
   ];
-    
-  
+
+  console.log(getUser())
     return (
       <div className="space-y-10">
         <StatSection/>

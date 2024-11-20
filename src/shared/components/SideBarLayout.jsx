@@ -38,7 +38,7 @@ function SideBarLayout() {
                             </span>
                           )}
                         </div>
-                        <UserProfile user={{ name: getUser().fullName, email: user.sub, avatar: loadedImageUrl }} />
+                        <UserProfile user={{ name: getUser().fullName ? getUser().fullName : "Unknown" , email: user.sub, avatar: loadedImageUrl }} />
                     </div>
                 </header>
                 <main className="overflow-y-auto p-6 bg-white overflow-x-hidden">

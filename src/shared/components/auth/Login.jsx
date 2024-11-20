@@ -99,7 +99,7 @@ const Login = () => {
             </Link>
           </p>
           <p className="text-center text-gray-500 text-xs mt-6">
-            Copyright ARAMALI Mohammed
+            Copyright FST Settat
           </p>
         </div>
         <div className="hidden md:block md:w-full">
