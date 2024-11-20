@@ -13,10 +13,10 @@ const ClubsListingPage = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [error, setError] = useState(null);
 
-  const fetchClubs = useCallback(async (page, size, nomClub = "", idMyClubs = false) => {
+  const fetchClubs = useCallback(async (page, size, nomClub = "", isMyClubs = false) => {
     setLoading(true);
     try {
-      const data = await getClubs({ page, size, nomClub, idMyClubs });
+      const data = await getClubs({ page, size, nomClub, isMyClubs });
       setClubs((prevClubs) => [...prevClubs, ...data.data]);
       setTotalPages(data.totalPages);
     } catch (error) {
@@ -36,19 +36,16 @@ const ClubsListingPage = () => {
 
 
   useEffect(() => {
-    const idMyClubs = activeView === "all" ? false : true;
+    const isMyClubs = activeView === "all" ? false : true;
     setClubs([]);
-    console.log("1     "+ activeView);
     setCurrentPage(0);
-    fetchClubs(0, 3, searchQuery, idMyClubs);
+    fetchClubs(0, 3, searchQuery, isMyClubs);
   }, [activeView, searchQuery, fetchClubs]);
 
   useEffect(() => {
     if (currentPage > 0) {
-      const idMyClubs = activeView === "all" ? false : true;
-      console.log("2     "+ activeView);
-
-      fetchClubs(currentPage, 3, searchQuery, idMyClubs);
+      const isMyClubs = activeView === "all" ? false : true;
+      fetchClubs(currentPage, 3, searchQuery, isMyClubs);
     }
   }, [currentPage, fetchClubs, searchQuery, activeView]);
 
