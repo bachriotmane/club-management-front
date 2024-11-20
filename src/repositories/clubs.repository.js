@@ -2,14 +2,14 @@ import axiosInstance from "../auth/axios.js";
 
 const apiUrl = "/clubs";
 
-export const getClubs = async ({ page, size = 3, nomClub = "", idUser = "" }) => {
+export const getClubs = async ({ page, size = 3, nomClub = "", isMyClubs = false }) => {
   try {
     const response = await axiosInstance.get(apiUrl, {
       params: {
         page: page,
         size: size,
         nomClub: nomClub,
-        idUser: idUser,
+        isMyClubs: isMyClubs,
       },
     });
     return response.data;

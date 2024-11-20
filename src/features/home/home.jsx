@@ -8,7 +8,7 @@ import PublicationCard from '../../shared/components/cards/PublicationCard';
 import {getUser} from "../../auth/auth.js";
 const Home = () => {
   const clubs = [
-    { id: "1", nom: "Club de Danse", description: "Un club pour les passionnés de danse.", createdAt: "2022-01-10", logo: null, instagramme: "https://www.instagram.com/" },
+    { id: "1", nom: "Club de Danse", description: "Un club pour les passionnés de danse.Un club pour les passionnés de danse.Un club pour les passionnés de danse.Un club pour les passionnés de danse.Un club pour les passionnés de danse.", createdAt: "2022-01-10", logo: null, instagramme: "https://www.instagram.com/" },
     { id: "2", nom: "Club de Musique", description: "Un club pour les mélomanes.", createdAt: "2023-03-15", logo: "/bac.jpeg", instagramme: "https://www.instagram.com/" },
     { id: "3", nom: "Club de Théâtre", description: "Un club pour les passionnés de théâtre.", createdAt: "2022-06-05", logo: "/bac.jpeg", instagramme: "https://www.instagram.com/" },
     { id: "4", nom: "Club de Lecture", description: "Pour les amoureux des livres.", createdAt: "2021-09-01", logo: "/bac.jpeg", instagramme: "https://www.instagram.com/" },

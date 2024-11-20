@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { jwtDecode } from "jwt-decode";
 import ClubCard from "../../shared/components/cards/ClubCard";
 import { getClubs } from "../../repositories/clubs.repository";
 import noFindImage from "../../assets/not-items-found.png";
@@ -8,19 +7,17 @@ import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
 const ClubsListingPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [clubs, setClubs] = useState([]);
-  const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [activeView, setActiveView] = useState("all");
   const [currentPage, setCurrentPage] = useState(0);
   const [error, setError] = useState(null);
 
-  const fetchClubs = useCallback(async (page, size, nomClub = "", idUser = "") => {
+  const fetchClubs = useCallback(async (page, size, nomClub = "", isMyClubs = false) => {
     setLoading(true);
     try {
-      const data = await getClubs({ page, size, nomClub, idUser });
+      const data = await getClubs({ page, size, nomClub, isMyClubs });
       setClubs((prevClubs) => [...prevClubs, ...data.data]);
-      setTotalItems(data.totalItems);
       setTotalPages(data.totalPages);
     } catch (error) {
       setError(error.message);
@@ -36,30 +33,19 @@ const ClubsListingPage = () => {
     }
   };
 
-  const getUserIdFromToken = () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        return decodedToken.id || "";
-      } catch (error) {
-        console.error("Invalid token format", error);
-      }
-    }
-    return "";
-  };
+
 
   useEffect(() => {
-    const idUser = activeView === "all" ? "" : getUserIdFromToken();
+    const isMyClubs = activeView === "all" ? false : true;
     setClubs([]);
     setCurrentPage(0);
-    fetchClubs(0, 3, searchQuery, idUser);
+    fetchClubs(0, 3, searchQuery, isMyClubs);
   }, [activeView, searchQuery, fetchClubs]);
 
   useEffect(() => {
     if (currentPage > 0) {
-      const idUser = activeView === "all" ? "" : getUserIdFromToken();
-      fetchClubs(currentPage, 3, searchQuery, idUser);
+      const isMyClubs = activeView === "all" ? false : true;
+      fetchClubs(currentPage, 3, searchQuery, isMyClubs);
     }
   }, [currentPage, fetchClubs, searchQuery, activeView]);
 
