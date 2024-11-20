@@ -1,5 +1,6 @@
 import axiosInstance from "../auth/axios.js";
 const apiUrl = "/publications";
+const apiUrl1 = "/publications/home";
 
 export const getPublications = async ({ page, size = 3, search = "", fromDate = "", toDate = "" , isPublic = true, userId = null}) => {
     try {
@@ -35,3 +36,21 @@ export const createNewPublication = async (publication) => {
         throw error;
     }
 };
+
+export const getPublicationsHome = async ({ limit = 7 }) => {
+    try {
+
+        const response = await axiosInstance.get(apiUrl1, {
+            params: {
+                limit: limit,
+            },
+        });
+
+
+        return response.data.content;
+    } catch (error) {
+
+        throw error;
+    }
+};
+

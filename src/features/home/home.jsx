@@ -6,7 +6,14 @@ import ClubCard from '../../shared/components/cards/ClubCard';
 import EventCard from '../../shared/components/cards/EventCard';
 import PublicationCard from '../../shared/components/cards/PublicationCard';
 import {getUser} from "../../auth/auth.js";
+import HomeClubListing from '../clubs listing/HomeClubListing.jsx';
+import HomeEventsListing from '../events listing/HomeEventsListing.jsx';
+import HomePublicationListing from '../publication listing/HomePublicationListing.jsx';
+
 const Home = () => {
+
+  /*const clubs = [
+    { id: "1", nom: "Club de Danse", description: "Un club pour les passionnés de danse.", createdAt: "2022-01-10", logo: null, instagramme: "https://www.instagram.com/" },
   const clubs = [
     { id: "1", nom: "Club de Danse", description: "Un club pour les passionnés de danse.Un club pour les passionnés de danse.Un club pour les passionnés de danse.Un club pour les passionnés de danse.Un club pour les passionnés de danse.", createdAt: "2022-01-10", logo: null, instagramme: "https://www.instagram.com/" },
     { id: "2", nom: "Club de Musique", description: "Un club pour les mélomanes.", createdAt: "2023-03-15", logo: "/bac.jpeg", instagramme: "https://www.instagram.com/" },
@@ -28,7 +35,7 @@ const Home = () => {
     { id: "18", nom: "Club de Programmation", description: "Pour ceux qui aiment coder.", createdAt: "2021-11-01", logo: "/bac.jpeg", instagramme: "https://www.instagram.com/" },
     { id: "19", nom: "Club de Poker", description: "Un club pour les joueurs de poker.", createdAt: "2022-07-25", logo: "/bac.jpeg", instagramme: "https://www.instagram.com/" },
     { id: "20", nom: "Club de Football", description: "Pour les passionnés de football.", createdAt: "2023-09-12", logo: "/bac.jpeg", instagramme: "https://www.instagram.com/" },
-  ];
+  ];*/
   const events = [
     { id: "1", nom: "Concert de Musique", description: "Un événement de musique live avec plusieurs artistes.", image: "/bac.jpeg", date: "2024-12-15", location: "Salle de Concert, Paris", budget: 5000 },
     { id: "2", nom: "Festival de Danse", description: "Un festival de danse avec des performances exceptionnelles.", image: "/bac.jpeg", date: "2024-11-30", location: "Théâtre Royal, Marrakech", budget: 3000 },
@@ -78,9 +85,9 @@ const Home = () => {
     return (
       <div className="space-y-10">
         <StatSection/>
-        <Carousel items={clubs}  CardComponent={ClubCard} title="Liste des Clubs"/>
-        <Carousel items={events}  CardComponent={EventCard} title="Liste des Events"/>
-        <Carousel items={publications}  CardComponent={PublicationCard} title="Liste des Publications"/>
+        <HomeClubListing /> HomeEventsListing
+        <HomeEventsListing />
+        <HomePublicationListing />
       </div>
     );
   };
