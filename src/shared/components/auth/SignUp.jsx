@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { Link , useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import backgroundImage from "../../../assets/fstsImg.jpg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
+import "react-toastify/dist/ReactToastify.css"; // Importer le CSS de Toastify
 import axiosInstance from "../../../auth/axios";
 import { useUserContext } from "../../context/UserContext";
-
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -18,7 +17,7 @@ const SignUp = () => {
     cin: "",
   });
 
-  const {setUserEmail} = useUserContext();
+  const { setUserEmail } = useUserContext();
 
   const navigate = useNavigate();
 
@@ -27,30 +26,30 @@ const SignUp = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.firstName) newErrors.firstName = "Firstname is mandatory";
-    if (!formData.lastName) newErrors.lastName = "Lastname is mandatory";
+    if (!formData.firstName) newErrors.firstName = "Le prénom est obligatoire";
+    if (!formData.lastName) newErrors.lastName = "Le nom est obligatoire";
     if (!formData.email) {
-      newErrors.email = "Email is mandatory";
+      newErrors.email = "L'adresse email est obligatoire";
     } else if (!/.+@uhp\.ac\.ma/.test(formData.email)) {
-      newErrors.email = "Email should end with: @uhp.ac.ma";
+      newErrors.email = "L'email doit se terminer par : @uhp.ac.ma";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is not well formatted";
+      newErrors.email = "L'adresse email n'est pas bien formatée";
     }
     if (!formData.password) {
-      newErrors.password = "Password is mandatory";
+      newErrors.password = "Le mot de passe est obligatoire";
     } else if (formData.password.length < 8) {
-      newErrors.password = "Password should be 8 characters long minimum";
+      newErrors.password = "Le mot de passe doit contenir au moins 8 caractères";
     }
     if (!formData.passwordConfirmation) {
-      newErrors.passwordConfirmation = "Password confirmation is mandatory";
+      newErrors.passwordConfirmation = "La confirmation du mot de passe est obligatoire";
     } else if (formData.password !== formData.passwordConfirmation) {
-      newErrors.passwordConfirmation = "Passwords do not match";
+      newErrors.passwordConfirmation = "Les mots de passe ne correspondent pas";
     }
     if (!formData.cin) {
-      newErrors.cin = "CIN is mandatory";
+      newErrors.cin = "Le CIN est obligatoire";
     } else if (!/[A-Z]{1,2}[0-9]{4,9}/.test(formData.cin)) {
       newErrors.cin =
-        "CIN should be 1-2 uppercase letters followed by 4-9 digits";
+        "Le CIN doit contenir 1-2 lettres majuscules suivies de 4-9 chiffres";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -63,7 +62,7 @@ const SignUp = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) {
-      toast.error("Please fill in the required fields");
+      toast.error("Veuillez remplir tous les champs requis");
       return;
     }
 
@@ -71,7 +70,7 @@ const SignUp = () => {
       .post("/auth/register", formData)
       .then((response) => {
         if (response.status === 202) {
-          toast.success("Account created successfully");
+          toast.success("Compte créé avec succès");
           setFormData({
             firstName: "",
             lastName: "",
@@ -79,16 +78,16 @@ const SignUp = () => {
             password: "",
             passwordConfirmation: "",
             cin: "",
-            }); 
-            setUserEmail(formData.email);
-            navigate("/confirmation");
+          });
+          setUserEmail(formData.email);
+          navigate("/confirmation");
         } else {
-          toast.error("An error occurred, please try again");
+          toast.error("Une erreur est survenue, veuillez réessayer");
         }
       })
       .catch((error) => {
-        console.error("Signup error", error);
-        toast.error("An error occurred, please try again");
+        console.error("Erreur d'inscription", error);
+        toast.error("Une erreur est survenue, veuillez réessayer");
       });
   };
 
@@ -101,12 +100,12 @@ const SignUp = () => {
       <div className="flex flex-col bg-white/70 backdrop-blur-lg rounded-xl shadow-lg w-11/12 max-w-2xl h-[90%]">
         <div className="p-6 overflow-y-auto">
           <h2 className="text-2xl font-bold text-blue-900 mb-4 text-center">
-            Sign Up
+            Inscription
           </h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="firstName" className="block text-gray-700">
-                First Name
+                Prénom
               </label>
               <input
                 type="text"
@@ -116,14 +115,12 @@ const SignUp = () => {
                 onChange={handleChange}
               />
               {errors.firstName && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.firstName}
-                </p>
+                <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
               )}
             </div>
             <div>
               <label htmlFor="lastName" className="block text-gray-700">
-                Last Name
+                Nom
               </label>
               <input
                 type="text"
@@ -138,7 +135,7 @@ const SignUp = () => {
             </div>
             <div>
               <label htmlFor="email" className="block text-gray-700">
-                Email
+                Adresse email
               </label>
               <input
                 type="email"
@@ -153,7 +150,7 @@ const SignUp = () => {
             </div>
             <div className="relative">
               <label htmlFor="password" className="block text-gray-700">
-                Password
+                Mot de passe
               </label>
               <input
                 type={showPassword ? "text" : "password"}
@@ -178,7 +175,7 @@ const SignUp = () => {
                 htmlFor="passwordConfirmation"
                 className="block text-gray-700"
               >
-                Confirm Password
+                Confirmation du mot de passe
               </label>
               <input
                 type={showPassword ? "text" : "password"}
@@ -212,13 +209,13 @@ const SignUp = () => {
               type="submit"
               className="w-full bg-blue-900 text-white py-2 rounded-md hover:bg-blue-800 transition"
             >
-              Sign Up
+              S'inscrire
             </button>
           </form>
           <p className="text-center text-gray-600 mt-4">
-            Already have an account?{" "}
+            Vous avez déjà un compte ?{" "}
             <Link to="/login" className="text-blue-500 hover:underline">
-              Login
+              Connexion
             </Link>
           </p>
         </div>

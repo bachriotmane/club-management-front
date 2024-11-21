@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // To get the ID from the URL
+import { useParams } from 'react-router-dom'; 
 import {
   FaEnvelope,
   FaIdCard,
@@ -20,7 +20,7 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const getUserId = id || getUser().id; 
+  const getUserId = id || getUser()?.id; 
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -31,7 +31,7 @@ const Profile = () => {
         setUser(response.data);
       } catch (err) {
         console.log(err);
-        setError("Failed to fetch user data");
+        setError("Échec de la récupération des données utilisateur");
       } finally {
         setLoading(false);
       }
@@ -40,8 +40,8 @@ const Profile = () => {
     fetchUser();
   }, [getUserId]); 
 
-  if (loading) return <p>Loading...</p>;
-  if (!user) return <p>No user data available</p>;
+  if (loading) return <p>Chargement...</p>;
+  if (!user) return <p>Aucune donnée utilisateur disponible</p>;
 
   const isStudent = user.cne !== undefined;
 
@@ -107,23 +107,14 @@ const Profile = () => {
           )}
         </div>
 
-        {/* <div className="border-t border-gray-300 pt-4 mt-6">
-          <h2 className="text-xl font-semibold text-gray-700 flex items-center justify-center">
-            <FaIdCard className="mr-2 text-indigo-500" /> Basic Information
-          </h2>
-          <div className="mt-2 text-gray-600 text-lg">
-            {user.cin && <p><strong>CIN:</strong> {user.cin}</p>}
-          </div>
-        </div> */}
-
         {isStudent && (
           <div className="border-t border-gray-300 pt-4 mt-4">
             <h2 className="text-xl font-semibold text-gray-700 flex items-center justify-center">
-              <FaUserGraduate className="mr-2 text-indigo-500" /> Student Information
+              <FaUserGraduate className="mr-2 text-indigo-500" /> Informations Étudiant
             </h2>
             <div className="mt-2 text-gray-600 text-lg">
-              {user.cne && <p><strong>CNE:</strong> {user.cne}</p>}
-              {user.filiere && <p><strong>Filière:</strong> {user.filiere}</p>}
+              {user.cne && <p><strong>CNE :</strong> {user.cne}</p>}
+              {user.filiere && <p><strong>Filière :</strong> {user.filiere}</p>}
             </div>
           </div>
         )}
@@ -149,7 +140,7 @@ const Profile = () => {
         {user.adminClubs?.length > 0 && (
           <div className="border-t border-gray-300 pt-4 mt-4">
             <h2 className="text-xl font-semibold text-gray-700 flex items-center justify-center">
-              <FaCrown className="mr-2 text-indigo-500" /> Admin of Clubs
+              <FaCrown className="mr-2 text-indigo-500" /> Administrateur des Clubs
             </h2>
             <div className="mt-2 flex flex-wrap justify-center gap-2">
               {user.adminClubs.map((club, index) => (

@@ -23,7 +23,7 @@ const ChangePasswordPage = () => {
         e.preventDefault();
 
         if (passwords.newPassword !== passwords.confirmNewPassword) {
-            toast.error('Passwords do not match');
+            toast.error('Les mots de passe ne correspondent pas');
             return;
         }
 
@@ -34,7 +34,7 @@ const ChangePasswordPage = () => {
                 newPassword: passwords.newPassword
             });
 
-            toast.success('Password changed successfully');
+            toast.success('Mot de passe changé avec succès');
             logout();
             navigate('/login');
             setPasswords({
@@ -43,8 +43,8 @@ const ChangePasswordPage = () => {
                 confirmNewPassword: ''
             });
         } catch (error) {
-            console.error("Error changing password:", error);
-            toast.error("An error occurred, please try again");
+            console.error("Erreur lors du changement de mot de passe :", error);
+            toast.error("Une erreur s'est produite, veuillez réessayer");
         }
     };
 
@@ -55,10 +55,10 @@ const ChangePasswordPage = () => {
     return (
         <div className="max-w-lg mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg">
             <ToastContainer />
-            <h2 className="text-2xl font-semibold mb-6">Change Password</h2>
+            <h2 className="text-2xl font-semibold mb-6">Changer de mot de passe</h2>
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
                 <div>
-                    <label className="block text-gray-700">Current Password</label>
+                    <label className="block text-gray-700">Mot de passe actuel</label>
                     <div className="relative">
                         <input
                             type={showPasswords ? 'text' : 'password'}
@@ -78,7 +78,7 @@ const ChangePasswordPage = () => {
                     </div>
                 </div>
                 <div>
-                    <label className="block text-gray-700">New Password</label>
+                    <label className="block text-gray-700">Nouveau mot de passe</label>
                     <div className="relative">
                         <input
                             type={showPasswords ? 'text' : 'password'}
@@ -98,7 +98,7 @@ const ChangePasswordPage = () => {
                     </div>
                 </div>
                 <div>
-                    <label className="block text-gray-700">Confirm NewPassword</label>
+                    <label className="block text-gray-700">Confirmer le nouveau mot de passe</label>
                     <div className="relative">
                         <input
                             type={showPasswords ? 'text' : 'password'}
@@ -121,7 +121,7 @@ const ChangePasswordPage = () => {
                     type="submit"
                     className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
-                   Change Password
+                   Changer le mot de passe
                 </button>
             </form>
         </div>

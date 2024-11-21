@@ -21,7 +21,7 @@ function SideBarLayout() {
               <Sidebar/>
           </div>
             <div className="flex-1 w-full flex flex-col overflow-hidden">
-                <header className="flex items-center justify-center bg-white shadow-md p-2">
+                <header className="flex items-center justify-center bg-white shadow-md p-1">
                     {/* <button className="text-gray-600 focus:outline-none md:hidden" onClick={toggleSidebar}>
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />

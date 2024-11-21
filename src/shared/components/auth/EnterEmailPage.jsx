@@ -6,19 +6,18 @@ import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const EnterEmail = () => {
-
- const [email, setEmail] = useState('');
- const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axiosInstance.get('/auth/forgot-password', {params:{ email }});
-      toast.success('Password reset email sent!');
+      await axiosInstance.get('/auth/forgot-password', { params: { email } });
+      toast.success('Email de réinitialisation envoyé avec succès !');
       navigate('/reset-password');
     } catch (error) {
-      console.error('There was an error sending the email!', error);
-      toast.error('Failed to send password reset email.');
+      console.error("Erreur lors de l'envoi de l'email !", error);
+      toast.error("Échec de l'envoi de l'email de réinitialisation.");
     }
   };
 
@@ -30,7 +29,7 @@ const EnterEmail = () => {
       <ToastContainer />
       <div className="flex bg-white/70 backdrop-blur-3xl rounded-xl shadow-lg overflow-hidden w-3/4 md:w-[70%] ">
         <div className="w-full p-6 md:p-8 lg:p-10">
-          <h2 className="text-2xl font-bold text-blue-900 mb-4">Enter Email </h2>
+          <h2 className="text-2xl font-bold text-blue-900 mb-4">Entrer votre Email</h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label htmlFor="email" className="block text-gray-700">Email</label>
@@ -43,11 +42,11 @@ const EnterEmail = () => {
               />
             </div>
             <button type="submit" className="w-full bg-blue-900 text-white py-2 rounded-md hover:bg-blue-800 transition">
-            Submit
+              Soumettre
             </button>
           </form>
           <p className="text-center text-gray-500 text-xs mt-6">
-            Copyright ARAMALI Mohammed
+            Copyright FST Settat
           </p>
         </div>
         <div className="hidden md:block md:w-full">

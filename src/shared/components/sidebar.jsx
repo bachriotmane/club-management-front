@@ -19,17 +19,17 @@ export function Sidebar() {
   const [isOpened, setIsOpened] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Load the active index from localStorage on mount
+  // Charger l'index actif depuis sessionStorage au montage
   useEffect(() => {
     const savedIndex = sessionStorage.getItem("activeIndex");
     if (savedIndex !== null) {
-      setActiveIndex(parseInt(savedIndex, 10)); // Ensure the value is a number
+      setActiveIndex(parseInt(savedIndex, 10)); // S'assurer que la valeur est un nombre
     }
   }, []);
 
   const handleItemClick = (index) => {
     setActiveIndex(index);
-    sessionStorage.setItem("activeIndex", index); // Save the index to localStorage
+    sessionStorage.setItem("activeIndex", index); // Sauvegarder l'index dans sessionStorage
     setIsOpened(!isOpened);
   };
 
@@ -75,13 +75,13 @@ export function Sidebar() {
               <ListItemPrefix>
                 <Cog8ToothIcon className="h-5 w-5" />
               </ListItemPrefix>
-              <Link to="/parametre">Parametre</Link>
+              <Link to="/parametre">Paramètres</Link>
             </ListItem>
             <ListItem className="flex justify-start gap-6 bg-[#00407D] text-[#E49F13] rounded-2xl">
               <ListItemPrefix>
                 <PowerIcon className="h-5 w-5" />
               </ListItemPrefix>
-              Log Out
+              Déconnexion
             </ListItem>
           </div>
         </List>

@@ -19,10 +19,10 @@ const Login = () => {
     event.preventDefault();
     try {
       await login(email, password, rememberMe);
-      navigate("/"); // Adjust this path as needed
+      navigate("/"); // Ajustez ce chemin si nécessaire
     } catch (error) {
-      console.error("Login error", error);
-      toast.error("Invalid email or password");
+      console.error("Erreur de connexion", error);
+      toast.error("Email ou mot de passe invalide");
     }
   };
 
@@ -36,9 +36,9 @@ const Login = () => {
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <ToastContainer />
-      <div className="flex bg-white/70 backdrop-blur-3xl rounded-xl shadow-lg overflow-hidden w-3/4 md:w-[70%] ">
+      <div className="flex bg-white/70 backdrop-blur-3xl rounded-xl shadow-lg overflow-hidden w-3/4 md:w-[70%]">
         <div className="w-full p-6 md:p-8 lg:p-10">
-          <h2 className="text-2xl font-bold text-blue-900 mb-4">Login</h2>
+          <h2 className="text-2xl font-bold text-blue-900 mb-4">Connexion</h2>
           <form onSubmit={handleLogin}>
             <div className="mb-4">
               <label htmlFor="email" className="block text-gray-700">Email</label>
@@ -52,24 +52,24 @@ const Login = () => {
               />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Password</label>
-                <div className="relative">
-                    <input
-                        type={showPasswords ? 'text' : 'password'}
-                        name="password"
-                        value={password}
-                        onChange={handlePasswordChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        required
-                    />
-                    <button
-                        type="button"
-                        onClick={() => setShowPasswords(!showPasswords)}
-                        className="absolute inset-y-0 right-0 flex items-center px-3"
-                    >
-                        <FontAwesomeIcon icon={showPasswords ? faEyeSlash : faEye} />
-                    </button>
-                </div>
+              <label className="block text-gray-700">Mot de passe</label>
+              <div className="relative">
+                <input
+                  type={showPasswords ? 'text' : 'password'}
+                  name="password"
+                  value={password}
+                  onChange={handlePasswordChange}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords(!showPasswords)}
+                  className="absolute inset-y-0 right-0 flex items-center px-3"
+                >
+                  <FontAwesomeIcon icon={showPasswords ? faEyeSlash : faEye} />
+                </button>
+              </div>
             </div>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
@@ -80,22 +80,22 @@ const Login = () => {
                   checked={rememberMe}
                   onChange={() => setRememberMe(!rememberMe)}
                 />
-                <label htmlFor="rememberMe" className="text-sm text-gray-700">Remember Me</label>
+                <label htmlFor="rememberMe" className="text-sm text-gray-700">Se souvenir de moi</label>
               </div>
               <div className="text-right">
                 <Link to="/forgot-password" className="text-sm text-blue-500 hover:underline">
-                  Forgot your password?
+                  Mot de passe oublié ?
                 </Link>
               </div>
             </div>
             <button type="submit" onClick={handleLogin} className="w-full bg-blue-900 text-white py-2 rounded-md hover:bg-blue-800 transition">
-              Login
+              Se connecter
             </button>
           </form>
           <p className="text-center text-gray-600 mt-4">
             Vous n'avez pas de compte ?{" "}
             <Link to="/sign-up" className="text-blue-500 hover:underline">
-              Sign-up
+              S'inscrire
             </Link>
           </p>
           <p className="text-center text-gray-500 text-xs mt-6">
