@@ -16,7 +16,7 @@ const UserProfile = ({ user}) => {
     return (
         <div className="relative" >
             <button onClick={handleToggle} className="flex items-center space-x-3 focus:outline-none">
-                <img src={user.avatar} alt="User Avatar" className="w-12 h-12 rounded-full border-2 border-gray-300" />
+                <img src={user.avatar} alt="User Avatar" className="w-10 h-10 rounded-full border-2 border-gray-300" />
                 <span className="text-gray-800 font-semibold">{user.name}</span>
                 <svg className={`w-5 h-5 transform ${isOpen ? 'rotate-180' : 'rotate-0'} transition-transform`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />

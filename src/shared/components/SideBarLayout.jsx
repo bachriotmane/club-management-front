@@ -5,6 +5,7 @@ import UserProfile from './global/UserProfile'
 import loadedImageUrl from "../../assets/user7.jpg"
 import { BellIcon } from '@heroicons/react/24/solid'
 import {getUser} from "../../auth/auth.js";
+import fsts from "../../assets/fsts.png";
 
 function SideBarLayout() {
 
@@ -19,26 +20,28 @@ function SideBarLayout() {
           <div className='mr-2 w-[21%] h-[100vh] overflow-hidden'>
               <Sidebar/>
           </div>
-            <div className="flex-1 w-[78%] flex flex-col overflow-hidden">
-                <header className="flex items-center justify-center bg-white shadow-md p-4">
+            <div className="flex-1 w-full flex flex-col overflow-hidden">
+                <header className="flex items-center justify-center bg-white shadow-md p-2">
                     {/* <button className="text-gray-600 focus:outline-none md:hidden" onClick={toggleSidebar}>
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
                         </svg>
                     </button> */}
-
+                    <div className="mb-2 p-2">
+                        <img src={fsts} alt="logo" className="w-12 h-12 mx-auto" />
+                    </div>
 
                     <div className=" w-full flex items-center justify-end space-x-4 gap-4 ">
 
                     <div className="relative">
-                          <BellIcon className="h-9 w-9" />
+                          <BellIcon className="h-7 w-7" />
                           {count > 0 && (
                             <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1  text-xs font-bold leading-none text-red-100 bg-[#E49F13] rounded-full">
                               {count}
                             </span>
                           )}
                         </div>
-                        <UserProfile user={{ name: getUser().fullName ? getUser().fullName : "Unknown" , email: user.sub, avatar: loadedImageUrl }} />
+                        <UserProfile user={{ name: getUser()?.fullName ? getUser().fullName : "Unknown" , email: user.sub, avatar: loadedImageUrl }} />
                     </div>
                 </header>
                 <main className="overflow-y-auto p-6 bg-white overflow-x-hidden">
@@ -49,4 +52,4 @@ function SideBarLayout() {
   )
 }
 
-export default SideBarLayout
+export default SideBarLayout;
