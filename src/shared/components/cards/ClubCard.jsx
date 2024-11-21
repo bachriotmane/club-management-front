@@ -8,7 +8,7 @@ const ClubCard = ({ item, size = "grand" }) => {
     const widthClass = size === "petit" ? "max-w-xs" : "max-w-md"; 
 
     const handleNavigation = () => {
-        navigate(`/club/${item.id}`);
+        navigate(`/club/${item.uuid}`);
     };
 
     return (
@@ -28,7 +28,7 @@ const ClubCard = ({ item, size = "grand" }) => {
             </h3>
 
             <div className="relative mt-3 h-18 overflow-hidden">
-                <p className="text-gray-600 text-xs sm:text-sm md:text-base">
+                <p className="text-gray-600 text-xs sm:text-sm md:text-base line-clamp-3">
                     {item.description || ""}
                 </p>
             </div>
