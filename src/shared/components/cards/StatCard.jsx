@@ -19,7 +19,7 @@ const StatCard = ({ title, number, color, onClick }) => {
   return (
     
     <div
-      className={`${bgColor} text-white rounded-2xl p-6 flex flex-col justify-between items-start w-full sm:w-96 md:w-96 shadow-lg cursor-pointer`}
+      className={`${bgColor} text-white rounded-2xl p-6 flex flex-col justify-between items-start w-full shadow-lg cursor-pointer`}
       onClick={onClick} 
     >
       <h3 className="text-xs sm:text-sm md:text-base font-semibold text-left">{title}</h3>
