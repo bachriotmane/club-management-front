@@ -44,7 +44,7 @@ function SideBarLayout() {
                         <UserProfile user={{ name: getUser()?.fullName ? getUser().fullName : "Unknown" , email: user.sub, avatar: loadedImageUrl }} />
                     </div>
                 </header>
-                <main className="overflow-y-auto p-6 bg-white overflow-x-hidden">
+                <main className="scrollbar-thin scrollbar-thumb-primaryColor scrollbar-track-transparent overflow-y-scroll scrollbar-thumb-rounded-full p-6 bg-white overflow-x-hidden">
                     <Outlet />
                 </main>
             </div>

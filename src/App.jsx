@@ -9,9 +9,7 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  Outlet,
 } from "react-router-dom";
-import PrivateRoute from "./shared/components/auth/PrivateRoute.jsx";
 import Login from "./shared/components/auth/Login.jsx";
 import Unauthorized from "./shared/components/auth/Unauthorized.jsx";
 import NotFound from "./shared/components/auth/NotFound.jsx";
@@ -28,6 +26,8 @@ import SignUp from "./shared/components/auth/SignUp.jsx";
 import Confirmation from "./shared/components/auth/Confirmation.jsx";
 import ChangePasswordPage from "./shared/components/auth/ChangePassword.jsx";
 import Historiques from "./features/historiques/historiques.jsx";
+import DeposeDemande from "./features/deposer demande/demande.depose.jsx";
+import DemandeHistorique from "./features/demande historique/DemandeHistorique.jsx";
 
 function App() {
   return (
@@ -44,7 +44,9 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/demandes" element={<DemandesListing />} />
+          <Route path="/demandes/deposer" element={<DeposeDemande />} />
           <Route path="/demandes/:id" element={<DemandeDetails />} />
+          <Route path="/demandes/historique/:id" element={<DemandeHistorique />} />
           <Route path="/club/:uuid" element={<ClubDetails />} />
           <Route path="/club/:uuid/membres" element={<ClubMembersListing />} />
           <Route path="/events" element={<EventsListing />} />

@@ -5,6 +5,8 @@ import {
   getDemandes,
   updateDemandeStatus,
 } from "../../repositories/Demandes.repository"; // Import de la fonction
+import { AiOutlinePlus } from "react-icons/ai";
+
 
 const DemandesListing = () => {
   const [demandes, setDemandes] = useState([]); // État pour stocker les demandes
@@ -96,7 +98,16 @@ const DemandesListing = () => {
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="my-2 text-2xl">Demandes</h1>
+        <div className="flex gap-5 justify-end items-center">
+            <button
+                onClick={()=>navigate("/demandes/deposer")}
+                className="flex items-center p-3 gap-1 rounded-2xl bg-primaryColor font-bold text-white"
+            >
+                <AiOutlinePlus className="text-2xl"/>
+                Dépose une demande
+            </button>
+        </div>
+        <h1 className="my-2 text-2xl">Demandes</h1>
 
       {/* Menu déroulant pour filtrer par type */}
       <div className="mb-4">
@@ -191,7 +202,7 @@ const DemandesListing = () => {
                 </div>
               </td>
               <td className="text-center">
-                <button onClick={()=>navigate(`/historiques/${demande.id}`)} className="bg-orange-500 p-2 text-white font-bold rounded-xl">historique</button>
+                <button onClick={()=>navigate(`/demandes/historique/${demande.id}`)} className="bg-orange-500 p-2 text-white font-bold rounded-xl">historique</button>
               </td>
             </tr>
           ))}
