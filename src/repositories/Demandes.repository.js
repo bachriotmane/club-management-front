@@ -1,4 +1,5 @@
 import axios from "axios";
+import axiosInstance from "../auth/axios";
 
 // Récupérer toutes les demandes
 // Récupérer toutes les demandes avec pagination
@@ -14,14 +15,14 @@ export const getDemandes = async ({ page, size, type }) => {
   // Effectuer la requête
   console.log("url:", url);
 
-  const response = await axios.get(url);
+  const response = await axiosInstance.get(url);
   return response.data;
 };
 
 // Mettre à jour le statut d'une demande
 export const updateDemandeStatus = async (id, statutDemande) => {
   try {
-    const response = await axios.put(
+    const response = await axiosInstance.put(
       `http://localhost:8080/demandes/${id}/status`,
       JSON.stringify(statutDemande), // Statut envoyé comme une chaîne JSON
       {
