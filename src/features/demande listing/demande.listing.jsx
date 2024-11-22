@@ -4,6 +4,8 @@ import Swal from "sweetalert2"; // Import de SweetAlert2
 import {
   getDemandes,
   updateDemandeStatus,
+} from "../../repositories/Demandes.repository";
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx"; // Import de la fonction
 } from "../../repositories/Demandes.repository"; // Import de la fonction
 import { AiOutlinePlus } from "react-icons/ai";
 
@@ -13,7 +15,7 @@ const DemandesListing = () => {
   const [currentPage, setCurrentPage] = useState(1); // Page actuelle
   const [totalPages, setTotalPages] = useState(0); // Nombre total de pages
   const [totalItems, setTotalItems] = useState(0); // Nombre total d'éléments pour calculer les pages
-  const [filterType, setFilterType] = useState("ALL"); // "ALL" pour afficher toutes les demandes
+  const [filterType, setFilterType] = useState("INTEGRATION_CLUB"); // "ALL" pour afficher toutes les demandes
   const navigate = useNavigate();
 
   // Fonction pour récupérer les demandes depuis le backend avec pagination
@@ -110,41 +112,48 @@ const DemandesListing = () => {
         <h1 className="my-2 text-2xl">Demandes</h1>
 
       {/* Menu déroulant pour filtrer par type */}
-      <div className="mb-4">
-        <label className="mr-2">Filtrer par type:</label>
-        <select
-          value={filterType}
-          onChange={(e) => {
-            setFilterType(e.target.value); // Mettre à jour le filtre de type
-            setCurrentPage(1); // Réinitialiser à la première page lors du changement de filtre
-          }}
-          className="px-2 py-1 border rounded"
-        >
-          <option value="ALL">Tous</option>
-          <option value="CREATION_CLUB">Création de club</option>
-          <option value="INTEGRATION_CLUB">Intégration de club</option>
-          <option value="EVENEMENT">Événements</option>
-        </select>
-      </div>
+      <SecureComponenet role='ROLE_USER' requiredClubRole="ADMIN">
+        <div className="mb-4">
+          <label className="mr-2">Filtrer par type:</label>
+          <select
+              value={filterType}
+              onChange={(e) => {
+                setFilterType(e.target.value); // Mettre à jour le filtre de type
+                setCurrentPage(1); // Réinitialiser à la première page lors du changement de filtre
+              }}
+              className="px-2 py-1 border rounded"
+          >
+            <option value="ALL">Tous</option>
+            <SecureComponenet role='ROLE_USER' requiredClubRole="ADMIN">
+              <option value="INTEGRATION_CLUB">Intégration de club</option>
+            </SecureComponenet>
+
+            <SecureComponenet role='ROLE_ADMIN'>
+              <option value="CREATION_CLUB">Création de club</option>
+              <option value="EVENEMENT">Organisation d'evenement</option>
+            </SecureComponenet>
+          </select>
+        </div>
+      </SecureComponenet>
 
       <table className="min-w-full border">
         <thead className="bg-gray-100">
-          <tr>
-            <th className="px-4 py-2 border">ID</th>
-            <th className="px-4 py-2 border">CNE</th>
-            <th className="px-4 py-2 border">Date</th>
-            <th className="px-4 py-2 border">Status</th>
-            <th className="px-4 py-2 border">Action</th>
-            <th className="px-4 py-2 border">Historiques</th>
-          </tr>
+        <tr>
+          <th className="px-4 py-2 border">ID</th>
+          <th className="px-4 py-2 border">CNE</th>
+          <th className="px-4 py-2 border">Date</th>
+          <th className="px-4 py-2 border">Status</th>
+          <th className="px-4 py-2 border">Action</th>
+          <th className="px-4 py-2 border">Historiques</th>
+        </tr>
         </thead>
         <tbody>
-          {demandes.map((demande) => (
+        {demandes.map((demande) => (
             <tr
-              key={demande.id}// Cela ne se produira que lorsque vous cliquez sur les autres colonnes
-              className="cursor-pointer hover:bg-gray-100"
+                key={demande.id}// Cela ne se produira que lorsque vous cliquez sur les autres colonnes
+                className="cursor-pointer hover:bg-gray-100"
             >
-              <td className="px-4 py-2 border text-center" onClick={() => navigate(`/demandes/${demande.id}`)} >#12</td>
+              <td className="px-4 py-2 border text-center" onClick={() => navigate(`/demandes/${demande.id}`)}>#12</td>
               <td className="px-4 py-2 border text-center">
                 {demande.cne || "Non spécifié"}
               </td>

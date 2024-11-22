@@ -7,6 +7,7 @@ import {getDateRange} from "../../shared/components/utili/mappers.js";
 import logo from '../../assets/not-items-found.png';
 import {useNavigate} from "react-router-dom";
 import {getUser} from "../../auth/auth.js";
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 
 const PublicationsList = () => {
     const navigate = useNavigate();
@@ -87,20 +88,23 @@ const PublicationsList = () => {
     return (
         <>
             <div className="container w-full mx-auto py-8 px-4">
-                <div className="flex mb-2.5 justify-end items-center w-full">
-                    <button
-                        onClick={()=>navigate("/publication/create")}
-                        className="px-6 bg-orange-500 py-3 text-white font-semibold rounded-lg shadow-md hover:bg-orange-700 "
-                    >
-                        Create New Publication
-                    </button>
-                </div>
+                <SecureComponenet role='ROLE_USER' requiredClubRole='ADMIN'>
+                    <div className="flex mb-2.5 justify-end items-center w-full">
+                        <button
+                            onClick={() => navigate("/publication/create")}
+                            className="px-6 bg-orange-500 py-3 text-white font-semibold rounded-lg shadow-md hover:bg-orange-700 "
+                        >
+                            Ajouter une nouvelle publication
+                        </button>
+                    </div>
+                </SecureComponenet>
 
-            <FilterHeader
-                onTitleClicked={() => {
-                    setFilterDate("");
-                    fetchPubs(true);
-                }}
+
+                <FilterHeader
+                    onTitleClicked={() => {
+                        setFilterDate("");
+                        fetchPubs(true);
+                    }}
                     title="Publications"
                     searchTerm={searchKey}
                     setSearchTerm={setSearchKey}

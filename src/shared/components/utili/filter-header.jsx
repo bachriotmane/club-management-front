@@ -1,3 +1,5 @@
+import SecureComponenet from "./SecureComponenet.jsx";
+
 const FilterHeader = ({title,onTitleClicked, activeTab = "All", setActiveTab, filterDate, setFilterDate, searchTerm, setSearchTerm,onSearchComplete }) => {
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
@@ -17,18 +19,21 @@ const FilterHeader = ({title,onTitleClicked, activeTab = "All", setActiveTab, fi
                 >
                     All
                 </button>
-                <button
-                    onClick={() => setActiveTab("Publications")}
-                    className={`px-6 py-2 rounded-lg font-semibold transition duration-300 ${
-                        activeTab === "Publications"
-                            ? "bg-orange-500 text-white shadow-md"
-                            : "bg-orange-100 text-gray-700 hover:bg-orange-100"
-                    }`}
-                >
-                    For me
-                </button>
+                <SecureComponenet role='ROLE_USER'>
+                    <button
+                        onClick={() => setActiveTab("Publications")}
+                        className={`px-6 py-2 rounded-lg font-semibold transition duration-300 ${
+                            activeTab === "Publications"
+                                ? "bg-orange-500 text-white shadow-md"
+                                : "bg-orange-100 text-gray-700 hover:bg-orange-100"
+                        }`}
+                    >
+                        For me
+                    </button>
+                </SecureComponenet>
+
             </div>}
-            <div onClick={()=>onTitleClicked()} className="text-xl font-bold cursor-pointer">{title}</div>
+            <div onClick={() => onTitleClicked()} className="text-xl font-bold cursor-pointer">{title}</div>
             <div className="flex space-x-4 items-center">
                 <select
                     value={filterDate}

@@ -9,6 +9,7 @@ import {getUser} from "../../auth/auth.js";
 import HomeClubListing from '../clubs listing/HomeClubListing.jsx';
 import HomeEventsListing from '../events listing/HomeEventsListing.jsx';
 import HomePublicationListing from '../publication listing/HomePublicationListing.jsx';
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 
 const Home = () => {
 
@@ -81,7 +82,6 @@ const Home = () => {
     { id: "20", titre: "La Mode Durable", auteur: "Sara Jada", date: "2024-04-01", image: "/bac.jpeg", description: "Comment la mode peut devenir plus durable." },
   ];
 
-  console.log(getUser())
     return (
       <div className="space-y-10">
         <StatSection/>
