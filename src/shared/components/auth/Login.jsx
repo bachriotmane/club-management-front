@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import backgroundImage from "../../../assets/fstsImg.jpg";
+import backgroundImage from "../../../assets/fst_background.png";
 import campusImage from "../../../assets/fstsImg.jpg";
 
 import { toast, ToastContainer } from "react-toastify";
