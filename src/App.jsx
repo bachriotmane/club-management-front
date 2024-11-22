@@ -9,9 +9,7 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  Outlet,
 } from "react-router-dom";
-import PrivateRoute from "./shared/components/auth/PrivateRoute.jsx";
 import Login from "./shared/components/auth/Login.jsx";
 import Unauthorized from "./shared/components/auth/Unauthorized.jsx";
 import NotFound from "./shared/components/auth/NotFound.jsx";
@@ -27,6 +25,7 @@ import CreatePublication from "./features/create-new-pub/CreatePublication.jsx";
 import SignUp from "./shared/components/auth/SignUp.jsx";
 import Confirmation from "./shared/components/auth/Confirmation.jsx";
 import ChangePasswordPage from "./shared/components/auth/ChangePassword.jsx";
+import DeposeDemande from "./features/deposer demande/demande.depose.jsx";
 
 function App() {
   return (
@@ -43,6 +42,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/demandes" element={<DemandesListing />} />
+          <Route path="/demandes/deposer" element={<DeposeDemande />} />
           <Route path="/demandes/:id" element={<DemandeDetails />} />
           <Route path="/club/:uuid" element={<ClubDetails />} />
           <Route path="/club/:uuid/membres" element={<ClubMembersListing />} />

@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 export default {
   content: [
     "./index.html",
@@ -6,8 +7,14 @@ export default {
   ],
   darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primaryColor: "#E49F13",
+      },
+    },
   },
   plugins: [
+    // eslint-disable-next-line no-undef
+    require('tailwind-scrollbar'),
 ],
 }
