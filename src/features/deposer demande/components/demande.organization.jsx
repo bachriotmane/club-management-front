@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { useCreateEventDemande, useFetchAdminClubs } from "../../../repositories/demande.repository";
+import {
+  useCreateEventDemande,
+  useFetchAdminClubs,
+} from "../../../repositories/demande.repository";
 
 const DemandeOrganization = () => {
   const [demande, setDemande] = useState({
@@ -9,10 +12,11 @@ const DemandeOrganization = () => {
     eventDate: null,
     budget: 0,
   });
+
   const [clubId, setClubId] = useState("");
-  const {data,isLoading ,isError,error} = useFetchAdminClubs("");
-  const {createEventDemande,isPending} = useCreateEventDemande();
-  
+  const { data: clubs, isLoading, isError, error } = useFetchAdminClubs();
+  const { createEventDemande, isPending } = useCreateEventDemande();
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -21,26 +25,42 @@ const DemandeOrganization = () => {
       !demande.description ||
       !demande.location ||
       !demande.eventDate ||
-      demande.budget <= 0
+      demande.budget <= 0 ||
+      !clubId
     ) {
-      alert("Veuillez remplir tous les champs obligatoires.");
+      alert("Veuillez remplir tous les champs obligatoires correctement.");
       return;
     }
 
     const formattedDemande = {
       ...demande,
-      budget: parseInt(demande.budget, 10),
+      budget: parseFloat(demande.budget),
     };
-    createEventDemande({clubId,formattedDemande})
-    console.log("Demande soumise :", formattedDemande);
-    setDemande({
-      eventName: "",
-      description: "",
-      location: "",
-      eventDate: null,
-      budget: 0,
-    });
+
+    createEventDemande(
+      { clubId,formattedDemande },
+      {
+        onSuccess: () => {
+          alert("Votre demande a été soumise avec succès !");
+          setDemande({
+            eventName: "",
+            description: "",
+            location: "",
+            eventDate: null,
+            budget: 0,
+          });
+          setClubId("");
+        },
+        onError: (error) => {
+          console.error("Erreur lors de la soumission :", error);
+          alert("Une erreur est survenue. Veuillez réessayer.");
+        },
+      }
+    );
   };
+
+  if (isLoading) return <p>Chargement des clubs...</p>;
+  if (isError) return <p>Erreur : {error.message}</p>;
 
   return (
     <form
@@ -98,7 +118,7 @@ const DemandeOrganization = () => {
           }
           value={demande.budget}
           type="number"
-          min="1"
+          step="0.01"
           id="budget"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none"
           placeholder="Entrez le budget estimé"
@@ -152,14 +172,13 @@ const DemandeOrganization = () => {
         <select
           onChange={(e) => setClubId(e.target.value)}
           value={clubId}
-          required
           id="club"
           className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none"
         >
           <option value="" disabled>
             Sélectionnez un club
           </option>
-          {data.map((club) => (
+          {clubs?.map((club) => (
             <option key={club.clubId} value={club.clubId}>
               {club.clubName}
             </option>
@@ -169,9 +188,14 @@ const DemandeOrganization = () => {
 
       <button
         type="submit"
-        className="w-full col-span-2 bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        disabled={isPending}
+        className={`w-1/3 col-span-2 font-medium py-2 px-4 rounded-lg focus:ring-2 focus:ring-opacity-50 ${
+          isPending
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
+        }`}
       >
-        Soumettre
+        {isPending ? "Envoi en cours..." : "Soumettre"}
       </button>
     </form>
   );

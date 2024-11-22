@@ -1,50 +1,63 @@
 import { useState } from "react";
-import { useCreateEventDemande } from "../../../repositories/demande.repository";
+import { AiOutlineClose } from "react-icons/ai";
+import { useCreateClubDemande } from "../../../repositories/demande.repository";
 
-const DemandeOrganization = () => {
-  const [demande, setDemande] = useState({
-    eventName: "",
+const DemandeCreation = () => {
+  const [demandeCreation, setDemandeCreation] = useState({
+    nomClub: "",
     description: "",
-    location: "",
-    eventDate: null,
-    budget: 0,
+    instagram: "",
+    activities: [],
   });
+  const { createClubDemande, isPending } = useCreateClubDemande();
+  const [newActivity, setNewActivity] = useState("");
 
-  const { createEventDemande, isPending } = useCreateEventDemande();
+  const addActivity = () => {
+    if (newActivity.trim() === "") {
+      alert("L'activité ne peut pas être vide.");
+      return;
+    }
+    setDemandeCreation((prevState) => ({
+      ...prevState,
+      activities: [...prevState.activities, newActivity.trim()],
+    }));
+    setNewActivity("");
+  };
+
+  const removeActivity = (index) => {
+    setDemandeCreation((prevState) => ({
+      ...prevState,
+      activities: prevState.activities.filter((_, i) => i !== index),
+    }));
+  };
+
+  const isValidUrl = (url) => {
+    const regex = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-]*)*\/?$/;
+    return regex.test(url);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (
-      !demande.eventName ||
-      !demande.description ||
-      !demande.location ||
-      !demande.eventDate ||
-      demande.budget <= 0
-    ) {
-      alert("Veuillez remplir tous les champs obligatoires correctement.");
+    if (!demandeCreation.nomClub || !demandeCreation.description || demandeCreation.activities.length === 0) {
+      alert("Veuillez remplir tous les champs obligatoires.");
       return;
     }
 
-    const formattedDemande = {
-      ...demande,
-      budget: parseFloat(demande.budget),
-    };
+    if (demandeCreation.instagram && !isValidUrl(demandeCreation.instagram)) {
+      alert("Veuillez entrer un lien Instagram valide.");
+      return;
+    }
 
-    createEventDemande(formattedDemande, {
+    createClubDemande(demandeCreation, {
       onSuccess: () => {
         alert("Votre demande a été soumise avec succès !");
-        setDemande({
-          eventName: "",
+        setDemandeCreation({
+          nomClub: "",
           description: "",
-          location: "",
-          eventDate: null,
-          budget: 0,
+          instagram: "",
+          activities: [],
         });
-      },
-      onError: (error) => {
-        console.error("Erreur lors de la soumission :", error);
-        alert("Une erreur est survenue. Veuillez réessayer.");
       },
     });
   };
@@ -54,134 +67,107 @@ const DemandeOrganization = () => {
       onSubmit={handleSubmit}
       className="grid grid-cols-2 gap-x-5 mt-8 p-6 bg-white shadow-lg rounded-lg border border-gray-200"
     >
+      {/* Nom du club */}
       <div className="mb-4">
-        <label
-          htmlFor="nomEvenement"
-          className="font-bold text-sm block text-gray-700 mb-2"
-        >
-          Titre <span className="text-red-500">*</span>
+        <label htmlFor="nomClub" className="font-bold text-sm text-gray-700 mb-2">
+          Nom du club <span className="text-red-500">*</span>
         </label>
         <input
-          onChange={(e) =>
-            setDemande({ ...demande, eventName: e.target.value })
-          }
-          value={demande.eventName}
+          onChange={(e) => setDemandeCreation({ ...demandeCreation, nomClub: e.target.value })}
+          value={demandeCreation.nomClub}
           type="text"
-          id="nomEvenement"
+          id="nomClub"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none"
-          placeholder="Entrez le nom de l'événement"
+          placeholder="Entrez le nom du club"
         />
       </div>
 
+      {/* Lien Instagram */}
       <div className="mb-4">
-        <label
-          htmlFor="location"
-          className="font-bold text-sm block text-gray-700 mb-2"
-        >
-          Lieu <span className="text-red-500">*</span>
+        <label htmlFor="instagramLink" className="font-bold text-sm text-gray-700 mb-2">
+          Lien Instagram
         </label>
         <input
-          onChange={(e) =>
-            setDemande({ ...demande, location: e.target.value })
-          }
-          value={demande.location}
+          onChange={(e) => setDemandeCreation({ ...demandeCreation, instagram: e.target.value })}
+          value={demandeCreation.instagram}
           type="text"
-          id="location"
+          id="instagramLink"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none"
-          placeholder="Entrez le lieu de l'événement"
+          placeholder="Ajoutez le lien Instagram"
         />
       </div>
 
-      <div className="mb-4">
-        <label
-          htmlFor="budget"
-          className="font-bold text-sm block text-gray-700 mb-2"
-        >
-          Budget (en DH) <span className="text-red-500">*</span>
-        </label>
-        <input
-          onChange={(e) =>
-            setDemande({ ...demande, budget: e.target.value })
-          }
-          value={demande.budget}
-          type="number"
-          step="0.01"
-          id="budget"
-          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none"
-          placeholder="Entrez le budget estimé"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="dateTime"
-          className="font-bold text-sm block text-gray-700 mb-2"
-        >
-          Date et heure <span className="text-red-500">*</span>
-        </label>
-        <input
-          onChange={(e) =>
-            setDemande({ ...demande, eventDate: e.target.value })
-          }
-          value={demande.eventDate || ""}
-          type="datetime-local"
-          id="dateTime"
-          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none"
-        />
-      </div>
-
+      {/* Description */}
       <div className="mb-4 col-span-2">
-        <label
-          htmlFor="description"
-          className="font-bold text-sm block text-gray-700 mb-2"
-        >
+        <label htmlFor="description" className="font-bold text-sm block text-gray-700 mb-2">
           Description <span className="text-red-500">*</span>
         </label>
         <textarea
-          onChange={(e) =>
-            setDemande({ ...demande, description: e.target.value })
-          }
-          value={demande.description}
+          onChange={(e) => setDemandeCreation({ ...demandeCreation, description: e.target.value })}
+          value={demandeCreation.description}
           id="description"
           rows="4"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
-          placeholder="Décrivez l'événement..."
+          placeholder="Décrivez votre club..."
         ></textarea>
       </div>
 
+      {/* Activités */}
       <div className="mb-4 col-span-2">
-        <label
-          htmlFor="club"
-          className="font-bold text-sm block text-gray-700 mb-2"
-        >
-          Sélectionnez un club <span className="text-red-500">*</span>
+        <label htmlFor="activities" className="font-bold text-sm block text-gray-700 mb-2">
+          Activités <span className="text-red-500">*</span>
         </label>
-        <select
-          onChange={(e) =>
-            setDemande({ ...demande, club: e.target.value })
-          }
-          id="club"
-          className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none"
-        >
-          <option value="">Choisissez un club</option>
-          <option value="club1">Club 1</option>
-          <option value="club2">Club 2</option>
-        </select>
+        <div className="flex items-center gap-4">
+          <input
+            value={newActivity}
+            onChange={(e) => setNewActivity(e.target.value)}
+            type="text"
+            id="activities"
+            className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none"
+            placeholder="Ajoutez une activité"
+          />
+          <button
+            type="button"
+            onClick={addActivity}
+            aria-label="Ajouter une activité"
+            className="bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          >
+            Ajouter
+          </button>
+        </div>
+        <ul className="mt-4 gap-2 flex flex-wrap">
+          {demandeCreation.activities.map((activity, index) => (
+            <li
+              key={index}
+              className="flex items-center gap-2 bg-gray-100 p-2 rounded-lg border border-gray-300 mb-2"
+            >
+              <span className="font-bold text-gray-600">{index + 1}. </span>
+              <span>{activity}</span>
+              <button
+                type="button"
+                onClick={() => removeActivity(index)}
+                aria-label={`Supprimer l'activité ${activity}`}
+                className="text-red-500 font-bold hover:text-red-700"
+              >
+                <AiOutlineClose />
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
 
+      {/* Bouton Soumettre */}
       <button
         type="submit"
         disabled={isPending}
-        className={`w-full col-span-2 font-medium py-2 px-4 rounded-lg focus:ring-2 focus:ring-opacity-50 ${
-          isPending
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
+        className={`w-1/2 font-medium py-2 px-4 rounded-lg focus:ring-2 focus:ring-opacity-50 ${
+          isPending ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
         }`}
       >
-        {isPending ? "Envoi en cours..." : "Soumettre"}
+        Soumettre
       </button>
     </form>
   );
 };
 
-export default DemandeOrganization;
+export default DemandeCreation;

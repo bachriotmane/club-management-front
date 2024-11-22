@@ -29,7 +29,7 @@ const DemandeIntegration = () => {
       onSubmit={handleSubmit}
       className=" mt-8 p-6 bg-white shadow-lg rounded-lg border border-gray-200"
     >
-      <div className="mb-4 w-1/3">
+      <div className="mb-4 ">
         <label htmlFor="demandeType" className="font-bold block  text-gray-700 mb-2">
           Club <span className="text-red-500">*</span>
         </label>
@@ -53,7 +53,7 @@ const DemandeIntegration = () => {
         </select>
       </div>
 
-      <div className="mb-4 w-1/2">
+      <div className="mb-4 ">
         <label htmlFor="motivation" className="font-bold block text-gray-700 mb-2">
           Motivation <span className="text-red-500">*</span>
         </label>
