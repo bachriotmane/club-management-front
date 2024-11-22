@@ -13,13 +13,23 @@ export const useFetchNotJoinedClubs = () => {
   return { isLoading, isError, data ,error};
 };
 
+export const useFetchAdminClubs = () => {
+  const { data } = useQuery({
+    queryKey: ['clubsListAdmin'],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get('/clubs/adminClub');
+      return data;
+    },
+  });
+  return {data};
+};
+
 export const useCreateIntegrationDemande = () => {
   const queryClient = useQueryClient();
   const { mutate: createIntegrationDemande, isPending } = useMutation({
     mutationFn: ({ clubId, motivation }) => axiosInstance.post(`/demandes/integration/depose?clubId=${clubId}`, { motivation }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clubsList'] });
-      toast.success('Demande hhhhh');
     },
     onError: (error) => {
       toast.error(error.response.data.msg);
@@ -27,9 +37,10 @@ export const useCreateIntegrationDemande = () => {
   });
   return { createIntegrationDemande, isPending };
 }; 
+
 export const useCreateClubDemande = () => {
   const { mutate: createClubDemande, isPending } = useMutation({
-    mutationFn: (demandeCreation) => axiosInstance.post(`/demandes/organization/depose?clubId${clubId}`, { motivation }),
+    mutationFn: (demandeCreation) => axiosInstance.post(`/demandes/creation/depose`, demandeCreation ),
     onSuccess: () => {
       toast.success('Demande hhhhh');
     },
