@@ -38,7 +38,7 @@ const SecureComponent = ({ role, clubId, requiredClubRole, children }) => {
             let authorized = false;
 
             // Global role check
-            if (role && currentUser.authorities?.includes(role)) {
+            if (role && currentUser?.authorities?.includes(role)) {
                 authorized = true;
             }
 
