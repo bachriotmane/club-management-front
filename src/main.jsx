@@ -13,7 +13,7 @@ createRoot(document.getElementById('root')).render(
       <UserProvider>
         <App />
       </UserProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   </React.StrictMode>
 );
