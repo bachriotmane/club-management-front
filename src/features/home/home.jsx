@@ -85,7 +85,7 @@ const Home = () => {
     return (
       <div className="space-y-10">
         <StatSection/>
-        <HomeClubListing /> HomeEventsListing
+        <HomeClubListing /> 
         <HomeEventsListing />
         <HomePublicationListing />
       </div>
