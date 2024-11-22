@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2"; // Import de SweetAlert2
-import {
-  getDemandes,
-  updateDemandeStatus,
-} from "../../repositories/Demandes.repository";
-import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx"; // Import de la fonction
-} from "../../repositories/Demandes.repository"; // Import de la fonction
+import {getDemandes, updateDemandeStatus,} from "../../repositories/Demandes.repository";
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx"; // Import de la fonction} from "../../repositories/Demandes.repository"; // Import de la fonction
 import { AiOutlinePlus } from "react-icons/ai";
 
 
@@ -100,16 +96,18 @@ const DemandesListing = () => {
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
+      <SecureComponenet role='ROLE_USER'>
         <div className="flex gap-5 justify-end items-center">
-            <button
-                onClick={()=>navigate("/demandes/deposer")}
-                className="flex items-center p-3 gap-1 rounded-2xl bg-primaryColor font-bold text-white"
-            >
-                <AiOutlinePlus className="text-2xl"/>
-                Dépose une demande
-            </button>
+          <button
+              onClick={() => navigate("/demandes/deposer")}
+              className="flex items-center p-3 gap-1 rounded-2xl bg-primaryColor font-bold text-white"
+          >
+            <AiOutlinePlus className="text-2xl"/>
+            Dépose une demande
+          </button>
         </div>
-        <h1 className="my-2 text-2xl">Demandes</h1>
+      </SecureComponenet>
+      <h1 className="my-2 text-2xl">Demandes</h1>
 
       {/* Menu déroulant pour filtrer par type */}
       <SecureComponenet role='ROLE_USER' requiredClubRole="ADMIN">
