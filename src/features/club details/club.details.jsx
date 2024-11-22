@@ -9,7 +9,7 @@ import { getClubById } from "../../repositories/clubs.repository";
 import LoadingSpinner from "../../shared/components/utili/LoadingCompnent";
 import ErrorMessage from "../../shared/components/utili/ErrorComponent";
 import apiErrorHandler from "../../shared/components/utili/apiErrorHandler";
-import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
+import { getImage } from "../../repositories/image.repository";
 
 const ClubDetails = () => {
   const { uuid } = useParams();
@@ -18,6 +18,7 @@ const ClubDetails = () => {
   const [club, setClub] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imageUrl, setLogoUrl] = useState(null);
 
   const activityColors = [
     "bg-blue-100 text-blue-700",
@@ -29,25 +30,31 @@ const ClubDetails = () => {
   ];
 
   useEffect(() => {
-    const fetchClubDetails = async () => {
+    const fetchClubData = async () => {
       try {
         const data = await getClubById(uuid);
-
+  
         if (data.errorCode) {
           throw new Error(data.errorMessage);
         }
-
+  
         setClub(data.data);
+  
+        if (data.data.logo) {
+          const imageUrl = await getImage(data.data.logo);
+          setLogoUrl(imageUrl);
+        }
       } catch (err) {
-        const errorMessage = apiErrorHandler(err); 
-        setError(errorMessage); 
+        const errorMessage = apiErrorHandler(err);
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchClubDetails();
+  
+    fetchClubData();
   }, [uuid]);
+  
 
   if (loading) {
     return <LoadingSpinner />;
@@ -65,7 +72,7 @@ const ClubDetails = () => {
 
       <div className="container mx-auto grid gap-8 grid-cols-1 lg:grid-cols-2 items-start">
         <img
-          src={club.logo || "/default-image.jpg"}
+          src={imageUrl || "/default-image.jpg"}
           alt={club.nom}
           className="h-[25rem] w-full rounded-lg object-cover "
         />
@@ -159,21 +166,18 @@ const ClubDetails = () => {
             </a>
 
             <div className="absolute bottom-0 right-0 flex space-x-4 mb-4">
-              <SecureComponenet role='ROLE_USER' clubId={club.id} requiredClubRole="ADMIN" >
-                <button
-                    className="text-gray-600 hover:text-gray-700"
-                    aria-label="Edit Club"
-                >
-                  <BiEditAlt size={24}/>
-                </button>
-              </SecureComponenet>
-
-              {/*<button*/}
-              {/*  className="text-red-500 hover:text-red-600"*/}
-              {/*  aria-label="Delete Club"*/}
-              {/*>*/}
-              {/*  <RiDeleteBinLine size={24} />*/}
-              {/*</button>*/}
+              <button
+                className="text-gray-600 hover:text-gray-700"
+                aria-label="Edit Club"
+              >
+                <BiEditAlt size={24} />
+              </button>
+              <button
+                className="text-red-500 hover:text-red-600"
+                aria-label="Delete Club"
+              >
+                <RiDeleteBinLine size={24} />
+              </button>
             </div>
           </div>
         </div>
