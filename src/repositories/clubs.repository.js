@@ -30,7 +30,7 @@ export const getClubById = async (uuid) => {
 };
 export const getClubMembers = async ({ uuid, page, size, studentName ="" }) => {
   try {
-    console.log("studentName="+studentName);
+
     const response = await axiosInstance.get(
       `${apiUrl}/club/${uuid}/members`,
       {

@@ -16,7 +16,6 @@ const ForgetPassword = () => {
     event.preventDefault();
 
     if (password !== confirmPassword) {
-      console.log("passwords do not match")
       toast.error('Passwords do not match!');
       return;
     }

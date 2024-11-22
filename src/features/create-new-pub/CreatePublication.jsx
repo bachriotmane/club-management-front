@@ -18,11 +18,9 @@ const CreatePublication = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    console.log()
     const fetchClubs = async () => {
         try {
             setIsLoading(true);
-            console.log("Current user : ",getUser())
             const resp = await getClubsForUser(getUser().id);
             setClubsList(resp.data);
         } catch (err) {
@@ -63,7 +61,6 @@ const CreatePublication = () => {
         try {
             await createNewPublication(publicationBody);
             setIsSubmitted(true);
-            console.log("Publication created successfully.");
             setTimeout(() => navigate("/publications"), 2000);
         } catch (err) {
             setError(err.message || "Failed to create publication.");

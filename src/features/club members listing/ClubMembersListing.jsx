@@ -6,6 +6,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import apiErrorHandler from "../../shared/components/utili/apiErrorHandler";
 import ErrorMessage from "../../shared/components/utili/ErrorComponent";
 import LoadingSpinner from "../../shared/components/utili/LoadingCompnent";
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 
 const ClubMembersListing = () => {
   const { uuid } = useParams();
@@ -112,7 +113,10 @@ const ClubMembersListing = () => {
             <th className="px-4 py-2 border">Date d'Intégration</th>
             <th className="px-4 py-2 border">Filière</th>
             <th className="px-4 py-2 border">Rôle</th>
-            <th className="px-4 py-2 border text-center">Actions</th>
+            <SecureComponenet role='ROLE_USER' clubId={uuid.id} requiredClubRole={"ADMIN"}>
+              <th className="px-4 py-2 border text-center">Actions</th>
+            </SecureComponenet>
+
           </tr>
         </thead>
         <tbody>
@@ -143,36 +147,39 @@ const ClubMembersListing = () => {
                 {member.filiere || "Non spécifiée"}
               </td>
               <td className="px-4 py-2 border text-center">{member.role}</td>
-              <td className="px-4 py-2 border text-center">
-                <button
-                  className="text-blue-500 hover:text-blue-700 mr-2"
-                  aria-label="Edit Member"
-                >
-                  <BiEditAlt size={24} />
-                </button>
-                <button
-                  className="text-red-500 hover:text-red-600"
-                  aria-label="Delete Member"
-                >
-                  <RiDeleteBinLine size={24} />
-                </button>
-              </td>
+              <SecureComponenet role='ROLE_USER' clubId={uuid.id} requiredClubRole="ADMIN">
+                <td className="px-4 py-2 border text-center">
+                  <button
+                      className="text-blue-500 hover:text-blue-700 mr-2"
+                      aria-label="Edit Member"
+                  >
+                    <BiEditAlt size={24}/>
+                  </button>
+                  <button
+                      className="text-red-500 hover:text-red-600"
+                      aria-label="Delete Member"
+                  >
+                    <RiDeleteBinLine size={24}/>
+                  </button>
+                </td>
+              </SecureComponenet>
+
             </tr>
           ))}
         </tbody>
       </table>
 
       {members.length > 0 && (
-        <div className="flex justify-center space-x-2 mt-4">
-          <button
-            disabled={page === 1}
-            onClick={() => handlePageChange(page - 1)}
-            className={`px-2 py-1 rounded ${page === 1 ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-400"}`}
-          >
-            Précédent
-          </button>
-          {[...Array(totalPages)].map((_, i) => (
+          <div className="flex justify-center space-x-2 mt-4">
             <button
+                disabled={page === 1}
+                onClick={() => handlePageChange(page - 1)}
+                className={`px-2 py-1 rounded ${page === 1 ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-400"}`}
+            >
+              Précédent
+            </button>
+            {[...Array(totalPages)].map((_, i) => (
+                <button
               key={i}
               onClick={() => handlePageChange(i + 1)}
               className={`px-2 py-1 rounded ${page === i + 1 ? "bg-blue-400 text-white" : "bg-gray-200"}`}

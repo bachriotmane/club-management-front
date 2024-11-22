@@ -30,7 +30,6 @@ const Profile = () => {
         const response = await axiosInstance.get(`/user/${getUserId}`);
         setUser(response.data);
       } catch (err) {
-        console.log(err);
         setError("Failed to fetch user data");
       } finally {
         setLoading(false);

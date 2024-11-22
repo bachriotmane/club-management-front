@@ -3,6 +3,7 @@ import ClubCard from "../../shared/components/cards/ClubCard";
 import { getClubs } from "../../repositories/clubs.repository";
 import noFindImage from "../../assets/not-items-found.png";
 import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 
 const ClubsListingPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -86,20 +87,23 @@ const ClubsListingPage = () => {
           >
             Tous les clubs
           </button>
-          <button
-            onClick={() => handleViewChange("myClubs")}
-            className={`px-4 py-2 rounded-full font-semibold ${activeView === "myClubs" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
-          >
-            Mes Clubs
-          </button>
+          <SecureComponenet role='ROLE_USER'>
+            <button
+                onClick={() => handleViewChange("myClubs")}
+                className={`px-4 py-2 rounded-full font-semibold ${activeView === "myClubs" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
+            >
+              Mes Clubs
+            </button>
+          </SecureComponenet>
+
         </div>
 
         <input
-          type="text"
-          placeholder="Rechercher un club..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className="p-3 border border-gray-300 rounded-full w-1/3"
+            type="text"
+            placeholder="Rechercher un club..."
+            value={searchQuery}
+            onChange={handleSearch}
+            className="p-3 border border-gray-300 rounded-full w-1/3"
         />
       </div>
 
