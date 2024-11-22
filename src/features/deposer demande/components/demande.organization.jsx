@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useCreateEventDemande, useFetchAdminClubs } from "../../../repositories/demande.repository";
 
 const DemandeOrganization = () => {
   const [demande, setDemande] = useState({
@@ -8,11 +9,13 @@ const DemandeOrganization = () => {
     eventDate: null,
     budget: 0,
   });
-
+  const [clubId, setClubId] = useState("");
+  const {data,isLoading ,isError,error} = useFetchAdminClubs("");
+  const {createEventDemande,isPending} = useCreateEventDemande();
+  
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validation des champs obligatoires
     if (
       !demande.eventName ||
       !demande.description ||
@@ -24,16 +27,12 @@ const DemandeOrganization = () => {
       return;
     }
 
-    // Conversion du budget en entier
     const formattedDemande = {
       ...demande,
       budget: parseInt(demande.budget, 10),
     };
-
-    // Simulation de l'envoi des données (remplacez par votre fonction d'API)
+    createEventDemande({clubId,formattedDemande})
     console.log("Demande soumise :", formattedDemande);
-
-    alert("Votre demande a été soumise avec succès !");
     setDemande({
       eventName: "",
       description: "",
@@ -48,7 +47,6 @@ const DemandeOrganization = () => {
       onSubmit={handleSubmit}
       className="grid grid-cols-2 gap-x-5 mt-8 p-6 bg-white shadow-lg rounded-lg border border-gray-200"
     >
-      {/* Titre */}
       <div className="mb-4">
         <label
           htmlFor="nomEvenement"
@@ -68,7 +66,6 @@ const DemandeOrganization = () => {
         />
       </div>
 
-      {/* Lieu */}
       <div className="mb-4">
         <label
           htmlFor="location"
@@ -88,7 +85,6 @@ const DemandeOrganization = () => {
         />
       </div>
 
-      {/* Budget */}
       <div className="mb-4">
         <label
           htmlFor="budget"
@@ -109,7 +105,6 @@ const DemandeOrganization = () => {
         />
       </div>
 
-      {/* Date et heure */}
       <div className="mb-4">
         <label
           htmlFor="dateTime"
@@ -128,7 +123,6 @@ const DemandeOrganization = () => {
         />
       </div>
 
-      {/* Description */}
       <div className="mb-4 col-span-2">
         <label
           htmlFor="description"
@@ -148,7 +142,6 @@ const DemandeOrganization = () => {
         ></textarea>
       </div>
 
-      {/* Sélection du club */}
       <div className="mb-4 col-span-2">
         <label
           htmlFor="club"
@@ -157,19 +150,23 @@ const DemandeOrganization = () => {
           Sélectionnez un club <span className="text-red-500">*</span>
         </label>
         <select
-          onChange={(e) =>
-            setDemande({ ...demande, club: e.target.value })
-          }
+          onChange={(e) => setClubId(e.target.value)}
+          value={clubId}
+          required
           id="club"
           className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none"
         >
-          <option value="">Choisissez un club</option>
-          <option value="club1">Club 1</option>
-          <option value="club2">Club 2</option>
+          <option value="" disabled>
+            Sélectionnez un club
+          </option>
+          {data.map((club) => (
+            <option key={club.clubId} value={club.clubId}>
+              {club.clubName}
+            </option>
+          ))}
         </select>
       </div>
 
-      {/* Bouton Soumettre */}
       <button
         type="submit"
         className="w-full col-span-2 bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"

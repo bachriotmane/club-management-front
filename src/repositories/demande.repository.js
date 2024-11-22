@@ -14,14 +14,14 @@ export const useFetchNotJoinedClubs = () => {
 };
 
 export const useFetchAdminClubs = () => {
-  const { data } = useQuery({
+  const { data ,isLoading ,isError,error } = useQuery({
     queryKey: ['clubsListAdmin'],
     queryFn: async () => {
       const { data } = await axiosInstance.get('/clubs/adminClub');
       return data;
     },
   });
-  return {data};
+  return {data,isLoading ,isError,error};
 };
 
 export const useCreateIntegrationDemande = () => {
@@ -53,7 +53,7 @@ export const useCreateClubDemande = () => {
 
 export const useCreateEventDemande = () => {
   const { mutate: createEventDemande, isPending } = useMutation({
-    mutationFn: (formattedDemande) => axiosInstance.post(`/demandes/creation/depose`, formattedDemande ),
+    mutationFn: ({clubId,formattedDemande}) => axiosInstance.post(`/demandes/organization/depose?clubId=${clubId}`, formattedDemande ),
     onSuccess: () => {
       toast.success('Demande hhhhh');
     },
