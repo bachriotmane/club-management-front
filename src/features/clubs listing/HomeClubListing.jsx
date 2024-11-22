@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { getClubsHome } from "../../repositories/clubs.repository"; // Importation de la fonction API
-import Carousel from "../home/components/Carousel"; // Assure-toi que Carousel est bien importé
-import ClubCard from "../../shared/components/cards/ClubCard"; // Assure-toi que ClubCard est bien importé
+import { getClubsHome } from "../../repositories/clubs.repository"; 
+import Carousel from "../home/components/Carousel"; 
+import ClubCard from "../../shared/components/cards/ClubCard"; 
+import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx"; 
 
 const HomeClubListing = () => {
   const [clubs, setClubs] = useState([]);
@@ -15,7 +16,7 @@ const HomeClubListing = () => {
         const data = await getClubsHome({ limit: 7 });
         setClubs(data.data); 
       } catch (error) {
-        setError("Erreur lors du chargement des clubs");
+        setError("Network Error");
       } finally {
         setLoading(false);
       }
@@ -24,13 +25,33 @@ const HomeClubListing = () => {
     fetchClubsData();
   }, []); 
 
-  if (loading) return <div>Chargement...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center mt-20">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center w-full h-20 bg-red-200 rounded-lg mt-20">
+        <div className="text-center text-black font-bold text-2xl">
+          Oops! Something went wrong: {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10">
-     
-      <Carousel items={clubs} CardComponent={ClubCard} title="Liste des Clubs" />
+      <Carousel 
+  items={clubs} 
+  CardComponent={ClubCard} 
+  title="Clubs populaires" 
+  redirectUrl="/clubs" 
+/>
+
     </div>
   );
 };

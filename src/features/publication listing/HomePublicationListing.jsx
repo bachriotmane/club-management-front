@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getPublicationsHome } from "../../repositories/publications.repository"; // Assurez-vous d'importer correctement la fonction d'API
 import Carousel from "../home/components/Carousel"; // Assurez-vous que Carousel est bien importé
 import PublicationCard from "../../shared/components/cards/PublicationCard"; // Assurez-vous que PublicationCard est bien importé
+import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx"; 
 
 const HomePublicationListing = () => {
   const [publications, setPublications] = useState([]);
@@ -22,15 +23,26 @@ const HomePublicationListing = () => {
     };
 
     fetchPublicationsData();
-  }, []); // Appel de l'API au montage du composant
+  }, []); 
 
-  if (loading) return <div>Chargement...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center mt-20">
+        <LoadingSpinner />
+      </div>
+    );
+  }  if (error) return <div></div>;
 
   return (
     <div className="space-y-10">
-      {/* Affichage des publications dans un Carousel */}
-      <Carousel items={publications} CardComponent={PublicationCard} title="Liste des Publications" />
+      
+      <Carousel 
+      items={publications} 
+      CardComponent={PublicationCard} 
+      title="Publications récentes" 
+      redirectUrl="/publications" 
+    />
+
     </div>
   );
 };

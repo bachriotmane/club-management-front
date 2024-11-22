@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getEventsHome } from "../../repositories/evenements.repository"; 
 import Carousel from "../home/components/Carousel"; 
 import EventCard from "../../shared/components/cards/EventCard"; 
+import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx"; 
 
 const HomeEventsListing = () => {
   const [events, setEvents] = useState([]);
@@ -24,13 +25,25 @@ const HomeEventsListing = () => {
     fetchEventsData();
   }, []); 
 
-  if (loading) return <div>Chargement...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center mt-20">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+  if (error) return <div></div>;
 
   return (
     <div className="space-y-10">
       
-      <Carousel items={events} CardComponent={EventCard} title="Liste des Événements" />
+      <Carousel 
+  items={events} 
+  CardComponent={EventCard} 
+  title="Evenements populaires" 
+  redirectUrl="/events" 
+/>
+
     </div>
   );
 };

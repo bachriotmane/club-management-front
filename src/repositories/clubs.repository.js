@@ -47,7 +47,7 @@ export const getClubMembers = async ({ uuidClub, page, size, studentName }) => {
 export const getClubsHome = async ({ limit = 7 }) => {
   try {
     // Effectue la requête HTTP avec axios
-    const response = await axiosInstance.get(apiUrl, {
+    const response = await axiosInstance.get(apiUrl1, {
       params: {
         limit: limit,  
       },
