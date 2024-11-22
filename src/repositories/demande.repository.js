@@ -13,6 +13,19 @@ export const useFetchNotJoinedClubs = () => {
   return { isLoading, isError, data ,error};
 };
 
+export const useFetchDemandeHistorique = (demandeId) => {
+  const { isLoading, data, isError, error } = useQuery({
+    queryKey: ['historique', demandeId], 
+    queryFn: async () => {
+      const { data } = await axiosInstance.get(`demandes/historique/${demandeId}`);
+      return data;
+    },
+    enabled: !!demandeId,
+  });
+
+  return { isLoading, isError, data, error };
+};
+
 export const useFetchAdminClubs = () => {
   const { data ,isLoading ,isError,error } = useQuery({
     queryKey: ['clubsListAdmin'],

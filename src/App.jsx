@@ -26,6 +26,7 @@ import SignUp from "./shared/components/auth/SignUp.jsx";
 import Confirmation from "./shared/components/auth/Confirmation.jsx";
 import ChangePasswordPage from "./shared/components/auth/ChangePassword.jsx";
 import DeposeDemande from "./features/deposer demande/demande.depose.jsx";
+import DemandeHistorique from "./features/demande historique/DemandeHistorique.jsx";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route path="/demandes" element={<DemandesListing />} />
           <Route path="/demandes/deposer" element={<DeposeDemande />} />
           <Route path="/demandes/:id" element={<DemandeDetails />} />
+          <Route path="/demandes/historique/:id" element={<DemandeHistorique />} />
           <Route path="/club/:uuid" element={<ClubDetails />} />
           <Route path="/club/:uuid/membres" element={<ClubMembersListing />} />
           <Route path="/events" element={<EventsListing />} />
