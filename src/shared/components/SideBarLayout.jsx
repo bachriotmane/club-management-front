@@ -26,7 +26,7 @@ function SideBarLayout() {
         getImage(response.data.id).then((res) => {
           setUserImage(res);
         });
-      }) 
+      })
       .catch((error) => {
         console.error("Erreur lors de la récupération de l'image", error);
       });
@@ -55,7 +55,7 @@ function SideBarLayout() {
               user={{
                 name: getUser()?.fullName ? getUser().fullName : "Unknown",
                 email: user.sub,
-                avatar: !!userImage ? userImage : loadedImageUrl,
+                avatar: !userImage ? userImage : loadedImageUrl,
               }}
             />
           </div>
@@ -74,4 +74,4 @@ function SideBarLayout() {
   );
 }
 
-export default SideBarLayout;
+export default SideBarLayout
