@@ -10,6 +10,7 @@ import {getPublicationById} from "../../repositories/publications.repository.js"
 import {format} from "date-fns";
 import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
 import ErrorComponent from "../../shared/components/utili/ErrorComponent.jsx";
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 
 const publication = {
     title: "Paris Through the Lens",
@@ -116,15 +117,17 @@ const PublicationDetails = () => {
                                 }
                             </div>
                         </div>
+                        <SecureComponenet role="ROLE_USER" clubId={publicationDetails.clubId} requiredClubRole="ADMIN">
+                            <div className="flex items-center space-x-4 mt-4">
+                                <button className="text-gray-600 hover:text-gray-800">
+                                    <BiEditAlt size={30}/>
+                                </button>
+                                <button className="text-red-600 hover:text-red-800">
+                                    <RiDeleteBinLine size={30}/>
+                                </button>
+                            </div>
+                        </SecureComponenet>
 
-                        <div className="flex items-center space-x-4 mt-4">
-                            <button className="text-gray-600 hover:text-gray-800">
-                                <BiEditAlt size={30}/>
-                            </button>
-                            <button className="text-red-600 hover:text-red-800">
-                                <RiDeleteBinLine size={30}/>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </header>
