@@ -1,46 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2"; // Import de SweetAlert2
+import Swal from "sweetalert2";
 import {
   getDemandes,
   updateDemandeStatus,
-} from "../../repositories/Demandes.repository"; // Import de la fonction
+} from "../../repositories/Demandes.repository";
 
 const DemandesListing = () => {
-  const [demandes, setDemandes] = useState([]); // État pour stocker les demandes
-  const [currentPage, setCurrentPage] = useState(1); // Page actuelle
-  const [totalPages, setTotalPages] = useState(0); // Nombre total de pages
-  const [totalItems, setTotalItems] = useState(0); // Nombre total d'éléments pour calculer les pages
-  const [filterType, setFilterType] = useState("ALL"); // "ALL" pour afficher toutes les demandes
+  const [demandes, setDemandes] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [filterType, setFilterType] = useState("ALL");
   const navigate = useNavigate();
 
-  // Fonction pour récupérer les demandes depuis le backend avec pagination
   const fetchDemandes = async (page = 1) => {
     try {
-      const size = 10; // Nombre d'éléments par page
+      const size = 10;
       const response = await getDemandes({
         page: page - 1,
         size,
         type: filterType,
-      }); // Passer le type ici
-      setDemandes(response.content); // Mettre à jour les demandes
-      setTotalPages(response.totalPages); // Mettre à jour le nombre total de pages
-      setTotalItems(response.totalElements); // Mettre à jour le nombre total d'éléments
+      });
+      setDemandes(response.content);
+      setTotalPages(response.totalPages);
+      setTotalItems(response.totalElements);
     } catch (error) {
       console.error("Erreur lors de la récupération des demandes :", error);
     }
   };
 
-  // Charger les demandes au montage du composant et lorsque la page ou le filtre change
   useEffect(() => {
-    fetchDemandes(currentPage); // Charger les demandes pour la page actuelle
-  }, [currentPage, filterType]); // Recharger les demandes lorsque la page ou le type change
+    fetchDemandes(currentPage);
+  }, [currentPage, filterType]);
 
-  // Fonction pour mettre à jour le statut de la demande
   const handleStatusChange = async (demandeId, newStatus, event) => {
-    event.stopPropagation(); // Empêcher la propagation de l'événement de clic pour éviter la navigation
-
-    // Afficher la boîte de confirmation avant de procéder
+    event.stopPropagation();
     const result = await Swal.fire({
       title: "Êtes-vous sûr ?",
       text: `Voulez-vous vraiment ${
@@ -54,18 +49,13 @@ const DemandesListing = () => {
 
     if (result.isConfirmed) {
       try {
-        // Appel API pour mettre à jour le statut de la demande
         await updateDemandeStatus(demandeId, newStatus);
-
-        // Mettre à jour l'état local des demandes pour refléter le changement de statut
         const updatedDemandes = demandes.map((demande) =>
           demande.id === demandeId
-            ? { ...demande, statutDemande: newStatus } // Modifier le statut de la demande concernée
+            ? { ...demande, statutDemande: newStatus }
             : demande
         );
-        setDemandes(updatedDemandes); // Mettre à jour l'état local des demandes
-
-        // Afficher une alerte de succès
+        setDemandes(updatedDemandes);
         Swal.fire(
           "Succès!",
           `La demande a été ${
@@ -87,10 +77,9 @@ const DemandesListing = () => {
     }
   };
 
-  // Fonction pour changer de page
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page); // Mettre à jour la page actuelle
+      setCurrentPage(page);
     }
   };
 
@@ -98,14 +87,13 @@ const DemandesListing = () => {
     <div className="p-6 bg-white shadow-lg rounded-lg">
       <h1 className="my-2 text-2xl">Demandes</h1>
 
-      {/* Menu déroulant pour filtrer par type */}
       <div className="mb-4">
         <label className="mr-2">Filtrer par type:</label>
         <select
           value={filterType}
           onChange={(e) => {
-            setFilterType(e.target.value); // Mettre à jour le filtre de type
-            setCurrentPage(1); // Réinitialiser à la première page lors du changement de filtre
+            setFilterType(e.target.value);
+            setCurrentPage(1);
           }}
           className="px-2 py-1 border rounded"
         >
@@ -130,10 +118,11 @@ const DemandesListing = () => {
         <tbody>
           {demandes.map((demande) => (
             <tr
-              key={demande.id}// Cela ne se produira que lorsque vous cliquez sur les autres colonnes
+              key={demande.id}
               className="cursor-pointer hover:bg-gray-100"
+              onClick={() => navigate(`/demandes/${demande.id}`)}
             >
-              <td className="px-4 py-2 border text-center" onClick={() => navigate(`/demandes/${demande.id}`)} >#12</td>
+              <td className="px-4 py-2 border text-center">#{demande.id}</td>
               <td className="px-4 py-2 border text-center">
                 {demande.cne || "Non spécifié"}
               </td>
@@ -147,9 +136,7 @@ const DemandesListing = () => {
                       ? "bg-orange-500 text-white"
                       : demande.statutDemande === "ACCEPTE"
                       ? "bg-green-500 text-white"
-                      : demande.statutDemande === "REFUSE"
-                      ? "bg-red-500 text-white"
-                      : "bg-gray-500 text-white"
+                      : "bg-red-500 text-white"
                   } py-1 px-2 rounded-full font-semibold`}
                 >
                   {demande.statutDemande === "EN_COURS"
@@ -191,14 +178,18 @@ const DemandesListing = () => {
                 </div>
               </td>
               <td className="text-center">
-                <button onClick={()=>navigate(`/historiques/${demande.id}`)} className="bg-orange-500 p-2 text-white font-bold rounded-xl">historique</button>
+                <button
+                  onClick={() => navigate(`/historiques/${demande.id}`)}
+                  className="bg-orange-500 p-2 text-white font-bold rounded-xl"
+                >
+                  Historique
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* Pagination */}
       <div className="mt-4 flex justify-between">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
