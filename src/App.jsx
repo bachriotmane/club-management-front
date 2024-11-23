@@ -28,6 +28,8 @@ import ChangePasswordPage from "./shared/components/auth/ChangePassword.jsx";
 import Historiques from "./features/historiques/historiques.jsx";
 import DeposeDemande from "./features/deposer demande/demande.depose.jsx";
 import DemandeHistorique from "./features/demande historique/DemandeHistorique.jsx";
+import ChangeProfile from "./shared/components/auth/ChangeProfil.jsx";
+import PrivateRoute from "./shared/components/auth/PrivateRoute.jsx";
 
 function App() {
   return (
@@ -40,9 +42,11 @@ function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/confirmation" element={<Confirmation />} />
 
+      <Route element={<PrivateRoute />} >
         <Route element={<SideBarLayout />}>
           <Route index element={<Home />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
+          <Route path="/change-profile" element={<ChangeProfile />} />
           <Route path="/demandes" element={<DemandesListing />} />
           <Route path="/demandes/deposer" element={<DeposeDemande />} />
           <Route path="/demandes/:id" element={<DemandeDetails />} />
@@ -51,15 +55,14 @@ function App() {
           <Route path="/club/:uuid/membres" element={<ClubMembersListing />} />
           <Route path="/events" element={<EventsListing />} />
           <Route path="/event/:id" element={<EventDetails />} />
-          {/* <Route element={<PrivateRoute roles={['ROLE_ADMIN']} />}> */}
           <Route path="/clubs" element={<ClubsListingPage />} />
-          {/* </Route> */}
           <Route path="/publications" element={<PublicationsList />} />
           <Route path="/historiques/:id" element={<Historiques />} />
           <Route path="/publication/:id" element={<PublicationDetails />} />
           <Route path="/publication/create" element={<CreatePublication />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<Profile />} />
+        </Route>
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

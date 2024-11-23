@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   FaEnvelope,
   FaUserGraduate,
@@ -19,6 +19,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 const Profile = () => {
   const { id } = useParams();
+  const navigate = useNavigate(); // Initialize useNavigate hook
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -42,7 +43,7 @@ const Profile = () => {
         getImage(response.data?.imageCover).then((res) => {
           setCoverImage(res);
         });
-        console.log("user id ",getUserId);
+        console.log("user id ", getUserId);
       } catch (err) {
         console.log(err);
         setError("Failed to fetch user data");
@@ -64,7 +65,7 @@ const Profile = () => {
     if (!file) return;
 
     // Validate file type and size
-    const allowedTypes = ["image/jpeg", "image/png","image/jpg"];
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
     if (!allowedTypes.includes(file.type)) {
       toast.info("Only JPG or PNG images are allowed.");
       return;
@@ -102,44 +103,54 @@ const Profile = () => {
 
   return (
     <div className="max-w-4xl mx-auto bg-white shadow-2xl rounded-lg overflow-hidden mt-10 transform transition duration-500 hover:scale-105">
+      {/* Back Button */}
+      <div className="absolute top-4 left-4 z-10">
+        <button
+          onClick={() => navigate(-1)} // Navigate back when clicked
+          className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+        >
+          Back
+        </button>
+      </div>
+
       <div className="relative h-56 bg-cover bg-center group" style={{ backgroundImage: `url(${coverImage || back})` }}>
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-gray-900 opacity-50"></div>
         {
           getUser()?.id === getUserId &&
-        <div className="absolute top-4 right-4">
-          <label className="cursor-pointer">
-             <FaCamera className="text-white text-2xl opacity-75 hover:opacity-100 transition" />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleImageChange(e, "cover")}
-              className="hidden"
-              disabled={isUploading}
-            />
-          </label>
-        </div>
-  }
+          <div className="absolute top-4 right-4">
+            <label className="cursor-pointer">
+               <FaCamera className="text-white text-2xl opacity-75 hover:opacity-100 transition" />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageChange(e, "cover")}
+                className="hidden"
+                disabled={isUploading}
+              />
+            </label>
+          </div>
+        }
       </div>
 
       <div className="p-6 -mt-20 relative z-10 text-center">
         {/* Profile Image */}
         <div className="w-36 h-36 rounded-full bg-white overflow-hidden border-4 border-indigo-500 mx-auto shadow-lg relative group">
           <img src={profileImage || userImage} alt={`${user.firstName} ${user.lastName}`} className="w-full h-full object-cover" />
-       {
-          getUser()?.id === getUserId &&
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-            <label className="cursor-pointer">
-              <FaCamera className="text-white text-3xl" />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageChange(e, "profile")}
-                className="hidden"
-                disabled={isUploading}
-              />
-            </label>
-          </div>
-     }
+          {
+            getUser()?.id === getUserId &&
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+              <label className="cursor-pointer">
+                <FaCamera className="text-white text-3xl" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e, "profile")}
+                  className="hidden"
+                  disabled={isUploading}
+                />
+              </label>
+            </div>
+          }
         </div>
 
         {/* User Info */}
