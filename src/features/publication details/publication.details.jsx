@@ -165,7 +165,7 @@ const PublicationDetails = () => {
                         </div>
                         <SecureComponenet role="ROLE_USER" clubId={publicationDetails.clubId} requiredClubRole={"ADMIN"}>
                             <div className="flex items-center space-x-4 mt-4">
-                                <button className="text-gray-600 hover:text-gray-800">
+                                <button onClick={()=>navigate(`/publication/update/${publicationDetails.id}`)} className="text-gray-600 hover:text-gray-800">
                                     <BiEditAlt size={30}/>
                                 </button>
                                 <button onClick={handleDeletePublication} className="text-red-600 hover:text-red-800">
