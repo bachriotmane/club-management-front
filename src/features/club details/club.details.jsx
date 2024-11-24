@@ -14,6 +14,7 @@ import apiErrorHandler from "../../shared/components/utili/apiErrorHandler";
 import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 import { IoMdClose } from "react-icons/io";
 import { FaPlug, FaUserShield } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const ClubDetails = () => {
   const { uuid } = useParams();
@@ -117,7 +118,7 @@ const ClubDetails = () => {
       } else if (deleteChoice === "club") {
         await deleteClub(club.uuid);
         setClub(null); 
-        setStatusMessage("Club deleted successfully!");
+        toast.success("Club deleted successfully!");
         navigate("/clubs");
       }
     } catch (error) {
