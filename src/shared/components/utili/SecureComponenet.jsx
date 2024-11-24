@@ -16,12 +16,10 @@ const SecureComponent = ({ role, clubId, requiredClubRole, children }) => {
         const fetchCurrentUserRoles = async () => {
 
             try {
-
                 if (currentUser && currentUser.id) {
                     const { data: clubRolesResponse } = await axiosInstance.get(
                         `/clubs/${currentUser.id}/roles`
                     );
-                    console.log(clubRolesResponse)
 
                     setUserRolesInClubs(clubRolesResponse); // Expecting an array of clubs with roles
                 }
@@ -38,7 +36,7 @@ const SecureComponent = ({ role, clubId, requiredClubRole, children }) => {
             let authorized = false;
 
             // Global role check
-            if (role && currentUser?.authorities?.includes(role)) {
+            if (!requiredClubRole &&  role && currentUser?.authorities?.includes(role)) {
                 authorized = true;
             }
 
@@ -50,12 +48,12 @@ const SecureComponent = ({ role, clubId, requiredClubRole, children }) => {
                 }
             } else if(!requiredClubRole){
                 // Check for 'ADMIN' role in any club if no clubId is provided
-                const hasAdminRole = userRolesInClubs.some((club) => club.userRole === "ADMIN");
+                const hasAdminRole = userRolesInClubs.some((club) =>  club.userRole === "ADMIN");
                 if (hasAdminRole) {
                     authorized = true;
                 }
             }else if(requiredClubRole) {
-                authorized = userRolesInClubs.some((club) => club.userRole === requiredClubRole);
+                authorized = userRolesInClubs.some((club) => club.clubId === clubId && club.userRole === requiredClubRole);
                 console.log("Salam ",authorized)
             }
 

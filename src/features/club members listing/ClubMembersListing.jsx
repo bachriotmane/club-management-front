@@ -33,6 +33,9 @@ const ClubMembersListing = () => {
   const [selectedMember, setSelectedMember] = useState(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
+
+  const clubId = useParams().uuid;
+
   useEffect(() => {
     const fetchMembers = async () => {
       setLoading(true);
@@ -209,7 +212,7 @@ const ClubMembersListing = () => {
             <th className="px-4 py-2 border">Filière</th>
             <th className="px-4 py-2 border">Rôle</th>
             <th className="px-4 py-2 border">Fonction</th>
-            <SecureComponenet role='ROLE_USER' clubId={uuid.id} requiredClubRole={"ADMIN"}>
+            <SecureComponenet role='ROLE_USER' clubId={clubId} requiredClubRole={"ADMIN"}>
               <th className="px-4 py-2 border text-center">Actions</th>
             </SecureComponenet>
 
@@ -244,7 +247,7 @@ const ClubMembersListing = () => {
               </td>
               <td className="px-4 py-2 border text-center">{member.memberRole}</td>
               <td className="px-4 py-2 border text-center">{member.roleName}</td>
-              <SecureComponenet role='ROLE_USER' clubId={uuid.id} requiredClubRole="ADMIN">
+              <SecureComponenet role='ROLE_USER' clubId={clubId} requiredClubRole="ADMIN">
                 <td className="px-4 py-2 border text-center">
                 <button
                   className="text-blue-500 hover:text-blue-700 mr-2"

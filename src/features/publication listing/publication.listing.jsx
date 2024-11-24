@@ -8,6 +8,7 @@ import logo from '../../assets/not-items-found.png';
 import {useNavigate} from "react-router-dom";
 import {getUser} from "../../auth/auth.js";
 import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
+import {getImage} from "../../repositories/image.repository.js";
 
 const PublicationsList = () => {
     const navigate = useNavigate();
@@ -21,6 +22,14 @@ const PublicationsList = () => {
     const [error, setError] = useState(null);
     const [hasMore, setHasMore] = useState(true);
     const userId = getUser().id;
+
+    const fetchImage = async (id)=>{
+        try{
+            return await getImage(id);
+        }catch(_){
+            return null;
+        }
+    }
     const fetchPubs = async (reset = false) => {
         if (reset) {
             setPubs([]);
@@ -57,6 +66,27 @@ const PublicationsList = () => {
         });
     }, []);
 
+    const [images, setImages] = useState({}); // Store images with imageId as the key
+
+    useEffect(() => {
+        const fetchImages = async () => {
+            const fetchedImages = {};
+            for (const pub of pubs) {
+                if (pub?.imageId) {
+                    try {
+                        const image = await fetchImage(pub.imageId);
+                        fetchedImages[pub.imageId] = image;
+                    } catch (error) {
+                        fetchedImages[pub.imageId] = null;
+                    }
+                }
+            }
+            setImages(fetchedImages);
+        };
+
+        fetchImages();
+    }, [pubs]);
+
     useEffect(() => {
         setIsLoading(true);
         fetchPubs(true).then(() => {
@@ -84,11 +114,10 @@ const PublicationsList = () => {
             </div>
         );
     }
-
     return (
         <>
             <div className="container w-full mx-auto py-8 px-4">
-                <SecureComponenet role='ROLE_USER' requiredClubRole='ADMIN'>
+                <SecureComponenet role='ROLE_USER'>
                     <div className="flex mb-2.5 justify-end items-center w-full">
                         <button
                             onClick={() => navigate("/publication/create")}
@@ -126,8 +155,10 @@ const PublicationsList = () => {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {
-                                pubs.map((item, index) => (<PublicationCard key={index} item={item}/>
-                                ))
+                                pubs.map((item, index) => {
+                                    const image = images[item.imageId];
+                                    return <PublicationCard key={index} item={item} image={image} />;
+                                })
                             }
                         </div>
 
