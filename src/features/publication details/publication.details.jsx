@@ -13,6 +13,7 @@ import ErrorComponent from "../../shared/components/utili/ErrorComponent.jsx";
 import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 import {getImage} from "../../repositories/image.repository.js";
 import Swal from "sweetalert2";
+import {getClubById} from "../../repositories/clubs.repository.js";
 
 
 const publication = {
@@ -35,6 +36,7 @@ const PublicationDetails = () => {
     const [image, setImage] = useState(null);
     const [imageLoading, setImageLoading] = useState(true)
     const params = useParams();
+    const [clubLogo,setClubLogo] = useState(null);
 
     const fetchPublication = async () => {
         const resp = await getPublicationById(params.id);
@@ -93,6 +95,14 @@ const PublicationDetails = () => {
         if(publicationDetails && publicationDetails.imageId){
             fetchImage(publicationDetails.imageId);
         }
+        if(publicationDetails && publicationDetails.clubId){
+            getClubById(publicationDetails.clubId).then(response => {
+                getImage(response.data.logo).then(
+                    response => setClubLogo(response)
+                )
+            });
+
+        }
     }, [publicationDetails]);
 
     if (error){
@@ -127,7 +137,7 @@ const PublicationDetails = () => {
                     <div className="flex-grow w-full lg:w-1/2 space-y-3">
                         <div className="flex items-center space-x-1">
                             <img
-                                src={publication.organiser.image}
+                                src={clubLogo || "../default-image.jpg"}
                                 alt="not loaded"
                                 className="w-12 h-12 rounded-full object-cover border-2 border-amber-500"
                             />
