@@ -9,6 +9,7 @@ import { getClubById } from "../../repositories/clubs.repository";
 import LoadingSpinner from "../../shared/components/utili/LoadingCompnent";
 import ErrorMessage from "../../shared/components/utili/ErrorComponent";
 import apiErrorHandler from "../../shared/components/utili/apiErrorHandler";
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 
 const ClubDetails = () => {
   const { uuid } = useParams();
@@ -36,11 +37,8 @@ const ClubDetails = () => {
           throw new Error(data.errorMessage);
         }
 
-        console.log("Détails du club:", data.data);
         setClub(data.data);
       } catch (err) {
-        console.error("Erreur lors de la récupération des détails du club:", err.message);
-
         const errorMessage = apiErrorHandler(err); 
         setError(errorMessage); 
       } finally {
@@ -161,18 +159,21 @@ const ClubDetails = () => {
             </a>
 
             <div className="absolute bottom-0 right-0 flex space-x-4 mb-4">
-              <button
-                className="text-gray-600 hover:text-gray-700"
-                aria-label="Edit Club"
-              >
-                <BiEditAlt size={24} />
-              </button>
-              <button
-                className="text-red-500 hover:text-red-600"
-                aria-label="Delete Club"
-              >
-                <RiDeleteBinLine size={24} />
-              </button>
+              <SecureComponenet role='ROLE_USER' clubId={club.id} requiredClubRole="ADMIN" >
+                <button
+                    className="text-gray-600 hover:text-gray-700"
+                    aria-label="Edit Club"
+                >
+                  <BiEditAlt size={24}/>
+                </button>
+              </SecureComponenet>
+
+              {/*<button*/}
+              {/*  className="text-red-500 hover:text-red-600"*/}
+              {/*  aria-label="Delete Club"*/}
+              {/*>*/}
+              {/*  <RiDeleteBinLine size={24} />*/}
+              {/*</button>*/}
             </div>
           </div>
         </div>

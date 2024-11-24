@@ -1,27 +1,24 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { jwtDecode } from "jwt-decode";
 import ClubCard from "../../shared/components/cards/ClubCard";
 import { getClubs } from "../../repositories/clubs.repository";
 import noFindImage from "../../assets/not-items-found.png";
 import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 
 const ClubsListingPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [clubs, setClubs] = useState([]);
-  const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [activeView, setActiveView] = useState("all");
   const [currentPage, setCurrentPage] = useState(0);
   const [error, setError] = useState(null);
 
-  const fetchClubs = useCallback(async (page, size, nomClub = "", idUser = "") => {
-    console.log(idUser + " name club " + nomClub);
+  const fetchClubs = useCallback(async (page, size, nomClub = "", isMyClubs = false) => {
     setLoading(true);
     try {
-      const data = await getClubs({ page, size, nomClub, idUser });
-      setClubs((prevClubs) => [...prevClubs, ...data.data]); 
-      setTotalItems(data.totalItems);
+      const data = await getClubs({ page, size, nomClub, isMyClubs });
+      setClubs((prevClubs) => [...prevClubs, ...data.data]);
       setTotalPages(data.totalPages);
     } catch (error) {
       setError(error.message);
@@ -37,42 +34,30 @@ const ClubsListingPage = () => {
     }
   };
 
-  const getUserIdFromToken = () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        return decodedToken.id || "";
-      } catch (error) {
-        console.error("Invalid token format", error);
-      }
-    }
-    return 0;
-  };
+
 
   useEffect(() => {
-    const idUser = activeView === "all" ? "" : getUserIdFromToken();
-    setClubs([]); 
-    setCurrentPage(0); 
-    fetchClubs(0, 3, searchQuery, idUser); 
+    const isMyClubs = activeView === "all" ? false : true;
+    setClubs([]);
+    setCurrentPage(0);
+    fetchClubs(0, 3, searchQuery, isMyClubs);
   }, [activeView, searchQuery, fetchClubs]);
 
   useEffect(() => {
     if (currentPage > 0) {
-      const idUser = activeView === "all" ? "" : getUserIdFromToken();
-      fetchClubs(currentPage, 3, searchQuery, idUser);
+      const isMyClubs = activeView === "all" ? false : true;
+      fetchClubs(currentPage, 3, searchQuery, isMyClubs);
     }
   }, [currentPage, fetchClubs, searchQuery, activeView]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setClubs([]); 
+    setClubs([]);
     setCurrentPage(0);
   };
 
   const handleViewChange = (view) => {
     if (view === activeView) return;
-    
     setActiveView(view);
     setClubs([]);
     setCurrentPage(0);
@@ -102,20 +87,23 @@ const ClubsListingPage = () => {
           >
             Tous les clubs
           </button>
-          <button
-            onClick={() => handleViewChange("myClubs")}
-            className={`px-4 py-2 rounded-full font-semibold ${activeView === "myClubs" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
-          >
-            Mes Clubs
-          </button>
+          <SecureComponenet role='ROLE_USER'>
+            <button
+                onClick={() => handleViewChange("myClubs")}
+                className={`px-4 py-2 rounded-full font-semibold ${activeView === "myClubs" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
+            >
+              Mes Clubs
+            </button>
+          </SecureComponenet>
+
         </div>
 
         <input
-          type="text"
-          placeholder="Rechercher un club..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className="p-3 border border-gray-300 rounded-full w-1/3"
+            type="text"
+            placeholder="Rechercher un club..."
+            value={searchQuery}
+            onChange={handleSearch}
+            className="p-3 border border-gray-300 rounded-full w-1/3"
         />
       </div>
 
@@ -126,10 +114,11 @@ const ClubsListingPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {clubs.map((club) => (
-            <ClubCard key={club.uuid} item={club} />
-          ))}
-        </div>
+        {clubs.map((club, index) => (
+          <ClubCard key={`${club.uuid}-${index}`} item={club} />
+        ))}
+      </div>
+      
       )}
 
       {loading && (

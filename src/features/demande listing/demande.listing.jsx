@@ -1,76 +1,243 @@
-import {useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2"; // Import de SweetAlert2
+import {getDemandes, updateDemandeStatus,} from "../../repositories/Demandes.repository";
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx"; // Import de la fonction} from "../../repositories/Demandes.repository"; // Import de la fonction
+import { AiOutlinePlus } from "react-icons/ai";
 
-const imageTest = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyzTWQoCUbRNdiyorem5Qp1zYYhpliR9q0Bw&s';
-const demandes = [
-    { id: 1, date: '13/05/2024', demandeur: { name: 'John Doe', image: imageTest }, status: 'Accepte' },
-    { id: 2, date: '22/05/2024', demandeur: { name: 'Jane Smith', image:imageTest  }, status: 'Accepte' },
-    { id: 3, date: '15/06/2024', demandeur: { name: 'Alice Johnson', image: imageTest }, status: 'En cours' },
-    { id: 4, date: '06/09/2024', demandeur: { name: 'Bob Brown', image: imageTest }, status: 'En cours' },
-    { id: 5, date: '25/09/2024', demandeur: { name: 'Charlie Black', image: imageTest }, status: 'Rejete' },
-];
 
 const DemandesListing = () => {
-    const navigate = useNavigate();
-    return (
-        <div className="p-6 bg-white shadow-lg rounded-lg">
-            <h1 className='my-2 text-2xl'>Demandes</h1>
-            <table className="min-w-full border">
-                <thead className="bg-gray-100">
-                <tr>
-                    <th className="px-4 py-2 border">ID</th>
-                    <th className="px-4 py-2 border">Demandeur</th>
-                    <th className="px-4 py-2 border">Date</th>
-                    <th className="px-4 py-2 border">Status</th>
-                    <th className="px-4 py-2 border">Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                {demandes.map((demande) => (
-                    <tr key={demande.id} onClick={()=>navigate("/demandes/1")} className="cursor-pointer hover:bg-gray-100">
-                        <td className="px-4 py-2 border text-center">#{demande.id}</td>
-                        <td className="px-4 py-2 border flex items-center space-x-2">
-                            <img src={demande.demandeur.image} alt="Demandeur" className="w-8 h-8 rounded-full"/>
-                            <span className=" hover:underline hover:text-blue-700">{demande.demandeur.name}</span>
-                        </td>
-                        <td className="px-4 py-2 border text-center">{demande.date}</td>
-                        <td className="px-4 py-2 border text-center">
-                <span className={`px-3 py-1 rounded-full text-white ${getStatusClass(demande.status)}`}>
-                  {demande.status}
-                </span>
-                        </td>
-                        <td className="px-4 py-2 border text-center">
-                            <button className="text-green-500 hover:text-green-700 mx-1">
-                                &#10004;
-                            </button>
-                            <button className="text-red-500 hover:text-red-700 mx-1">
-                                &#10006;
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-            <div className="flex justify-center space-x-2 mt-4">
-                <button className="px-2 py-1 rounded bg-gray-200">1</button>
-                <button className="px-2 py-1 rounded bg-gray-200">2</button>
-                <span className="px-2 py-1">...</span>
-                <button className="px-2 py-1 rounded bg-gray-200">10</button>
-            </div>
-        </div>
-    );
-};
+  const [demandes, setDemandes] = useState([]); // État pour stocker les demandes
+  const [currentPage, setCurrentPage] = useState(1); // Page actuelle
+  const [totalPages, setTotalPages] = useState(0); // Nombre total de pages
+  const [totalItems, setTotalItems] = useState(0); // Nombre total d'éléments pour calculer les pages
+  const [filterType, setFilterType] = useState("INTEGRATION_CLUB"); // "ALL" pour afficher toutes les demandes
+  const navigate = useNavigate();
 
-const getStatusClass = (status) => {
-    switch (status) {
-        case 'Accepte':
-            return 'bg-green-400';
-        case 'En cours':
-            return 'bg-yellow-400';
-        case 'Rejete':
-            return 'bg-red-400';
-        default:
-            return 'bg-gray-200';
+  // Fonction pour récupérer les demandes depuis le backend avec pagination
+  const fetchDemandes = async (page = 1) => {
+    try {
+      const size = 10; // Nombre d'éléments par page
+      const response = await getDemandes({
+        page: page - 1,
+        size,
+        type: filterType,
+      }); // Passer le type ici
+      setDemandes(response.content); // Mettre à jour les demandes
+      setTotalPages(response.totalPages); // Mettre à jour le nombre total de pages
+      setTotalItems(response.totalElements); // Mettre à jour le nombre total d'éléments
+    } catch (error) {
+      console.error("Erreur lors de la récupération des demandes :", error);
     }
+  };
+
+  // Charger les demandes au montage du composant et lorsque la page ou le filtre change
+  useEffect(() => {
+    fetchDemandes(currentPage); // Charger les demandes pour la page actuelle
+  }, [currentPage, filterType]); // Recharger les demandes lorsque la page ou le type change
+
+  // Fonction pour mettre à jour le statut de la demande
+  const handleStatusChange = async (demandeId, newStatus, event) => {
+    event.stopPropagation(); // Empêcher la propagation de l'événement de clic pour éviter la navigation
+
+    // Afficher la boîte de confirmation avant de procéder
+    const result = await Swal.fire({
+      title: "Êtes-vous sûr ?",
+      text: `Voulez-vous vraiment ${
+        newStatus === "ACCEPTE" ? "accepter" : "refuser"
+      } cette demande ?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Oui",
+      cancelButtonText: "Annuler",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        // Appel API pour mettre à jour le statut de la demande
+        await updateDemandeStatus(demandeId, newStatus);
+
+        // Mettre à jour l'état local des demandes pour refléter le changement de statut
+        const updatedDemandes = demandes.map((demande) =>
+          demande.id === demandeId
+            ? { ...demande, statutDemande: newStatus } // Modifier le statut de la demande concernée
+            : demande
+        );
+        setDemandes(updatedDemandes); // Mettre à jour l'état local des demandes
+
+        // Afficher une alerte de succès
+        Swal.fire(
+          "Succès!",
+          `La demande a été ${
+            newStatus === "ACCEPTE" ? "acceptée" : "refusée"
+          } avec succès.`,
+          "success"
+        );
+      } catch (error) {
+        console.error(
+          "Erreur lors de la mise à jour du statut de la demande :",
+          error
+        );
+        Swal.fire(
+          "Erreur!",
+          "Une erreur est survenue lors de la mise à jour.",
+          "error"
+        );
+      }
+    }
+  };
+
+  // Fonction pour changer de page
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page); // Mettre à jour la page actuelle
+    }
+  };
+
+  return (
+    <div className="p-6 bg-white shadow-lg rounded-lg">
+      <SecureComponenet role='ROLE_USER'>
+        <div className="flex gap-5 justify-end items-center">
+          <button
+              onClick={() => navigate("/demandes/deposer")}
+              className="flex items-center p-3 gap-1 rounded-2xl bg-primaryColor font-bold text-white"
+          >
+            <AiOutlinePlus className="text-2xl"/>
+            Dépose une demande
+          </button>
+        </div>
+      </SecureComponenet>
+      <h1 className="my-2 text-2xl">Demandes</h1>
+
+      {/* Menu déroulant pour filtrer par type */}
+      <SecureComponenet role='ROLE_USER' requiredClubRole="ADMIN">
+        <div className="mb-4">
+          <label className="mr-2">Filtrer par type:</label>
+          <select
+              value={filterType}
+              onChange={(e) => {
+                setFilterType(e.target.value); // Mettre à jour le filtre de type
+                setCurrentPage(1); // Réinitialiser à la première page lors du changement de filtre
+              }}
+              className="px-2 py-1 border rounded"
+          >
+            <option value="ALL">Tous</option>
+            <SecureComponenet role='ROLE_USER' requiredClubRole="ADMIN">
+              <option value="INTEGRATION_CLUB">Intégration de club</option>
+            </SecureComponenet>
+
+            <SecureComponenet role='ROLE_ADMIN'>
+              <option value="CREATION_CLUB">Création de club</option>
+              <option value="EVENEMENT">Organisation d'evenement</option>
+            </SecureComponenet>
+          </select>
+        </div>
+      </SecureComponenet>
+
+      <table className="min-w-full border">
+        <thead className="bg-gray-100">
+        <tr>
+          <th className="px-4 py-2 border">ID</th>
+          <th className="px-4 py-2 border">CNE</th>
+          <th className="px-4 py-2 border">Date</th>
+          <th className="px-4 py-2 border">Status</th>
+          <th className="px-4 py-2 border">Action</th>
+          <th className="px-4 py-2 border">Historiques</th>
+        </tr>
+        </thead>
+        <tbody>
+        {demandes.map((demande) => (
+            <tr
+                key={demande.id}// Cela ne se produira que lorsque vous cliquez sur les autres colonnes
+                className="cursor-pointer hover:bg-gray-100"
+            >
+              <td className="px-4 py-2 border text-center" onClick={() => navigate(`/demandes/${demande.id}`)}>#12</td>
+              <td className="px-4 py-2 border text-center">
+                {demande.cne || "Non spécifié"}
+              </td>
+              <td className="px-4 py-2 border text-center">
+                {new Date(demande.date).toLocaleDateString()}
+              </td>
+              <td className="px-4 py-2 border text-center">
+                <span
+                  className={`${
+                    demande.statutDemande === "EN_COURS"
+                      ? "bg-orange-500 text-white"
+                      : demande.statutDemande === "ACCEPTE"
+                      ? "bg-green-500 text-white"
+                      : demande.statutDemande === "REFUSE"
+                      ? "bg-red-500 text-white"
+                      : "bg-gray-500 text-white"
+                  } py-1 px-2 rounded-full font-semibold`}
+                >
+                  {demande.statutDemande === "EN_COURS"
+                    ? "En cours"
+                    : demande.statutDemande === "ACCEPTE"
+                    ? "Acceptée"
+                    : "Refusée"}
+                </span>
+              </td>
+              <td className="px-4 py-2 border text-center">
+                <div>
+                  {demande.statutDemande === "EN_COURS" && (
+                    <div>
+                      <button
+                        onClick={(event) =>
+                          handleStatusChange(demande.id, "ACCEPTE", event)
+                        }
+                        className="text-green-500 hover:text-green-700 mx-1"
+                      >
+                        <span role="img" aria-label="check">
+                          &#10004;
+                        </span>
+                      </button>
+                      <button
+                        onClick={(event) =>
+                          handleStatusChange(demande.id, "REFUSE", event)
+                        }
+                        className="text-red-500 hover:text-red-700 mx-1"
+                      >
+                        <span role="img" aria-label="cross">
+                          &#10006;
+                        </span>
+                      </button>
+                    </div>
+                  )}
+                  {demande.statutDemande !== "EN_COURS" && (
+                    <span className="text-gray-500">Action terminée</span>
+                  )}
+                </div>
+              </td>
+              <td className="text-center">
+                <button onClick={()=>navigate(`/demandes/historique/${demande.id}`)} className="bg-orange-500 p-2 text-white font-bold rounded-xl">historique</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Pagination */}
+      <div className="mt-4 flex justify-between">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+        >
+          Précédent
+        </button>
+        <span>
+          Page {currentPage} sur {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+        >
+          Suivant
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default DemandesListing;

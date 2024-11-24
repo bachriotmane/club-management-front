@@ -3,14 +3,14 @@ import axiosInstance from "../auth/axios.js";
 const apiUrl = "/clubs";
 const apiUrl1 = "/clubs/home-clubs";
 
-export const getClubs = async ({ page, size = 3, nomClub = "", idUser = "" }) => {
+export const getClubs = async ({ page, size = 3, nomClub = "", isMyClubs = false }) => {
   try {
     const response = await axiosInstance.get(apiUrl, {
       params: {
         page: page,
         size: size,
         nomClub: nomClub,
-        idUser: idUser,
+        isMyClubs: isMyClubs,
       },
     });
     return response.data;
@@ -28,14 +28,32 @@ export const getClubById = async (uuid) => {
     throw error;
   }
 };
+export const getClubMembers = async ({ uuid, page, size, studentName ="" }) => {
+  try {
 
-export const getClubMembers = async ({ uuidClub, page, size, studentName }) => {
+    const response = await axiosInstance.get(
+      `${apiUrl}/club/${uuid}/members`,
+      {
+        params: {
+          page: page,
+          size: size,
+          studentName: studentName
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getClubsForUser = async (user) => {
   try {
     const response = await axiosInstance.get(
-      `${apiUrl}/${uuidClub}/members`,
-      {
-        params: { page, size, studentName },
-      }
+        `${apiUrl}/${user}/admin`,
+        {
+          params: { page : 0,size : 40 },
+        }
     );
     return response.data;
   } catch (error) {
@@ -49,14 +67,14 @@ export const getClubsHome = async ({ limit = 7 }) => {
     // Effectue la requête HTTP avec axios
     const response = await axiosInstance.get(apiUrl1, {
       params: {
-        limit: limit,  
+        limit: limit,
       },
     });
-    
-   
+
+
     return response.data;
   } catch (error) {
-    
+
     throw error;
   }
 };
