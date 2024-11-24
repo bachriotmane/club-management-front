@@ -82,17 +82,13 @@ export const getClubsHome = async ({ limit = 7 }) => {
 export const editClub = async ({ clubId, clubEditRequest }) => {
   try {
 
-  
     const response = await axiosInstance.patch(
       `${apiUrl}/club/${clubId}`, 
       clubEditRequest
-    
     );
 
     return response.data.data;  
   } catch (error) {
-    console.error("Erreur lors de la modification du club :", error);
-
     throw error;
   }
 };
@@ -106,4 +102,13 @@ export const deleteClub = async (id) => {
   }
 };
 
+export const getMemberRoles = async () => {
+  try {
+    const response = await axiosInstance.get(`${apiUrl}/member-roles`);
+    return response.data; 
+  } catch (error) {
+    console.error("Error fetching member roles:", error);
+    throw error;
+  }
+};
 
