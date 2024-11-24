@@ -261,7 +261,11 @@ const ClubDetails = () => {
          </div>
           ) : (
             <button
-           onClick={() => navigate("/demandes")}
+            onClick={() =>
+              navigate("/demandes/deposer", {
+                state: { clubId: club.uuid, clubName: club.nom }
+              })
+            }
             className="flex items-center px-4 py-2 text-blue-600 rounded-lg border-2 border-blue-600 hover:bg-blue-600 hover:text-white hover:border-blue-700 transition-all duration-300"
           >
             <FaPlug className="mr-2" size={20} />
