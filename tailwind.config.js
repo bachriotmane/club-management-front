@@ -10,6 +10,7 @@ export default {
     extend: {
       colors: {
         primaryColor: "#E49F13",
+         btnColor:"rgb(249 115 22)"
       },
     },
   },
