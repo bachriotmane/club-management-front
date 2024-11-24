@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { getClubsForUser } from "../../repositories/clubs.repository.js";
-import { createNewPublication } from "../../repositories/publications.repository.js"; // Ensure the path is correct
+import { getUser } from "../../auth/auth.js";
+import { saveImage } from "../../repositories/image.repository.js";
+import { createNewPublication } from "../../repositories/publications.repository.js";
+import axiosInstance from "../../auth/axios.js";
 import { useNavigate } from "react-router-dom";
-import {getUser} from "../../auth/auth.js";
 
 const CreatePublication = () => {
     const navigate = useNavigate();
@@ -11,6 +13,7 @@ const CreatePublication = () => {
         description: "",
         visibility: "public",
         clubId: "",
+        image: null
     });
 
     const [error, setError] = useState(undefined);
@@ -18,6 +21,7 @@ const CreatePublication = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+
     const fetchClubs = async () => {
         try {
             setIsLoading(true);
@@ -39,10 +43,13 @@ const CreatePublication = () => {
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
+    const handleFileChange = (e) => {
+        setFormData((prevData) => ({ ...prevData, image: e.target.files[0] }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validation check
         if (!formData.title || !formData.description || !formData.clubId) {
             setError("All fields are required.");
             return;
@@ -51,19 +58,35 @@ const CreatePublication = () => {
         setError(undefined); // Reset error
         setIsSubmitting(true);
 
-        const publicationBody = {
-            title: formData.title,
-            isPublic: formData.visibility === "public",
-            description: formData.description,
-            clubId: formData.clubId,
-        };
-
         try {
-            await createNewPublication(publicationBody);
+            let imageId = null;
+
+            // Step 1: Upload the image if provided
+            if (formData.image) {
+                const imageResponse = await saveImage(formData.image);
+                imageId = imageResponse.data; // Assuming the payload contains the image ID
+            }
+
+            // Step 2: Create the publication
+            const publicationBody = {
+                title: formData.title,
+                description: formData.description,
+                clubId: formData.clubId,
+                isPublic: formData.visibility === "public"
+            };
+            const publication = await createNewPublication(publicationBody);
+
+            // Step 3: Associate the image with the publication (if uploaded)
+            if (imageId) {
+                await axiosInstance.post(
+                    `/publications/${publication.data.id}/image/${imageId}`
+                );
+            }
+
             setIsSubmitted(true);
             setTimeout(() => navigate("/publications"), 2000);
         } catch (err) {
-            setError(err.message || "Failed to create publication.");
+            setError(err.response?.data?.errorMessage || "Failed to create publication.");
         } finally {
             setIsSubmitting(false);
         }
@@ -80,11 +103,7 @@ const CreatePublication = () => {
     return (
         <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
             <h1 className="text-2xl font-bold mb-4">Create New Publication</h1>
-            {error && (
-                <p className="text-red-500 text-sm mb-4">
-                    {error}
-                </p>
-            )}
+            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
             {isSubmitted && (
                 <p className="text-green-500 text-sm mb-4">
                     Publication created successfully! Redirecting...
@@ -123,6 +142,29 @@ const CreatePublication = () => {
                 </div>
 
                 <div className="mb-4">
+                    <label htmlFor="clubId" className="block text-sm font-medium text-gray-700">
+                        Club
+                    </label>
+                    <select
+                        id="clubId"
+                        name="clubId"
+                        value={formData.clubId}
+                        onChange={handleInputChange}
+                        className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
+                        required
+                    >
+                        <option value="" disabled>
+                            Select a club
+                        </option>
+                        {clubsList.map((club) => (
+                            <option key={club.uuid} value={club.uuid}>
+                                {club.nom}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700">
                         Visibility
                     </label>
@@ -153,27 +195,19 @@ const CreatePublication = () => {
                 </div>
 
                 <div className="mb-4">
-                    <label htmlFor="clubId" className="block text-sm font-medium text-gray-700">
-                        Club
+                    <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+                        Upload Image (Optional)
                     </label>
-                    <select
-                        id="clubId"
-                        name="clubId"
-                        value={formData.clubId}
-                        onChange={handleInputChange}
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        accept="image/*"
+                        onChange={handleFileChange}
                         className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
-                        required
-                    >
-                        <option value="" disabled>
-                            Select a club
-                        </option>
-                        {clubsList.map((club) => (
-                            <option key={club.uuid} value={club.uuid}>
-                                {club.nom}
-                            </option>
-                        ))}
-                    </select>
+                    />
                 </div>
+
                 <button
                     type="submit"
                     className={`w-full py-2 px-4 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
   FaRegHeart,
   FaComment,
@@ -7,6 +7,8 @@ import {
   FaCalendarAlt,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../utili/LoadingCompnent.jsx";
+import {getImage} from "../../../repositories/image.repository.js";
 
 const getFormattedTime = (date) => {
   const time = new Date(date);
@@ -15,7 +17,7 @@ const getFormattedTime = (date) => {
   return `${hours}:${minutes}`;
 };
 
-const PublicationCard = ({ item }) => {
+const PublicationCard = ({ item , image}) => {
   const navigate = useNavigate();
   const handleNavigation = () => {
     navigate(`/publication/${item.id}`);
@@ -24,8 +26,8 @@ const PublicationCard = ({ item }) => {
       <> {item && <div
           className="bg-white shadow-lg rounded-lg p-4 mb-6 mx-auto w-full max-w-full sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl h-auto hover:shadow-xl transition-shadow duration-300 ease-in-out">
         <div onClick={handleNavigation} className="aspect-w-16 aspect-h-9">
-          <img
-              src={item.image || "default-image.jpg"}
+           <img
+              src={image || "default-image.jpg"}
               alt={item.title}
               className="object-cover w-full h-full rounded-md"
           />

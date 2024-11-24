@@ -12,7 +12,7 @@ const StatSection = () => {
 
     return (
         <div className="flex flex-wrap gap-4 mt-8 w-full px-4">
-            <SecureComponenet role='ROLE_USER' requiredClubRole="ADMIN">
+            <SecureComponenet role='ROLE_USER'>
                 <div className="flex-1 min-w-[calc(33.33%-1rem)] md:min-w-[calc(25%-1rem)] flex-grow">
                     <StatCard
                         title="Demandes d'intégration"
