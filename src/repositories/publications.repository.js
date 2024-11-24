@@ -53,3 +53,12 @@ export const getPublicationsHome = async ({ limit = 7 }) => {
     }
 };
 
+export const deletePublication = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`${apiUrl}/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+

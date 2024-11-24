@@ -20,7 +20,7 @@ const ClubMembersListing = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [studentName, setStudentName] = useState("");
-
+  const clubId = useParams().uuid;
   useEffect(() => {
     const fetchMembers = async () => {
       setLoading(true);
@@ -113,7 +113,7 @@ const ClubMembersListing = () => {
             <th className="px-4 py-2 border">Date d'Intégration</th>
             <th className="px-4 py-2 border">Filière</th>
             <th className="px-4 py-2 border">Rôle</th>
-            <SecureComponenet role='ROLE_USER' clubId={uuid.id} requiredClubRole={"ADMIN"}>
+            <SecureComponenet role='ROLE_USER' clubId={clubId} requiredClubRole={"ADMIN"}>
               <th className="px-4 py-2 border text-center">Actions</th>
             </SecureComponenet>
 
@@ -147,7 +147,7 @@ const ClubMembersListing = () => {
                 {member.filiere || "Non spécifiée"}
               </td>
               <td className="px-4 py-2 border text-center">{member.role}</td>
-              <SecureComponenet role='ROLE_USER' clubId={uuid.id} requiredClubRole="ADMIN">
+              <SecureComponenet role='ROLE_USER' clubId={clubId} requiredClubRole="ADMIN">
                 <td className="px-4 py-2 border text-center">
                   <button
                       className="text-blue-500 hover:text-blue-700 mr-2"
