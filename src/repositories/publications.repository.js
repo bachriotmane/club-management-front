@@ -62,3 +62,12 @@ export const deletePublication = async (id) => {
     }
 };
 
+export const updatePublication = async (id, updatedPublication)=>{
+    try {
+        console.log("UPDATED : ", updatedPublication);
+        const response = await axiosInstance.put(`${apiUrl}/${id}`, updatedPublication);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

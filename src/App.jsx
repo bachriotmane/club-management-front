@@ -30,6 +30,8 @@ import DeposeDemande from "./features/deposer demande/demande.depose.jsx";
 import DemandeHistorique from "./features/demande historique/DemandeHistorique.jsx";
 import ChangeProfile from "./shared/components/auth/ChangeProfil.jsx";
 import PrivateRoute from "./shared/components/auth/PrivateRoute.jsx";
+import UpdatePublication from "./features/update publication/update.publication.jsx";
+import React from "react";
 
 function App() {
   return (
@@ -59,6 +61,7 @@ function App() {
           <Route path="/publications" element={<PublicationsList />} />
           <Route path="/historiques/:id" element={<Historiques />} />
           <Route path="/publication/:id" element={<PublicationDetails />} />
+          <Route path="/publication/update/:id" element={<UpdatePublication />} />
           <Route path="/publication/create" element={<CreatePublication />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<Profile />} />
