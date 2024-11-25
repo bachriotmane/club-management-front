@@ -85,7 +85,7 @@ const ClubsListingPage = () => {
             onClick={() => handleViewChange("all")}
             className={`px-4 py-2 rounded-full font-semibold ${activeView === "all" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
           >
-            Tous les clubs
+            Tous les clubs 
           </button>
           <SecureComponenet role='ROLE_USER'>
             <button
