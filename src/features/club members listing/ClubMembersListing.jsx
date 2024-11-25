@@ -145,6 +145,7 @@ const ClubMembersListing = () => {
     } catch (error) {
       const errorMessage = apiErrorHandler(error);
       setErrorRed(errorMessage);
+      setIsConfirmModalOpen(false); 
     }
   };
   const handleCancel = () => {
@@ -156,7 +157,7 @@ const ClubMembersListing = () => {
       const timer = setTimeout(() => {
         setStatusMessage(null);
         setErrorRed(null);
-      }, 2000);
+      }, 4000);
       return () => clearTimeout(timer); 
     }
   }, [statusMessage, errorRed]);
