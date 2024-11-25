@@ -1,26 +1,52 @@
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getPublicationById, updatePublication } from "../../repositories/publications.repository.js";
+import { saveImage, getImage } from "../../repositories/image.repository.js";
+import axiosInstance from "../../auth/axios.js";
 import { getClubsForUser } from "../../repositories/clubs.repository.js";
 import { getUser } from "../../auth/auth.js";
-import { saveImage } from "../../repositories/image.repository.js";
-import { createNewPublication } from "../../repositories/publications.repository.js";
-import axiosInstance from "../../auth/axios.js";
-import { useNavigate } from "react-router-dom";
 
-const CreatePublication = () => {
+const UpdatePublication = () => {
+    const { id } = useParams();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         title: "",
         description: "",
         visibility: "public",
         clubId: "",
-        image: null
+        image: null,
     });
-
+    const [existingImage, setExistingImage] = useState(null);
     const [error, setError] = useState(undefined);
-    const [clubsList, setClubsList] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [clubsList, setClubsList] = useState([]);
+    const [deleteImage, setDeleteImage] = useState(false);
+
+    const fetchPublication = async () => {
+        try {
+            setIsLoading(true);
+            const resp = await getPublicationById(id);
+            const publication = resp.data;
+
+            setFormData({
+                title: publication.title,
+                description: publication.description,
+                visibility: publication.isPublic ? "public" : "private",
+                clubId: publication.clubId,
+                image: null,
+            });
+
+            if (publication.imageId) {
+                const imageResp = await getImage(publication.imageId);
+                setExistingImage(imageResp);
+            }
+        } catch (err) {
+            setError(err.response?.data?.errorMessage || "Échec du chargement de la publication.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const fetchClubs = async () => {
         try {
@@ -28,15 +54,11 @@ const CreatePublication = () => {
             const resp = await getClubsForUser(getUser().id);
             setClubsList(resp.data);
         } catch (err) {
-            setError(err.message || "Failed to load clubs.");
+            setError(err.message || "Échec du chargement des clubs.");
         } finally {
             setIsLoading(false);
         }
     };
-
-    useEffect(() => {
-        fetchClubs();
-    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -51,68 +73,58 @@ const CreatePublication = () => {
         e.preventDefault();
 
         if (!formData.title || !formData.description || !formData.clubId) {
-            setError("All fields are required.");
+            setError("Tous les champs sont obligatoires.");
             return;
         }
 
-        setError(undefined); // Reset error
+        setError(undefined);
         setIsSubmitting(true);
 
         try {
-            let imageId = null;
+            let imageId = existingImage?.id;
 
-            // Step 1: Upload the image if provided
             if (formData.image) {
                 const imageResponse = await saveImage(formData.image);
-                imageId = imageResponse.data; // Assuming the payload contains the image ID
+                imageId = imageResponse.data;
             }
-
-            // Step 2: Create the publication
-            const publicationBody = {
+            const updatedPublication = {
                 title: formData.title,
                 description: formData.description,
                 clubId: formData.clubId,
-                isPublic: formData.visibility === "public"
+                isPublic: formData.visibility === "public",
+                imageId: deleteImage ? null : imageId,
             };
-            const publication = await createNewPublication(publicationBody);
 
-            // Step 3: Associate the image with the publication (if uploaded)
-            if (imageId) {
-                await axiosInstance.post(
-                    `/publications/${publication.data.id}/image/${imageId}`
-                );
+            await updatePublication(id, updatedPublication);
+
+            if (formData.image && imageId) {
+                await axiosInstance.post(`/publications/${id}/image/${imageId}`);
             }
 
-            setIsSubmitted(true);
-            setTimeout(() => navigate("/publications"), 2000);
+            navigate("/publications");
         } catch (err) {
-            setError(err.response?.data?.errorMessage || "Failed to create publication.");
+            setError(err.response?.data?.errorMessage || "Échec de la mise à jour de la publication.");
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    useEffect(() => {
+        fetchPublication().then(() => fetchClubs());
+    }, [id]);
+
     if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <p className="text-lg font-semibold">Loading clubs...</p>
-            </div>
-        );
+        return <div>Chargement...</div>;
     }
 
     return (
         <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold mb-4">Create New Publication</h1>
+            <h1 className="text-2xl font-bold mb-4">Modifier la Publication</h1>
             {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-            {isSubmitted && (
-                <p className="text-green-500 text-sm mb-4">
-                    Publication created successfully! Redirecting...
-                </p>
-            )}
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                        Title
+                        Titre
                     </label>
                     <input
                         type="text"
@@ -120,12 +132,10 @@ const CreatePublication = () => {
                         name="title"
                         value={formData.title}
                         onChange={handleInputChange}
-                        placeholder="Enter the title"
-                        className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
+                        className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
                         required
                     />
                 </div>
-
                 <div className="mb-4">
                     <label htmlFor="description" className="block text-sm font-medium text-gray-700">
                         Description
@@ -135,12 +145,10 @@ const CreatePublication = () => {
                         name="description"
                         value={formData.description}
                         onChange={handleInputChange}
-                        placeholder="Enter the description"
-                        className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
+                        className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
                         required
                     ></textarea>
                 </div>
-
                 <div className="mb-4">
                     <label htmlFor="clubId" className="block text-sm font-medium text-gray-700">
                         Club
@@ -150,11 +158,11 @@ const CreatePublication = () => {
                         name="clubId"
                         value={formData.clubId}
                         onChange={handleInputChange}
-                        className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
+                        className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
                         required
                     >
                         <option value="" disabled>
-                            Select a club
+                            Sélectionnez un club
                         </option>
                         {clubsList.map((club) => (
                             <option key={club.uuid} value={club.uuid}>
@@ -163,63 +171,76 @@ const CreatePublication = () => {
                         ))}
                     </select>
                 </div>
-
                 <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                        Visibility
+                    <label htmlFor="visibility" className="block text-sm font-medium text-gray-700">
+                        Visibilité
                     </label>
-                    <div className="mt-2 flex items-center space-x-4">
-                        <label className="flex items-center">
+                    <div className="mt-2 flex space-x-4">
+                        <label>
                             <input
                                 type="radio"
                                 name="visibility"
                                 value="public"
                                 checked={formData.visibility === "public"}
                                 onChange={handleInputChange}
-                                className="form-radio text-orange-600"
                             />
-                            <span className="ml-2 text-gray-700">Public</span>
+                            Public
                         </label>
-                        <label className="flex items-center">
+                        <label>
                             <input
                                 type="radio"
                                 name="visibility"
                                 value="private"
                                 checked={formData.visibility === "private"}
                                 onChange={handleInputChange}
-                                className="form-radio text-orange-600"
                             />
-                            <span className="ml-2 text-gray-700">Private</span>
+                            Privé
                         </label>
                     </div>
                 </div>
-
                 <div className="mb-4">
                     <label htmlFor="image" className="block text-sm font-medium text-gray-700">
-                        Upload Image (Optional)
+                        Image
                     </label>
+                    {existingImage && (
+                        <div className="mb-2">
+                            <img
+                                src={existingImage}
+                                alt="Existante"
+                                className="w-full h-auto rounded-md mb-2"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setDeleteImage(true);
+                                    setExistingImage(null);
+                                }}
+                                className="px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            >
+                                Supprimer l'image
+                            </button>
+                        </div>
+                    )}
                     <input
                         type="file"
                         id="image"
                         name="image"
-                        accept="image/*"
                         onChange={handleFileChange}
-                        className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
+                        className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
                     />
                 </div>
-
                 <button
                     type="submit"
-                    className={`w-full py-2 px-4 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
-                        isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-orange-600 hover:bg-orange-700"
+                    className={`w-full py-2 px-4 text-white rounded-lg ${
+                        isSubmitting ? "bg-gray-400" : "bg-orange-600 hover:bg-orange-700"
                     }`}
                     disabled={isSubmitting}
                 >
-                    {isSubmitting ? "Submitting..." : "Create Publication"}
+                    {isSubmitting ? "Mise à jour..." : "Mettre à jour la publication"}
                 </button>
             </form>
         </div>
     );
 };
 
-export default CreatePublication;
+export default UpdatePublication;

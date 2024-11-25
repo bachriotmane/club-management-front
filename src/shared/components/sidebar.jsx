@@ -38,7 +38,7 @@ export function Sidebar() {
   };
 
   return (
-    <div className={`h-full m-2`}>
+    <div className={`m-2 h-full`}>
       <div className="md:hidden p-4 absolute top-0 left-0 z-50 text-[#00407D]">
         {isOpened ? (
           <XMarkIcon onClick={toggleSidebar} className="h-6 w-6" />
@@ -49,7 +49,7 @@ export function Sidebar() {
       <Card
         className={`md:block flex flex-row justify-center items-center ${
           isOpened ? "" : "hidden"
-        } md:w-64 h-full w-full md:max-w-[16rem] rounded-t-2xl p-4 bg-[#E49F13]`}
+        } md:w-64 h-full w-full md:max-w-[16rem] rounded-t-2xl rounded-b-none  p-4 bg-[#E49F13]`}
       >
         <List className="flex flex-col justify-between h-full">
           <div>

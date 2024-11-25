@@ -53,3 +53,21 @@ export const getPublicationsHome = async ({ limit = 7 }) => {
     }
 };
 
+export const deletePublication = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`${apiUrl}/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updatePublication = async (id, updatedPublication)=>{
+    try {
+        console.log("UPDATED : ", updatedPublication);
+        const response = await axiosInstance.put(`${apiUrl}/${id}`, updatedPublication);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

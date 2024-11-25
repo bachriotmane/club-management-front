@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import backgroundImage from "../../../assets/fstsImg.jpg";
+import backgroundImage from "../../../assets/fst_background.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Importer le CSS de Toastify
@@ -14,13 +14,19 @@ const SignUp = () => {
     email: "",
     password: "",
     passwordConfirmation: "",
-    cin: "",
+    cne: "",
+    facebook: "",
+    instagram: "",
+    whatsapp: "",
   });
 
+  const [profileImage, setProfileImage] = useState(null);
+  const [coverImage, setCoverImage] = useState(null);
+  const [profilePreview, setProfilePreview] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
+
   const { setUserEmail } = useUserContext();
-
   const navigate = useNavigate();
-
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
@@ -45,11 +51,17 @@ const SignUp = () => {
     } else if (formData.password !== formData.passwordConfirmation) {
       newErrors.passwordConfirmation = "Les mots de passe ne correspondent pas";
     }
-    if (!formData.cin) {
-      newErrors.cin = "Le CIN est obligatoire";
-    } else if (!/[A-Z]{1,2}[0-9]{4,9}/.test(formData.cin)) {
-      newErrors.cin =
-        "Le CIN doit contenir 1-2 lettres majuscules suivies de 4-9 chiffres";
+    if (!formData.cne) {
+      newErrors.cne = "Le CNE est obligatoire";
+    } else if (!/[A-Z]{1,2}[0-9]{4,9}/.test(formData.cne)) {
+      newErrors.cne =
+        "Le CNE doit contenir 1-2 lettres majuscules suivies de 4-9 chiffres";
+    }
+    if (profileImage && profileImage.size > 2 * 1024 * 1024) {
+      newErrors.profileImage = "L'image de profil doit être inférieure à 2 Mo";
+    }
+    if (coverImage && coverImage.size > 2 * 1024 * 1024) {
+      newErrors.coverImage = "L'image de couverture doit être inférieure à 2 Mo";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -59,37 +71,70 @@ const SignUp = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!validate()) {
-      toast.error("Veuillez remplir tous les champs requis");
-      return;
+  const handleFileChange = (e, setImage, setPreview) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith("image/")) {
+      if (file.size <= 2 * 1024 * 1024) {
+        setImage(file);
+        setPreview(URL.createObjectURL(file));
+      } else {
+        toast.error("L'image doit être inférieure à 2 Mo");
+      }
+    } else {
+      toast.error("Veuillez sélectionner un fichier image valide");
     }
-
-    axiosInstance
-      .post("/auth/register", formData)
-      .then((response) => {
-        if (response.status === 202) {
-          toast.success("Compte créé avec succès");
-          setFormData({
-            firstName: "",
-            lastName: "",
-            email: "",
-            password: "",
-            passwordConfirmation: "",
-            cin: "",
-          });
-          setUserEmail(formData.email);
-          navigate("/confirmation");
-        } else {
-          toast.error("Une erreur est survenue, veuillez réessayer");
-        }
-      })
-      .catch((error) => {
-        console.error("Erreur d'inscription", error);
-        toast.error("Une erreur est survenue, veuillez réessayer");
-      });
   };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validate()) {
+    toast.error("Veuillez remplir tous les champs requis");
+    return;
+  }
+
+  const formDataToSubmit = new FormData();
+
+  // Serialize the formData object as JSON and append it to the `request` key
+  formDataToSubmit.append("request", new Blob([JSON.stringify(formData)], { type: "application/json" }));
+
+  // Append profile and cover images
+  if (profileImage) formDataToSubmit.append("profileImage", profileImage);
+  if (coverImage) formDataToSubmit.append("coverImage", coverImage);
+
+  try {
+    const response = await axiosInstance.post("/auth/register", formDataToSubmit, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    if (response.status === 202) {
+      toast.success("Compte créé avec succès");
+      // Reset the form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        passwordConfirmation: "",
+        cne: "",
+        facebook: "",
+        instagram: "",
+        whatsapp: "",
+      });
+      setProfileImage(null);
+      setCoverImage(null);
+      setProfilePreview(null);
+      setCoverPreview(null);
+      setUserEmail(formData.email);
+      navigate("/confirmation");
+    } else {
+      toast.error("Une erreur est survenue, veuillez réessayer");
+    }
+  } catch (error) {
+    console.error("Erreur d'inscription", error);
+    toast.error("Une erreur est survenue, veuillez réessayer");
+  }
+};
+
 
   return (
     <div
@@ -103,6 +148,50 @@ const SignUp = () => {
             Inscription
           </h2>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="profileImage" className="block text-gray-700">
+                Image de Profil
+              </label>
+              <input
+                type="file"
+                id="profileImage"
+                accept="image/*"
+                onChange={(e) => handleFileChange(e, setProfileImage, setProfilePreview)}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+              {profilePreview && (
+                <img
+                  src={profilePreview}
+                  alt="Aperçu de l'image de profil"
+                  className="mt-2 w-24 h-24 object-cover rounded-full"
+                />
+              )}
+              {errors.profileImage && (
+                <p className="text-red-500 text-xs mt-1">{errors.profileImage}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="coverImage" className="block text-gray-700">
+                Image de Couverture
+              </label>
+              <input
+                type="file"
+                id="coverImage"
+                accept="image/*"
+                onChange={(e) => handleFileChange(e, setCoverImage, setCoverPreview)}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+              {coverPreview && (
+                <img
+                  src={coverPreview}
+                  alt="Aperçu de l'image de couverture"
+                  className="mt-2 w-full h-32 object-cover rounded-md"
+                />
+              )}
+              {errors.coverImage && (
+                <p className="text-red-500 text-xs mt-1">{errors.coverImage}</p>
+              )}
+            </div>
             <div>
               <label htmlFor="firstName" className="block text-gray-700">
                 Prénom
@@ -191,20 +280,57 @@ const SignUp = () => {
               )}
             </div>
             <div>
-              <label htmlFor="cin" className="block text-gray-700">
-                CIN
+              <label htmlFor="cne" className="block text-gray-700">
+                CNE
               </label>
               <input
                 type="text"
-                id="cin"
+                id="cne"
                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={formData.cin}
+                value={formData.cne}
                 onChange={handleChange}
               />
-              {errors.cin && (
-                <p className="text-red-500 text-xs mt-1">{errors.cin}</p>
+              {errors.cne && (
+                <p className="text-red-500 text-xs mt-1">{errors.cne}</p>
               )}
             </div>
+            <div>
+              <label htmlFor="facebook" className="block text-gray-700">
+                Facebook
+              </label>
+              <input
+                type="text"
+                id="facebook"
+                value={formData.facebook}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="instagram" className="block text-gray-700">
+                Instagram
+              </label>
+              <input
+                type="text"
+                id="instagram"
+                value={formData.instagram}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="whatsapp" className="block text-gray-700">
+                WhatsApp
+              </label>
+              <input
+                type="text"
+                id="whatsapp"
+                value={formData.whatsapp}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            {/* Submit Button */}
             <button
               type="submit"
               className="w-full bg-blue-900 text-white py-2 rounded-md hover:bg-blue-800 transition"

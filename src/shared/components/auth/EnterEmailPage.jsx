@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import backgroundImage from "../../../assets/fstsImg.jpg";
+import backgroundImage from "../../../assets/fst_background.png";
 import campusImage from "../../../assets/fstsImg.jpg";
 import axiosInstance from "../../../auth/axios";
 import { toast, ToastContainer } from "react-toastify";

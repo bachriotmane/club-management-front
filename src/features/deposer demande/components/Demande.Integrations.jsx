@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useCreateIntegrationDemande, useFetchNotJoinedClubs } from "../../../repositories/demande.repository";
+import { useLocation } from "react-router-dom";
 
 const DemandeIntegration = () => {
-  const [clubId, setClubId] = useState("");
-  const [motivation, setMotivation] = useState("");
+  const location = useLocation();
+  const { clubId: passedClubId, clubName: passedClubName } = location.state || {};
+  const [clubId, setClubId] = useState(passedClubId || ""); 
+  const [motivation, setMotivation] = useState(
+  passedClubName ? `Je souhaite rejoindre le club ${passedClubName}` : "" );
   const { data: availableClubs, error, isError, isLoading } = useFetchNotJoinedClubs();
   const { createIntegrationDemande , isPending } = useCreateIntegrationDemande();
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     createIntegrationDemande({clubId, motivation});
@@ -38,7 +42,7 @@ const DemandeIntegration = () => {
           value={clubId}
           required
           onChange={(e) => setClubId(e.target.value)}
-          disabled={isPending}
+          disabled={Boolean(passedClubId)}
           aria-label="Sélectionnez un club pour votre demande"
           className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none"
         >

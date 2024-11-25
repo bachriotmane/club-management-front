@@ -6,16 +6,23 @@ import logo from "../../assets/bac.jpeg";
 import {useNavigate, useParams} from "react-router-dom";
 import {MdLocationOn} from "react-icons/md";
 import {useEffect, useState} from "react";
-import {getEventById} from "../../repositories/evenements.repository.js";
+import {deleteEventemnt, getEventById} from "../../repositories/evenements.repository.js";
 import ErrorComponent from "../../shared/components/utili/ErrorComponent.jsx";
 import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
+import Swal from "sweetalert2";
+import {getImage} from "../../repositories/image.repository.js";
+import {format} from "date-fns";
+import {getClubById} from "../../repositories/clubs.repository.js";
 
 const EventDetails = () => {
     const navigate = useNavigate();
     const [event, setEventDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(undefined);
+    const [image, setImage] = useState(null);
     const params = useParams();
+    const [clubLogo, setClubLogo] = useState(null);
 
     const fetchEvent = async () => {
         const resp = await getEventById(params.id);
@@ -35,6 +42,57 @@ const EventDetails = () => {
         }
     }, []);
 
+
+
+    const fetchImage = async (id)=>{
+        try{
+            const resp = await getImage(id);
+            setImage(resp);
+        }catch(_){
+            setImage(null);
+        }finally {
+        }
+    }
+
+    useEffect(() => {
+        if(event && event.imageId){
+            fetchImage(event.imageId).then();
+        }
+        if(event && event.clubId){
+            getClubById(event.clubId).then(response => {
+                getImage(response.data.logo).then(
+                    response => setClubLogo(response)
+                )
+            });
+
+        }
+    }, [event]);
+
+    const handleDeleteEvent = async () => {
+        try {
+            const result = await Swal.fire({
+                title: "Êtes-vous sûr ?",
+                text: "Vous ne pourrez pas revenir en arrière !",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Oui, supprimez-le !",
+            });
+
+            if (result.isConfirmed) {
+                if (event && event.id) {
+                    await deleteEventemnt(event.id);
+                    Swal.fire("Supprimé !", "Votre événement a été supprimé.", "success").then();
+                    setTimeout(() => navigate("/events"), 2000);
+                }
+            }
+        } catch (err) {
+            Swal.fire("Erreur !", "Échec de la suppression de l'événement. Veuillez réessayer plus tard.", "error").then();
+            console.error("Erreur de suppression :", err);
+        }
+    };
+
     if (error){
         return <div className="mt-36">
             <ErrorComponent description={error.response ? error.response.data.errorMessage : "Erreur"} title="404!"></ErrorComponent>
@@ -51,13 +109,13 @@ const EventDetails = () => {
         <header className="bg-white p-8 min-h-screen">
             <button onClick={() => navigate(-1)} className="flex items-center text-black text-xl mb-4 space-x-2">
                 <BiArrowBack size={30}></BiArrowBack>
-                <span>Back</span>
+                <span>Retour</span>
             </button>
             <div className="container mx-auto flex flex-col lg:flex-row items-start gap-10 w-full h-full">
                 <div className="flex-shrink-0 w-full lg:w-1/3 h-1/3">
                     <img
-                        src={logo}
-                        alt="Event"
+                        src={image || "../default-image.jpg"}
+                        alt="Événement"
                         className="w-full h-full object-cover rounded-xl"
                     />
                 </div>
@@ -65,7 +123,7 @@ const EventDetails = () => {
                 <div className="flex-grow w-full lg:w-1/2 space-y-3">
                     <div className="flex items-center space-x-1">
                         <img
-                            src={logo}
+                            src={clubLogo || "../default-image.jpg"}
                             alt={event.nom}
                             className="w-12 h-12 rounded-full object-cover border-2 border-amber-500"
                         />
@@ -86,26 +144,27 @@ const EventDetails = () => {
                     <div className="space-y-3 text-gray-600">
                         <div className="flex items-center space-x-3">
                             <AiOutlineClockCircle size={30} color={"4207F2"}/>
-                            <span className="text-lg italic">{event.date ?? "unknown"}</span>
+                            <span className="text-lg italic">{format(new Date(event.date), "MMMM dd, yyyy - hh:mm a") ?? "inconnue"}</span>
                         </div>
                         <div className="flex items-center space-x-3">
                             <MdLocationOn size={34} color={"F27907"}></MdLocationOn>
-                            <span className="text-lg italic">{event.location ?? "unknown"}</span>
+                            <span className="text-lg italic">{event.location ?? "inconnue"}</span>
                         </div>
                         <a className="flex items-center space-x-3" href={event.instagram} >
                             <AiOutlineInstagram size={30} color="F20707"/>
                             <span className="text-lg italic hover:text-blue-500">@{event.instagram}</span>
                         </a>
                     </div>
-
-                    <div className="flex items-center space-x-4 mt-4">
-                        <button className="text-gray-600 hover:text-gray-800">
-                            <BiEditAlt size={30}/>
-                        </button>
-                        <button className="text-red-600 hover:text-red-800">
-                            <RiDeleteBinLine size={30}/>
-                        </button>
-                    </div>
+                    <SecureComponenet role="ROLE_USER" clubId={event.clubId} requiredClubRole={"ADMIN"}>
+                        <div className="flex items-center space-x-4 mt-4">
+                            <button onClick={()=>navigate(`/event/update/${event.id}`)} className="text-gray-600 hover:text-gray-800">
+                                <BiEditAlt size={30}/>
+                            </button>
+                            <button onClick={handleDeleteEvent} className="text-red-600 hover:text-red-800">
+                                <RiDeleteBinLine size={30}/>
+                            </button>
+                        </div>
+                    </SecureComponenet>
                 </div>
             </div>
         </header>

@@ -4,6 +4,7 @@ import { getClubs } from "../../repositories/clubs.repository";
 import noFindImage from "../../assets/not-items-found.png";
 import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
 import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
+import { getImage } from "../../repositories/image.repository.js";
 
 const ClubsListingPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,27 +15,50 @@ const ClubsListingPage = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [error, setError] = useState(null);
 
-  const fetchClubs = useCallback(async (page, size, nomClub = "", isMyClubs = false) => {
-    setLoading(true);
-    try {
-      const data = await getClubs({ page, size, nomClub, isMyClubs });
-      setClubs((prevClubs) => [...prevClubs, ...data.data]);
-      setTotalPages(data.totalPages);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const fetchClubs = useCallback(
+    async (page, size, nomClub = "", isMyClubs = false) => {
+      setLoading(true);
+      try {
+        const data = await getClubs({ page, size, nomClub, isMyClubs });
+
+        const clubsWithLogos = await Promise.all(
+          data.data.map(async (club) => {
+            try {
+              const logoUrl = club.logo
+                ? await getImage(club.logo)
+                : "/default-image.jpg";
+              return { ...club, logo: logoUrl };
+            } catch (error) {
+              console.error(`Erreur lors du chargement de l'image pour ${club.nom}:`, error);
+              return { ...club, logo: "/default-image.jpg" };
+            }
+          })
+        );
+
+        setClubs((prevClubs) => {
+          const newClubs = clubsWithLogos.filter(
+            (newClub) => !prevClubs.some((club) => club.uuid === newClub.uuid)
+          );
+          return [...prevClubs, ...newClubs];
+        });
+
+        setTotalPages(data.totalPages);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   const handleScroll = (e) => {
-    const bottom = e.target.scrollHeight === e.target.scrollTop + e.target.clientHeight;
-    if (bottom && !loading && currentPage < totalPages) {
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + 10;
+    if (bottom && !loading && currentPage < totalPages - 1) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
   };
-
-
 
   useEffect(() => {
     const isMyClubs = activeView === "all" ? false : true;
@@ -52,15 +76,12 @@ const ClubsListingPage = () => {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setClubs([]);
-    setCurrentPage(0);
   };
 
   const handleViewChange = (view) => {
-    if (view === activeView) return;
-    setActiveView(view);
-    setClubs([]);
-    setCurrentPage(0);
+    if (view !== activeView) {
+      setActiveView(view);
+    }
   };
 
   if (error) {
@@ -83,42 +104,49 @@ const ClubsListingPage = () => {
         <div className="flex space-x-4">
           <button
             onClick={() => handleViewChange("all")}
-            className={`px-4 py-2 rounded-full font-semibold ${activeView === "all" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
+            className={`px-4 py-2 rounded-full font-semibold ${
+              activeView === "all"
+                ? "bg-orange-500 text-white shadow-md"
+                : "bg-orange-100 text-black shadow-md"
+            }`}
           >
             Tous les clubs 
           </button>
-          <SecureComponenet role='ROLE_USER'>
+          <SecureComponenet role="ROLE_USER">
             <button
-                onClick={() => handleViewChange("myClubs")}
-                className={`px-4 py-2 rounded-full font-semibold ${activeView === "myClubs" ? "bg-orange-500 text-white shadow-md" : "bg-orange-100 text-black shadow-md"}`}
+              onClick={() => handleViewChange("myClubs")}
+              className={`px-4 py-2 rounded-full font-semibold ${
+                activeView === "myClubs"
+                  ? "bg-orange-500 text-white shadow-md"
+                  : "bg-orange-100 text-black shadow-md"
+              }`}
             >
               Mes Clubs
             </button>
           </SecureComponenet>
-
         </div>
-
         <input
-            type="text"
-            placeholder="Rechercher un club..."
-            value={searchQuery}
-            onChange={handleSearch}
-            className="p-3 border border-gray-300 rounded-full w-1/3"
+          type="text"
+          placeholder="Rechercher un club..."
+          value={searchQuery}
+          onChange={handleSearch}
+          className="p-3 border border-gray-300 rounded-full w-1/3"
         />
       </div>
 
       {clubs.length === 0 && !loading ? (
         <div className="flex flex-col items-center mt-6">
           <img src={noFindImage} alt="Aucun résultat trouvé" className="w-80 h-auto" />
-          <span className="mt-4 text-xl font-semibold">Aucun club trouvé pour votre recherche</span>
+          <span className="mt-4 text-xl font-semibold">
+            Aucun club trouvé pour votre recherche
+          </span>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {clubs.map((club, index) => (
-          <ClubCard key={`${club.uuid}-${index}`} item={club} />
-        ))}
-      </div>
-      
+          {clubs.map((club) => (
+            <ClubCard key={club.uuid} item={club} />
+          ))}
+        </div>
       )}
 
       {loading && (
