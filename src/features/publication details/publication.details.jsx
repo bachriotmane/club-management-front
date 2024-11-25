@@ -6,10 +6,15 @@ import logo from "../../assets/bac.jpeg";
 import {useNavigate, useParams} from "react-router-dom";
 import {MdPrivacyTip, MdPublic} from "react-icons/md";
 import {useEffect, useState} from "react";
-import {getPublicationById} from "../../repositories/publications.repository.js";
+import {deletePublication, getPublicationById} from "../../repositories/publications.repository.js";
 import {format} from "date-fns";
 import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
 import ErrorComponent from "../../shared/components/utili/ErrorComponent.jsx";
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
+import {getImage} from "../../repositories/image.repository.js";
+import Swal from "sweetalert2";
+import {getClubById} from "../../repositories/clubs.repository.js";
+
 
 const publication = {
     title: "Paris Through the Lens",
@@ -28,17 +33,30 @@ const PublicationDetails = () => {
     const [publicationDetails, setPublicationDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(undefined);
+    const [image, setImage] = useState(null);
+    const [imageLoading, setImageLoading] = useState(true)
     const params = useParams();
+    const [clubLogo,setClubLogo] = useState(null);
 
     const fetchPublication = async () => {
         const resp = await getPublicationById(params.id);
         setPublicationDetails(resp.data);
     };
+    const fetchImage = async (id)=>{
+        try{
+            const resp = await getImage(id);
+            setImage(resp);
+        }catch(_){
+            setImage(null);
+        }finally {
+            setImageLoading(false);
+        }
+    }
     useEffect(() => {
         try {
             setIsLoading(true);
             fetchPublication().then(() => {
-                    setIsLoading(false);
+                    setIsLoading(false)
                 }
             ).catch(err=>setError(err));
         } catch (err) {
@@ -48,6 +66,44 @@ const PublicationDetails = () => {
             setIsLoading(false);
         }
     }, []);
+    const handleDeletePublication = async () => {
+        try {
+            const result = await Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!",
+            });
+
+            if (result.isConfirmed) {
+                if (publicationDetails && publicationDetails.id) {
+                    await deletePublication(publicationDetails.id);
+                    Swal.fire("Deleted!", "Your publication has been deleted.", "success").then();
+                    setTimeout(() => navigate("/publications"), 2000);
+                }
+            }
+        } catch (err) {
+            Swal.fire("Error!", "Failed to delete the publication. Please try again later.", "error").then();
+            console.error("Delete Error:", err);
+        }
+    };
+
+    useEffect(() => {
+        if(publicationDetails && publicationDetails.imageId){
+            fetchImage(publicationDetails.imageId);
+        }
+        if(publicationDetails && publicationDetails.clubId){
+            getClubById(publicationDetails.clubId).then(response => {
+                getImage(response.data.logo).then(
+                    response => setClubLogo(response)
+                )
+            });
+
+        }
+    }, [publicationDetails]);
 
     if (error){
         return <div className="mt-36">
@@ -60,6 +116,7 @@ const PublicationDetails = () => {
             <LoadingSpinner></LoadingSpinner>
         </div>
     }
+    console.log("Image :  ",image)
 
         return (
 
@@ -70,18 +127,18 @@ const PublicationDetails = () => {
                 </button>
                 <div className="container mx-auto flex flex-col lg:flex-row items-start gap-10 w-full h-full">
                     <div className="flex-shrink-0 w-full lg:w-1/3 h-1/3">
-                        <img
-                            src={publication.image}
+                        {!imageLoading || !image ? <img
+                            src={image || "../default-image.jpg"}
                             alt="Event"
                             className="w-full h-full object-cover rounded-xl"
-                        />
+                        /> : <h1>Chargement de l'image ... </h1>}
                     </div>
 
                     <div className="flex-grow w-full lg:w-1/2 space-y-3">
                         <div className="flex items-center space-x-1">
                             <img
-                                src={publication.organiser.image}
-                                alt={publication.organiser.name}
+                                src={clubLogo || "../default-image.jpg"}
+                                alt="not loaded"
                                 className="w-12 h-12 rounded-full object-cover border-2 border-amber-500"
                             />
                             <div className="flex flex-col" onClick={() => navigate(`/club/${publicationDetails.clubId}`)}>
@@ -116,15 +173,17 @@ const PublicationDetails = () => {
                                 }
                             </div>
                         </div>
+                        <SecureComponenet role="ROLE_USER" clubId={publicationDetails.clubId} requiredClubRole={"ADMIN"}>
+                            <div className="flex items-center space-x-4 mt-4">
+                                <button onClick={()=>navigate(`/publication/update/${publicationDetails.id}`)} className="text-gray-600 hover:text-gray-800">
+                                    <BiEditAlt size={30}/>
+                                </button>
+                                <button onClick={handleDeletePublication} className="text-red-600 hover:text-red-800">
+                                    <RiDeleteBinLine size={30}/>
+                                </button>
+                            </div>
+                        </SecureComponenet>
 
-                        <div className="flex items-center space-x-4 mt-4">
-                            <button className="text-gray-600 hover:text-gray-800">
-                                <BiEditAlt size={30}/>
-                            </button>
-                            <button className="text-red-600 hover:text-red-800">
-                                <RiDeleteBinLine size={30}/>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </header>

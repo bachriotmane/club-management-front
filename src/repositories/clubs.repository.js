@@ -64,7 +64,6 @@ export const getClubsForUser = async (user) => {
 
 export const getClubsHome = async ({ limit = 7 }) => {
   try {
-    // Effectue la requête HTTP avec axios
     const response = await axiosInstance.get(apiUrl1, {
       params: {
         limit: limit,
@@ -78,3 +77,38 @@ export const getClubsHome = async ({ limit = 7 }) => {
     throw error;
   }
 };
+
+
+export const editClub = async ({ clubId, clubEditRequest }) => {
+  try {
+
+    const response = await axiosInstance.patch(
+      `${apiUrl}/club/${clubId}`, 
+      clubEditRequest
+    );
+
+    return response.data.data;  
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteClub = async (id) => {
+  try {
+    const response = await axiosInstance.delete(`${apiUrl}/club/delete/${id}`);
+    return response.data; 
+  } catch (error) {
+    throw error; 
+  }
+};
+
+export const getMemberRoles = async () => {
+  try {
+    const response = await axiosInstance.get(`${apiUrl}/member-roles`);
+    return response.data; 
+  } catch (error) {
+    console.error("Error fetching member roles:", error);
+    throw error;
+  }
+};
+

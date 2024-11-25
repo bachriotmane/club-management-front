@@ -35,6 +35,10 @@ const UserProfile = ({ user}) => {
                         <Link to={`/change-password`} className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                             Change Password
                         </Link>
+
+                        <Link to={`/change-profile`} className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            Change Profile 
+                        </Link>
                         <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={getOut}>
                             Logout
                         </button>
