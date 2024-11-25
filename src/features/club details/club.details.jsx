@@ -3,7 +3,7 @@ import { Typography } from "@material-tailwind/react";
 import { AiOutlineInstagram, AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 import { BiEditAlt } from "react-icons/bi";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { BsCalendar, BsPeople } from "react-icons/bs";
+import { BsCalendar, BsPeople, BsPerson } from "react-icons/bs";
 import { useParams, useNavigate } from "react-router-dom";
 import { getClubById, deleteClub ,editClub} from "../../repositories/clubs.repository";
 import { deleteImage, editImage } from "../../repositories/image.repository";
@@ -13,6 +13,8 @@ import ErrorMessage from "../../shared/components/utili/ErrorComponent";
 import apiErrorHandler from "../../shared/components/utili/apiErrorHandler";
 import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 import { IoMdClose } from "react-icons/io";
+import { FaPlug, FaUserShield } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const ClubDetails = () => {
   const { uuid } = useParams();
@@ -34,6 +36,7 @@ const ClubDetails = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditClubModalOpen, setIsEditClubModalOpen] = useState(false);
   const [isEditImageModalOpen, setIsEditImageModalOpen] = useState(false);
+  
 
 
 
@@ -115,7 +118,7 @@ const ClubDetails = () => {
       } else if (deleteChoice === "club") {
         await deleteClub(club.uuid);
         setClub(null); 
-        setStatusMessage("Club deleted successfully!");
+        toast.success("Club deleted successfully!");
         navigate("/clubs");
       }
     } catch (error) {
@@ -243,9 +246,36 @@ const ClubDetails = () => {
 
   return (
     <header className="bg-white p-6 lg:p-10">
-      <button onClick={() => navigate(-1)} className="text-blue-500 mb-4">
-        &larr; Retour
-      </button>
+   <div className="container mx-auto flex justify-between items-center mb-6">
+        <button onClick={() => navigate(-1)} className="text-blue-500 mb-4">
+          &larr; Retour
+        </button>
+
+        <div className="flex items-center space-x-4">
+          {club.isIntegrated ? (
+           <div className="flex items-center space-x-2">
+           <FaUserShield className="text-green-500" size={20} />
+           <Typography variant="body1" className="text-lg text-green-700 font-semibold">
+                Votre rôle dans ce club est : <span className="text-green-900">{club.roleName}</span>
+           </Typography>
+         </div>
+          ) : (
+            <button
+            onClick={() =>
+              navigate("/demandes/deposer", {
+                state: { clubId: club.uuid, clubName: club.nom }
+              })
+            }
+            className="flex items-center px-4 py-2 text-blue-600 rounded-lg border-2 border-blue-600 hover:bg-blue-600 hover:text-white hover:border-blue-700 transition-all duration-300"
+          >
+            <FaPlug className="mr-2" size={20} />
+            Demande d'intégration
+          </button>
+          
+          )}
+        </div>
+      </div>
+
 
       <div className="container mx-auto grid gap-8 grid-cols-1 lg:grid-cols-2 items-start">
         <img
@@ -258,7 +288,7 @@ const ClubDetails = () => {
           <Typography variant="h2" color="blue-gray" className="font-bold text-3xl mb-3">
             {club.nom}
           </Typography>
-
+  
           <div className="flex items-center mb-4">
             {club.profilsDetailsDto.map((student, index) => (
               <div key={student.uuid} className="flex flex-col items-center mr-2">
@@ -313,6 +343,10 @@ const ClubDetails = () => {
             <p className="flex items-center">
               <BsPeople className="mr-2 text-green-500" /> Nombre de membres :{" "}
               {club.nbrMembres}
+            </p>
+            <p className="flex items-center">
+              <BsPerson className="mr-2 text-gray-500" /> Fondateur :{" "}
+              {club.nomFondateur || "Non spécifié"}
             </p>
           </div>
 

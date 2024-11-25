@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
 import axiosInstance from "../auth/axios.js";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+const apiUrl = "/demandes";
 
 export const useFetchNotJoinedClubs = () => {
   const { isLoading, data, isError, error } = useQuery({
@@ -75,4 +76,31 @@ export const useCreateEventDemande = () => {
     },
   });
   return { createEventDemande, isPending };
-}; 
+};  
+
+export const editRoleStudent = async ({ uuid, roleName, memberRole }) => {
+  try {
+    const response = await axiosInstance.put(
+      `${apiUrl}/edit-integration/${uuid}`,
+      {},
+      {
+        params: {
+          roleName: roleName,
+          memberRole: memberRole,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteIntegration = async (id) => {
+  try {
+    const response = await axiosInstance.delete(`${apiUrl}/integration/delete/${id}`);
+    return response.data; 
+  } catch (error) {
+    throw error; 
+  }
+};
