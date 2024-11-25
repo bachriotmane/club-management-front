@@ -10,7 +10,7 @@ const Albums = () => {
   return (
 
     <div className="container w-full mx-auto px-4">
-        <SecureComponenet role='ROLE_USER'>
+        <SecureComponenet role='ROLE_USER' clubId={clubId} requiredClubRole="ADMIN" >
             <div className="flex justify-between mb-2.5  items-center w-full">
             <button onClick={()=>navigate(-1)}>
                 <IoMdArrowBack className="text-btnColor text-3xl"/>
