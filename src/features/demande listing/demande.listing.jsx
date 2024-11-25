@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2"; // Import de SweetAlert2
-import {getDemandes, updateDemandeStatus,} from "../../repositories/Demandes.repository"; // Import de la fonction
-import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx"; // Import de la fonction} from "../../repositories/Demandes.repository"; // Import de la fonction
-import { AiOutlinePlus } from "react-icons/ai";
+import {getDemandes, updateDemandeStatus,} from "../../repositories/Demandes.repository";
 
 
 const DemandesListing = () => {
@@ -14,7 +12,6 @@ const DemandesListing = () => {
   const [filterType, setFilterType] = useState("ALL");
   const navigate = useNavigate();
 
-  // Fonction pour récupérer les demandes depuis le backend avec pagination
   const fetchDemandes = async (page = 1) => {
     try {
       const size = 10;
