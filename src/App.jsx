@@ -32,8 +32,8 @@ import ChangeProfile from "./shared/components/auth/ChangeProfil.jsx";
 import PrivateRoute from "./shared/components/auth/PrivateRoute.jsx";
 import UpdatePublication from "./features/update publication/update.publication.jsx";
 import React from "react";
-import AlbumListing from "./features/AlbumListing/AlbumListing.jsx";
 import Albums from "./features/AlbumListing/Albums.jsx";
+import CreateAlbum from "./features/addAlbum/CreateAlbum.jsx";
 
 function App() {
   return (
@@ -57,6 +57,7 @@ function App() {
           <Route path="/demandes/historique/:id" element={<DemandeHistorique />} />
           <Route path="/club/:uuid" element={<ClubDetails />} />
           <Route path="/club/albums/:clubId" element={<Albums/>}/>
+          <Route path="/albums/:clubId" element={<CreateAlbum />}/>
           <Route path="/club/:uuid/membres" element={<ClubMembersListing />} />
           <Route path="/events" element={<EventsListing />} />
           <Route path="/event/:id" element={<EventDetails />} />

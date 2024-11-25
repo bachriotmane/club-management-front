@@ -55,11 +55,11 @@ const CustomSwiperNavButtons = () => {
     return (
       <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex justify-between px-4 z-10">
         <FaChevronCircleLeft
-          className="text-black text-3xl cursor-pointer opacity-25 "
+          className="text-white text-3xl cursor-pointer  "
           onClick={() => swiper.slidePrev()} 
         />
         <FaChevronCircleRight
-          className="text-black text-3xl cursor-pointer opacity-50"
+          className="text-white text-3xl cursor-pointer "
           onClick={() => swiper.slideNext()}  
         />
       </div>

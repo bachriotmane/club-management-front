@@ -2,16 +2,24 @@ import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
 import { useFetchClubAlbums } from "../../repositories/albumRepository.js";
 import AlbumCard from "../../shared/components/cards/AlbumCard.jsx";
 import { useParams } from "react-router-dom";
+import logo from '../../assets/not-items-found.png';
 
 const AlbumListing = () => {
   const {clubId} = useParams();
-  const {data,isLoading,error,isError} =useFetchClubAlbums(clubId);
-  console.log(data);
+  const {data,isLoading} =useFetchClubAlbums(clubId);
   
   if(isLoading){
     return(
       <div className="h-screen flex justify-center items-start mt-36">
         <LoadingSpinner></LoadingSpinner>
+      </div>
+    )
+  }
+  if(data && data.length === 0){
+    return (
+      <div className="flex flex-col items-center justify-center mt-20 ">
+          <img className="w-1/6 h-1/4 object-cover" src={logo} alt="salam"/>
+          <span className="font-bold text-2xl">Il n'y a pas d'albums pour ce club jusqu'à ce moment.</span>
       </div>
     )
   }
@@ -29,7 +37,6 @@ const AlbumListing = () => {
             /> ;
           })
         }
-         
       </div>
     );
   }
