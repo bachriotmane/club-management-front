@@ -7,10 +7,9 @@ import {
   updateDemandeStatus,
   getDemandesByDemandeurId,
 } from "../../repositories/Demandes.repository"; // Import de la fonction
-import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx"; // Import du composant SecureComponenet
-import { AiOutlinePlus } from "react-icons/ai";
 import axiosInstance from "../../auth/axios.js";
 import { getUser } from "../../auth/auth.js";
+import {FaPlusCircle} from "react-icons/fa";
 
 const DemandesListing = () => {
   const [demandes, setDemandes] = useState([]);
@@ -103,32 +102,9 @@ const DemandesListing = () => {
       try {
         // Récupérer les informations de la demande
         const demande = await getDemandeById2(demandeId);
-        console.log("demande ::", demande);
-
-        if (newStatus === "ACCEPTE") {
-          // Si la demande est acceptée, on met à jour les entités associées
-
-          if (demande.type === "INTEGRATION_CLUB" && demande.idIntegration) {
-            await acceptIntegration(demande.idIntegration);
-          } else if (demande.type === "CREATION_CLUB" && demande.idClub) {
-            await acceptClub(demande.idClub);
-          } else if (demande.type === "EVENEMENT" && demande.idEvent) {
-            await acceptEvenement(demande.idEvent);
-          }
-        } else if (newStatus === "REFUSE") {
-          // Si la demande est refusée, on supprime ou annule les entités associées
-
-          if (demande.type === "INTEGRATION_CLUB" && demande.idIntegration) {
-            await deleteIntegration(demande.idIntegration); // Suppression si refusé
-          } else if (demande.type === "CREATION_CLUB" && demande.idClub) {
-            await deleteClub(demande.idClub); // Suppression si refusé
-          } else if (demande.type === "EVENEMENT" && demande.idEvent) {
-            await deleteEvenement(demande.idEvent); // Suppression si refusé
-          }
-        }
 
         // Mettre à jour le statut de la demande après acceptation ou refus
-        await updateDemandeStatus(demandeId, newStatus);
+        await updateDemandeStatus(demandeId, newStatus, user.firstName + user.lastName);
 
         // Mise à jour de l'état des demandes affichées
         const updatedDemandes = demandes.map((demande) =>
@@ -234,35 +210,35 @@ const DemandesListing = () => {
   };
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg">
+      <div className="p-6 bg-white shadow-lg rounded-lg">
         <button
             onClick={() => navigate("deposer")}
-            className="absolute top-4 right-4 flex items-center bg-orange-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-orange-700"
+            className="absolute right-14 flex items-center bg-orange-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-orange-700"
         >
-            <FaPlusCircle className="mr-2" />
-            Déposer Demande
+          <FaPlusCircle className="mr-2"/>
+          Déposer Demande
         </button>
-      <h1 className="my-2 text-2xl">Demandes</h1>
-      <div className="mb-4">
-        <label className="mr-2">Filtrer par type:</label>
-        <select
-          value={filterType}
-          onChange={(e) => {
-            setFilterType(e.target.value);
-            setCurrentPage(1); // Remettre la page actuelle à 1 lorsque le type est changé
-          }}
-          className="px-2 py-1 border rounded"
-        >
-          <option value="ALL">Tous</option>
-          <option value="CREATION_CLUB">Création de club</option>
-          <option value="INTEGRATION_CLUB">Intégration de club</option>
-          <option value="EVENEMENT">Événements</option>
-        </select>
-      </div>
+        <h1 className="my-2 text-2xl">Demandes</h1>
+        <div className="mb-4">
+          <label className="mr-2">Filtrer par type:</label>
+          <select
+              value={filterType}
+              onChange={(e) => {
+                setFilterType(e.target.value);
+                setCurrentPage(1); // Remettre la page actuelle à 1 lorsque le type est changé
+              }}
+              className="px-2 py-1 border rounded"
+          >
+            <option value="ALL">Tous</option>
+            <option value="CREATION_CLUB">Création de club</option>
+            <option value="INTEGRATION_CLUB">Intégration de club</option>
+            <option value="EVENEMENT">Événements</option>
+          </select>
+        </div>
 
-      {/* Tableau des demandes */}
-      <table className="min-w-full border">
-        <thead className="bg-gray-100">
+        {/* Tableau des demandes */}
+        <table className="min-w-full border">
+          <thead className="bg-gray-100">
           <tr>
             <th className="px-4 py-2 border">ID</th>
             <th className="px-4 py-2 border">CNE</th>
@@ -271,103 +247,102 @@ const DemandesListing = () => {
             <th className="px-4 py-2 border">Action</th>
             <th className="px-4 py-2 border">Historiques</th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           {demandes.map((demande) => (
-            <tr
-              key={demande.id}
-              className="cursor-pointer hover:bg-gray-100"
-              onClick={() => navigate(`/demandes/${demande.id}`)}
-            >
-              <td className="px-4 py-2 border text-center">#{demande.id}</td>
-              <td className="px-4 py-2 border text-center">
-                {demande.cne || "Non spécifié"}
-              </td>
-              <td className="px-4 py-2 border text-center">
-                {new Date(demande.date).toLocaleDateString()}
-              </td>
-              <td className="px-4 py-2 border text-center">
+              <tr
+                  key={demande.id}
+                  className="cursor-pointer hover:bg-gray-100"
+              >
+                <td className="px-4 py-2 border text-center hover:underline" onClick={() => navigate(`/demandes/${demande.id}`)}>#{demande.id}</td>
+                <td className="px-4 py-2 border text-center">
+                  {demande.cne || "Non spécifié"}
+                </td>
+                <td className="px-4 py-2 border text-center">
+                  {new Date(demande.date).toLocaleDateString()}
+                </td>
+                <td className="px-4 py-2 border text-center">
                 <span
-                  className={`${
-                    demande.statutDemande === "EN_COURS"
-                      ? "bg-orange-500 text-white"
-                      : demande.statutDemande === "ACCEPTE"
-                      ? "bg-green-500 text-white"
-                      : "bg-red-500 text-white"
-                  } py-1 px-2 rounded-full font-semibold`}
+                    className={`${
+                        demande.statutDemande === "EN_COURS"
+                            ? "bg-orange-500 text-white"
+                            : demande.statutDemande === "ACCEPTE"
+                                ? "bg-green-500 text-white"
+                                : "bg-red-500 text-white"
+                    } py-1 px-2 rounded-full font-semibold`}
                 >
                   {demande.statutDemande === "EN_COURS"
-                    ? "En cours"
-                    : demande.statutDemande === "ACCEPTE"
-                    ? "Acceptée"
-                    : "Refusée"}
+                      ? "En cours"
+                      : demande.statutDemande === "ACCEPTE"
+                          ? "Acceptée"
+                          : "Refusée"}
                 </span>
-              </td>
-              <td className="px-4 py-2 border text-center">
-                <div>
-                  {demande.statutDemande === "EN_COURS" && (
-                    <div>
-                      <button
-                        onClick={(event) =>
-                          handleStatusChange(demande.id, "ACCEPTE", event)
-                        }
-                        className="text-green-500 hover:text-green-700 mx-1"
-                      >
+                </td>
+                <td className="px-4 py-2 border text-center">
+                  <div>
+                    {demande.statutDemande === "EN_COURS" && (
+                        <div>
+                          <button
+                              onClick={(event) =>
+                                  handleStatusChange(demande.id, "ACCEPTE", event)
+                              }
+                              className="text-green-500 hover:text-green-700 mx-1"
+                          >
                         <span role="img" aria-label="check">
                           &#10004;
                         </span>
-                      </button>
-                      <button
-                        onClick={(event) =>
-                          handleStatusChange(demande.id, "REFUSE", event)
-                        }
-                        className="text-red-500 hover:text-red-700 mx-1"
-                      >
+                          </button>
+                          <button
+                              onClick={(event) =>
+                                  handleStatusChange(demande.id, "REFUSE", event)
+                              }
+                              className="text-red-500 hover:text-red-700 mx-1"
+                          >
                         <span role="img" aria-label="cross">
                           &#10006;
                         </span>
-                      </button>
-                    </div>
-                  )}
-                  {demande.statutDemande !== "EN_COURS" && (
-                    <span className="text-gray-500">Action terminée</span>
-                  )}
-                </div>
-              </td>
-              <td className="text-center">
-                <button
-                  onClick={() => navigate(`/historiques/${demande.id}`)}
-                  className="bg-orange-500 p-2 text-white font-bold rounded-xl"
-                >
-                  historique
-                </button>
-              </td>
-            </tr>
+                          </button>
+                        </div>
+                    )}
+                    {demande.statutDemande !== "EN_COURS" && (
+                        <span className="text-gray-500">Action terminée</span>
+                    )}
+                  </div>
+                </td>
+                <td className="text-center">
+                  <button
+                      onClick={() => navigate(`/demandes/historique/${demande.id}`)}
+                      className="bg-orange-500 p-2 text-white font-bold rounded-xl"
+                  >
+                    historique
+                  </button>
+                </td>
+              </tr>
           ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
 
-      {/* Nouveau tableau pour afficher uniquement les demandes de l'utilisateur */}
-      <h2 className="my-2 text-2xl">Mes Demandes</h2>
-      <table className="min-w-full border">
-        <thead className="bg-gray-100">
+        {/* Nouveau tableau pour afficher uniquement les demandes de l'utilisateur */}
+        <h2 className="my-2 text-2xl">Mes Demandes</h2>
+        <table className="min-w-full border">
+          <thead className="bg-gray-100">
           <tr>
             <th className="px-4 py-2 border">ID</th>
             <th className="px-4 py-2 border">Description</th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           {myDemandes.map((demande) => (
-            <tr key={demande.id}>
-              <td className="px-4 py-2 border text-center">#{demande.id}</td>
-              <td className="px-4 py-2 border text-center">
-                {demande.description}
-              </td>
-            </tr>
+              <tr key={demande.id}>
+                <td className="px-4 py-2 border text-center">#{demande.id}</td>
+                <td className="px-4 py-2 border text-center">
+                  {demande.description}
+                </td>
+              </tr>
           ))}
-        </tbody>
-      </table>
-    </div>
+          </tbody>
+        </table>
+      </div>
   );
 };
 
