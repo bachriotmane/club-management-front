@@ -22,6 +22,8 @@ import ErrorNotification from "./components/errorMessage.jsx";
 import StatusNotification from "./components/statusMessage.jsx";
 import { fetchClubData } from "./services/clubServices.jsx";
 
+import { IoMdClose } from "react-icons/io";
+import { IoAlbums } from "react-icons/io5";
 
 const ClubDetails = () => {
   const { uuid } = useParams();
@@ -43,7 +45,7 @@ const ClubDetails = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditClubModalOpen, setIsEditClubModalOpen] = useState(false);
   const [isEditImageModalOpen, setIsEditImageModalOpen] = useState(false);
-  
+
 
   const activityColors = [
     "bg-blue-100 text-blue-700",
@@ -209,6 +211,11 @@ const ClubDetails = () => {
     }
   }, [statusMessage, errorDelete]);
 
+  const handleAlbumClick = ()=>{
+    const clubId = uuid;
+    navigate(`/club/albums/${clubId}`);
+  }
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -238,33 +245,41 @@ const ClubDetails = () => {
           <Typography variant="h2" color="blue-gray" className="font-bold text-3xl mb-3">
             {club.nom}
           </Typography>
-  
-          <div className="flex items-center mb-4">
-            {club.profilsDetailsDto.map((student, index) => (
-              <div key={student.uuid} className="flex flex-col items-center mr-2">
-                <img
-                  src={studentsImages[index] || "/default-profile.png"}
-                  alt={student.nom}
-                  className="w-12 h-12 rounded-full border-2 border-gray-300 cursor-pointer"
-                  onClick={() => navigate(`/profile/${student.uuid}`)}
-                />
-                <span className="text-xs font-medium mt-1">{student.nom}</span>
-              </div>
-            ))}
+          <div className="flex justify-between">
+            <div className="flex items-center mb-4">
+              {club.profilsDetailsDto.map((student, index) => (
+                <div key={student.uuid} className="flex flex-col items-center mr-2">
+                  <img
+                    src={studentsImages[index] || "/default-profile.png"}
+                    alt={student.nom}
+                    className="w-12 h-12 rounded-full border-2 border-gray-300 cursor-pointer"
+                    onClick={() => navigate(`/profile/${student.uuid}`)}
+                  />
+                  <span className="text-xs font-medium mt-1">{student.nom}</span>
+                </div>
+              ))}
 
-            <div className="flex flex-col items-center ml-4 text-blue-500 cursor-pointer">
-              <span
-                className="text-sm font-medium transition duration-300 ease-in-out transform hover:scale-105 hover:underline"
-                onClick={() => navigate(`/club/${uuid}/membres`)}
-              >
-                Voir tous
-              </span>
-              {club.nbrMembres - club.profilsDetailsDto.length > 0 && (
-                <span className="text-xs font-medium mt-1 text-gray-500">
-                  +{club.nbrMembres - club.profilsDetailsDto.length}
+              <div className="flex flex-col items-center ml-4 text-blue-500 cursor-pointer">
+                <span
+                  className="text-sm font-medium transition duration-300 ease-in-out transform hover:scale-105 hover:underline"
+                  onClick={() => navigate(`/club/${uuid}/membres`)}
+                >
+                  Voir tous
                 </span>
-              )}
+                {club.nbrMembres - club.profilsDetailsDto.length > 0 && (
+                  <span className="text-xs font-medium mt-1 text-gray-500">
+                    +{club.nbrMembres - club.profilsDetailsDto.length}
+                  </span>
+                )}
+              </div>
             </div>
+            <button
+              onClick={()=>handleAlbumClick()}
+              className="bg-btnColor p-3 h-10 rounded-lg flex gap-2 items-center text-white"
+            >
+                <IoAlbums />
+                Album
+            </button>
           </div>
 
           <Typography variant="paragraph" color="gray" className="mb-4">
@@ -379,7 +394,7 @@ const ClubDetails = () => {
         closeMessage={closeMessage}
         setErrorDelete={setErrorDelete}
       />
-      
+
 </header>
   );
 };
