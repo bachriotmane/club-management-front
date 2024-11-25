@@ -42,3 +42,24 @@ export const getEventsHome = async ({ limit = 7 }) => {
         throw error;
     }
 };
+
+
+export const deleteEventemnt = async (id)=>{
+    try {
+        const response = await axiosInstance.delete(`${apiUrl}/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const updateEvent = async (id, eventBody)=>{
+    try {
+        console.log("WILL UPDATE : ", id,eventBody)
+        const response = await axiosInstance.put(`${apiUrl}/${id}`, eventBody);
+        return response.data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}

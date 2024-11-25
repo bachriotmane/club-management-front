@@ -22,7 +22,6 @@ function SideBarLayout() {
   useEffect(() => {
       axiosInstance.get(`/user/profile/${userId}`)
       .then((response) => {
-        console.log("response data error" ,response.data);
         getImage(response.data.id).then((res) => {
           setUserImage(res);
         });
@@ -55,7 +54,7 @@ function SideBarLayout() {
               user={{
                 name: getUser()?.fullName ? getUser().fullName : "Unknown",
                 email: user.sub,
-                avatar: !userImage ? userImage : loadedImageUrl,
+                avatar: !!userImage ? userImage : loadedImageUrl,
               }}
             />
           </div>

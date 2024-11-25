@@ -60,6 +60,8 @@ const ClubsListingPage = () => {
     }
   };
 
+
+
   useEffect(() => {
     const isMyClubs = activeView === "all" ? false : true;
     setClubs([]);
@@ -124,6 +126,7 @@ const ClubsListingPage = () => {
               Mes Clubs
             </button>
           </SecureComponenet>
+
         </div>
         <input
           type="text"

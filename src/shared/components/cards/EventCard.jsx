@@ -2,8 +2,9 @@ import React from 'react';
 import { FaInstagram, FaCalendarAlt } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
 
-const EventCard = ({ item, size = "grand" }) => {
+const EventCard = ({ item, size = "grand" , image}) => {
   const navigate = useNavigate();
+  console.log("Image",image)
   
   const cardHeight = "h-[400px]"; 
   const widthClass = size === "petit" ? "max-w-xs" : "max-w-md"; 
@@ -18,7 +19,7 @@ const EventCard = ({ item, size = "grand" }) => {
       onClick={handleNavigation}
     >
       <img
-        src={item.image || "default-image.jpg"}
+        src={image || "default-image.jpg"}
         alt={item.nom}
         className="w-full h-48 object-cover rounded-md mb-4"
       />

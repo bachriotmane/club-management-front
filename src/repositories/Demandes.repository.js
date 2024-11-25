@@ -18,11 +18,14 @@ export const getDemandes = async ({ page, size, type }) => {
 };
 
 // Mettre à jour le statut d'une demande
-export const updateDemandeStatus = async (id, statutDemande) => {
+export const updateDemandeStatus = async (id, statutDemande, agent) => {
   try {
     const response = await axiosInstance.put(
       `http://localhost:8080/demandes/${id}/status`,
-      JSON.stringify(statutDemande), // Statut envoyé comme une chaîne JSON
+        {
+          statutDemande : statutDemande ,
+          agent : agent
+        },
       {
         headers: {
           "Content-Type": "application/json",
@@ -42,5 +45,29 @@ export const getDemandeById = async (id) => {
     return response.data; // Les données sont déjà extraites
   } catch (error) {
     throw new Error("Erreur lors de la récupération de la demande");
+  }
+};
+export const getDemandeById2 = async (id) => {
+  try {
+    const response = await axiosInstance.get(`/demandes/demande/${id}`);
+    return response.data; // Les données sont déjà extraites
+  } catch (error) {
+    throw new Error("Erreur lors de la récupération de la demande");
+  }
+};
+
+export const getDemandesByDemandeurId = async (demandeurId) => {
+  try {
+    // Effectuer une requête GET à l'API
+    const response = await axiosInstance.get(
+      `/demandes/demandeur/${demandeurId}`
+    );
+    return response.data; // Retourne les données extraites de la réponse
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération des demandes par ID du demandeur :",
+      error
+    );
+    throw new Error("Erreur lors de la récupération des demandes.");
   }
 };

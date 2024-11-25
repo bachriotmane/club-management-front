@@ -26,7 +26,6 @@ const Profile = () => {
   const getUserId = id || getUser()?.id;
   const [profileImage, setProfileImage] = useState(null);
   const [coverImage, setCoverImage] = useState(null);
-
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
@@ -43,7 +42,6 @@ const Profile = () => {
         getImage(response.data?.imageCover).then((res) => {
           setCoverImage(res);
         });
-        console.log("user id ", getUserId);
       } catch (err) {
         console.log(err);
         setError("Failed to fetch user data");

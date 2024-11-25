@@ -32,6 +32,7 @@ import ChangeProfile from "./shared/components/auth/ChangeProfil.jsx";
 import PrivateRoute from "./shared/components/auth/PrivateRoute.jsx";
 import UpdatePublication from "./features/update publication/update.publication.jsx";
 import React from "react";
+import UpdateEvent from "./features/update event/update.event.jsx";
 import Albums from "./features/AlbumListing/Albums.jsx";
 import CreateAlbum from "./features/addAlbum/CreateAlbum.jsx";
 
@@ -66,6 +67,7 @@ function App() {
           <Route path="/historiques/:id" element={<Historiques />} />
           <Route path="/publication/:id" element={<PublicationDetails />} />
           <Route path="/publication/update/:id" element={<UpdatePublication />} />
+          <Route path="/event/update/:id" element={<UpdateEvent />} />
           <Route path="/publication/create" element={<CreatePublication />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<Profile />} />

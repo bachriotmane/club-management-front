@@ -43,7 +43,6 @@ const SecureComponent = ({ role, clubId, requiredClubRole, children }) => {
             // Club-specific role check
             if (clubId && requiredClubRole) {
                 const club = userRolesInClubs.find((club) => club.clubId === clubId);
-                console.log("Club : ", club)
                 if (club && club.userRole === requiredClubRole) {
                     authorized = true;
                 }

@@ -5,6 +5,7 @@ import {getDateRange} from "../../shared/components/utili/mappers.js";
 import logo from '../../assets/not-items-found.png';
 import {getEvents} from "../../repositories/evenements.repository.js";
 import EventCard from "../../shared/components/cards/EventCard.jsx";
+import {getImage} from "../../repositories/image.repository.js";
 
 const EventListing = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,6 +16,7 @@ const EventListing = () => {
   const [page, setPage] = useState(0);
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
+  const [images, setImages] = useState({});
 
 
   const fetchEvents = async (reset = false) => {
@@ -45,12 +47,39 @@ const EventListing = () => {
     }
   };
 
+  const fetchImage = async (id)=>{
+    try{
+      return await getImage(id);
+    }catch(_){
+      return null;
+    }
+  }
+
   useEffect(() => {
     setIsLoading(true);
     fetchEvents(true).then(() => {
       setIsLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      const fetchedImages = {};
+      for (const event of events) {
+        if (event?.imageId) {
+          try {
+            const image = await fetchImage(event.imageId);
+            fetchedImages[event.imageId] = image;
+          } catch (error) {
+            fetchedImages[event.imageId] = null;
+          }
+        }
+      }
+      setImages(fetchedImages);
+    };
+
+    fetchImages();
+  }, [events]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -96,7 +125,7 @@ const EventListing = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {
-                    events.map((item, index) => ( <EventCard key={index} item={item}/>
+                    events.map((item, index) => ( <EventCard key={index} item={item} image={images[item.imageId]}/>
                     ))
                   }
                 </div>
