@@ -1,89 +1,103 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2"; // Import de SweetAlert2
+import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx"; 
+
 import {
   getDemandeById2,
   getDemandes,
   updateDemandeStatus,
   getDemandesByDemandeurId,
+  getDemandes_v2,
 } from "../../repositories/Demandes.repository"; // Import de la fonction
 import axiosInstance from "../../auth/axios.js";
 import { getUser } from "../../auth/auth.js";
 import {FaPlusCircle} from "react-icons/fa";
+import { getClubs_v2 } from "../../repositories/clubs.repository.js";
 
 const DemandesListing = () => {
   const [demandes, setDemandes] = useState([]);
-  const [myDemandes, setMyDemandes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [filterType, setFilterType] = useState("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isMyDemandes, setIsMyDemandes] = useState(false);
+  const handleSearch = (e) => setSearchQuery(e.target.value);
+  const [clubs, setClubs] = useState([]); 
+  const [selectedClub, setSelectedClub] = useState(""); 
+
 
   const { id } = useParams();
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const getUserId = id || getUser()?.id;
   const navigate = useNavigate(); // Utilisation de useNavigate pour la navigation
 
+ // useEffect(() => {
+    const user = getUser();
+  //   const fetchUser = async () => {
+  //     if (!getUserId) return; // Si aucun ID, pas besoin de faire l'appel API
+
+  //     setLoading(true);
+  //     setError(null);
+
+  //     try {
+  //       const response = await axiosInstance.get(`/user/${getUserId}`);
+  //       const fetchedUser = response.data;
+  //       setUser(fetchedUser); // Assurez-vous que `user` est bien mis à jour avant d'utiliser
+  //       console.log("user ::::::::::::::::: ", fetchedUser);
+  //     } catch (err) {
+  //       console.error("Error fetching user data: ", err);
+  //       setError("Failed to fetch user data");
+  //     } finally {
+  //       setLoading(false); // Arrête le loader après l'appel
+  //     }
+  //   };
+
+  //   fetchUser();
+  // }, [getUserId]);
+
+
+
+
+  const fetchDemandes = useCallback(async () => {
+    try {
+      const response = await getDemandes_v2({
+        page: currentPage - 1, 
+        size: 10, 
+        type: filterType, 
+        nom: searchQuery, 
+        isMyDemandes: isMyDemandes,
+        uuidClub: selectedClub,
+      });
+     console.log("response",response.content);
+      setDemandes(response.content);
+      setTotalPages(response.totalPages); 
+      console.log("demandes",demandes);
+
+    } catch (error) {
+      console.error("Error fetching demandes:", error);
+    }
+  }, [currentPage, filterType, searchQuery, isMyDemandes,selectedClub]);
+
   useEffect(() => {
-    const fetchUser = async () => {
-      if (!getUserId) return; // Si aucun ID, pas besoin de faire l'appel API
-
-      setLoading(true);
-      setError(null);
-
+    fetchDemandes();
+  }, [fetchDemandes]);
+  useEffect(() => {
+    const fetchClubs = async () => {
       try {
-        const response = await axiosInstance.get(`/user/${getUserId}`);
-        const fetchedUser = response.data;
-        setUser(fetchedUser); // Assurez-vous que `user` est bien mis à jour avant d'utiliser
-        console.log("user ::::::::::::::::: ", fetchedUser);
-      } catch (err) {
-        console.error("Error fetching user data: ", err);
-        setError("Failed to fetch user data");
-      } finally {
-        setLoading(false); // Arrête le loader après l'appel
+        const clubList = await getClubs_v2();
+        console.log(clubList)
+        setClubs(clubList); 
+      } catch (error) {
+        console.error("Error fetching clubs:", error);
       }
     };
 
-    fetchUser();
-  }, [getUserId]);
-
-  const fetchMyDemandes = useCallback(async () => {
-    if (!getUserId) return;
-
-    setLoading(true);
-    try {
-      const response = await getDemandesByDemandeurId(getUserId);
-      setMyDemandes(response);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [getUserId]);
-
-  // Fonction pour récupérer les demandes depuis le backend avec pagination
-  const fetchDemandes = async (page = 1) => {
-    try {
-      const size = 10;
-      const response = await getDemandes({
-        page: page - 1,
-        size,
-        type: filterType,
-      });
-      setDemandes(response.content);
-      setTotalPages(response.totalPages);
-      setTotalItems(response.totalElements);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des demandes :", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchDemandes(currentPage);
-    fetchMyDemandes();
-  }, [currentPage, filterType]);
+    fetchClubs();
+  }, []);
 
   const handleStatusChange = async (demandeId, newStatus, event) => {
     event.stopPropagation();
@@ -100,13 +114,10 @@ const DemandesListing = () => {
 
     if (result.isConfirmed) {
       try {
-        // Récupérer les informations de la demande
         const demande = await getDemandeById2(demandeId);
 
-        // Mettre à jour le statut de la demande après acceptation ou refus
-        await updateDemandeStatus(demandeId, newStatus, user.firstName + user.lastName);
+        await updateDemandeStatus(demandeId, newStatus, user.fullName);
 
-        // Mise à jour de l'état des demandes affichées
         const updatedDemandes = demandes.map((demande) =>
           demande.id === demandeId
             ? { ...demande, statutDemande: newStatus }
@@ -128,80 +139,8 @@ const DemandesListing = () => {
     }
   };
 
-  const acceptIntegration = async (id) => {
-    try {
-      const response = await axiosInstance.put(
-        `http://localhost:8080/integrations/${id}/accepter`,
-        { isValid: true } // Mise à jour du champ `isValid`
-      );
-      console.log(
-        "Intégration acceptée et mise à jour avec succès:",
-        response.data
-      );
-    } catch (error) {
-      console.error("Erreur lors de l'acceptation de l'intégration:", error);
-    }
-  };
 
-  // Fonction pour accepter le club (met à jour le `isValid` en true)
-  const acceptClub = async (clubId) => {
-    try {
-      const response = await axiosInstance.put(
-        `http://localhost:8080/clubs/${clubId}/accepter`,
-        { isValid: true } // Mise à jour du champ `isValid`
-      );
-      console.log("Club accepté et mis à jour avec succès:", response.data);
-    } catch (error) {
-      console.error("Erreur lors de l'acceptation du club:", error);
-    }
-  };
-
-  // Fonction pour accepter l'événement (met à jour le `isValid` en true)
-  const acceptEvenement = async (eventId) => {
-    try {
-      const response = await axiosInstance.put(
-        `http://localhost:8080/events/${eventId}/accepter`,
-        { isValid: true } // Mise à jour du champ `isValid`
-      );
-      console.log(
-        "Événement accepté et mis à jour avec succès:",
-        response.data
-      );
-    } catch (error) {
-      console.error("Erreur lors de l'acceptation de l'événement:", error);
-    }
-  };
-
-  const deleteIntegration = async (id) => {
-    try {
-      const response = await axiosInstance.delete(
-        `http://localhost:8080/integrations/${id}`
-      );
-      console.log("Suppression réussie:", response.data);
-    } catch (error) {
-      console.error("Erreur lors de la suppression:", error);
-    }
-  };
-
-  // Fonction pour supprimer le club
-  const deleteClub = async (clubId) => {
-    try {
-      await axiosInstance.delete(`http://localhost:8080/clubs/${clubId}`);
-    } catch (error) {
-      console.error("Erreur lors de la suppression du club:", error);
-      throw error;
-    }
-  };
-
-  // Fonction pour supprimer l'événement
-  const deleteEvenement = async (eventId) => {
-    try {
-      await axiosInstance.delete(`http://localhost:8080/events/${eventId}`);
-    } catch (error) {
-      console.error("Erreur lors de la suppression de l'événement:", error);
-      throw error;
-    }
-  };
+ 
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -220,22 +159,67 @@ const DemandesListing = () => {
         </button>
         <h1 className="my-2 text-2xl">Demandes</h1>
         <div className="mb-4">
-          <label className="mr-2">Filtrer par type:</label>
-          <select
-              value={filterType}
-              onChange={(e) => {
-                setFilterType(e.target.value);
-                setCurrentPage(1); // Remettre la page actuelle à 1 lorsque le type est changé
-              }}
-              className="px-2 py-1 border rounded"
-          >
-            <option value="ALL">Tous</option>
-            <option value="CREATION_CLUB">Création de club</option>
-            <option value="INTEGRATION_CLUB">Intégration de club</option>
-            <option value="EVENEMENT">Événements</option>
-          </select>
-        </div>
+  <label className="mr-2 text-orange-600">Filtrer par type:</label>
+  <select
+    value={filterType}
+    onChange={(e) => {
+      setFilterType(e.target.value);
+      setCurrentPage(1); 
+    }}
+    className="px-3 py-2 border rounded-lg bg-white text-gray-800 hover:border-orange-500 transition-all duration-300"
+  >
+    <option value="ALL">Tous</option>
+    <option value="CREATION_CLUB">Création de club</option>
+    <option value="INTEGRATION_CLUB">Intégration de club</option>
+    <option value="EVENEMENT">Événements</option>
+  </select>
 
+  <label className="ml-4 mr-2 text-orange-600">Sélectionner un club:</label>
+  <select
+    value={selectedClub}
+    onChange={(e) => setSelectedClub(e.target.value)}
+    className="px-3 py-2 border rounded-lg bg-white text-gray-800 hover:border-orange-500 transition-all duration-300"
+  >
+    <option value="">Tous les clubs</option>
+    {clubs.map((club) => (
+      <option key={club.uuid} value={club.uuid}>
+        {club.nom}
+      </option>
+    ))}
+  </select>
+</div>
+
+        <div className="flex justify-between items-center mb-6">
+        <div className="flex space-x-4">
+          <button
+            onClick={() => {
+              setIsMyDemandes(false);
+              setCurrentPage(1);
+            }}
+            className={`px-4 py-2 rounded-full font-semibold ${!isMyDemandes ? "bg-orange-500 text-white" : "bg-orange-100 text-black"}`}
+          >
+            Demandes reçues
+          </button>
+          <SecureComponenet role="ROLE_USER">
+            <button
+              onClick={() => {
+                setIsMyDemandes(true);
+                setCurrentPage(1);
+              }}
+              className={`px-4 py-2 rounded-full font-semibold ${isMyDemandes ? "bg-orange-500 text-white" : "bg-orange-100 text-black"}`}
+            >
+              Mes demandes
+            </button>
+          </SecureComponenet>
+        </div>
+        <input
+          type="text"
+          placeholder="Rechercher un club..."
+          value={searchQuery}
+          onChange={handleSearch}
+          className="p-3 border border-gray-300 rounded-full w-1/3"
+        />
+      </div>
         {/* Tableau des demandes */}
         <table className="min-w-full border">
           <thead className="bg-gray-100">
@@ -248,6 +232,7 @@ const DemandesListing = () => {
             <th className="px-4 py-2 border">Historiques</th>
           </tr>
           </thead>
+          
           <tbody>
           {demandes.map((demande) => (
               <tr
@@ -322,27 +307,26 @@ const DemandesListing = () => {
           </tbody>
         </table>
 
-        {/* Nouveau tableau pour afficher uniquement les demandes de l'utilisateur */}
-        <h2 className="my-2 text-2xl">Mes Demandes</h2>
-        <table className="min-w-full border">
-          <thead className="bg-gray-100">
-          <tr>
-            <th className="px-4 py-2 border">ID</th>
-            <th className="px-4 py-2 border">Description</th>
-          </tr>
-          </thead>
-          <tbody>
-          {myDemandes.map((demande) => (
-              <tr key={demande.id}>
-                <td className="px-4 py-2 border text-center">#{demande.id}</td>
-                <td className="px-4 py-2 border text-center">
-                  {demande.description}
-                </td>
-              </tr>
-          ))}
-          </tbody>
-        </table>
+
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-6">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="bg-orange-600 text-white px-4 py-2 rounded-full hover:bg-orange-700 disabled:bg-gray-400"
+        >
+          Précédent
+        </button>
+        <span className="text-lg">{`Page ${currentPage} sur ${totalPages}`}</span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="bg-orange-600 text-white px-4 py-2 rounded-full hover:bg-orange-700 disabled:bg-gray-400"
+        >
+          Suivant
+        </button>
       </div>
+    </div>
   );
 };
 

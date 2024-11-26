@@ -112,3 +112,11 @@ export const getMemberRoles = async () => {
   }
 };
 
+export const getClubs_v2 = async () => {
+  try {
+    const response = await axiosInstance.get(`${apiUrl}/clubs-name`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

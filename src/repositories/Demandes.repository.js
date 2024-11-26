@@ -71,3 +71,22 @@ export const getDemandesByDemandeurId = async (demandeurId) => {
     throw new Error("Erreur lors de la récupération des demandes.");
   }
 };
+export const getDemandes_v2 = async ({ page, size = 5,type ="ALL" ,nom = "", isMyDemandes = false,uuidClub= "" }) => {
+  try {
+    console.log("ismydomandes  est : "+isMyDemandes);
+    const response = await axiosInstance.get("/demandes/filter", {
+      params: {
+        page: page,
+        size: size,
+        nom: nom,
+        type : type,
+        isMyDemandes: isMyDemandes,
+        uuidClub : uuidClub
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
