@@ -1,7 +1,6 @@
 import { FaPlug, FaUserShield } from "react-icons/fa";
 import { Typography } from "@material-tailwind/react";
 const ClubIntegration = ({ club, navigate }) => {
-  console.log(club);
   return (
     <div className="flex items-center space-x-4">
       {club.statutDemande === "" ? (

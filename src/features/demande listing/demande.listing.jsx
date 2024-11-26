@@ -224,22 +224,26 @@ const DemandesListing = () => {
         <table className="min-w-full border">
           <thead className="bg-gray-100">
           <tr>
-            <th className="px-4 py-2 border">ID</th>
+            <th className="px-4 py-2 border">N°</th>
+            { !isMyDemandes && (<th className="px-4 py-2 border">Nom demandeur</th>)}
             <th className="px-4 py-2 border">CNE</th>
             <th className="px-4 py-2 border">Date</th>
             <th className="px-4 py-2 border">Status</th>
-            <th className="px-4 py-2 border">Action</th>
+            { !isMyDemandes && (<th className="px-4 py-2 border">Action</th>)}
             <th className="px-4 py-2 border">Historiques</th>
           </tr>
           </thead>
           
           <tbody>
-          {demandes.map((demande) => (
+          {demandes.map((demande,index) => (
               <tr
                   key={demande.id}
                   className="cursor-pointer hover:bg-gray-100"
               >
-                <td className="px-4 py-2 border text-center hover:underline" onClick={() => navigate(`/demandes/${demande.id}`)}>#{demande.id}</td>
+                <td className="px-4 py-2 border text-center hover:underline" onClick={() => navigate(`/demandes/${demande.id}`)}>#{index+1}</td>
+                 { !isMyDemandes && (<td className="px-4 py-2 border text-center">
+                  {demande.fullName || "Non spécifié"}
+                </td> )}
                 <td className="px-4 py-2 border text-center">
                   {demande.cne || "Non spécifié"}
                 </td>
@@ -263,7 +267,7 @@ const DemandesListing = () => {
                           : "Refusée"}
                 </span>
                 </td>
-                <td className="px-4 py-2 border text-center">
+                { !isMyDemandes && (<td className="px-4 py-2 border text-center">
                   <div>
                     {demande.statutDemande === "EN_COURS" && (
                         <div>
@@ -293,7 +297,7 @@ const DemandesListing = () => {
                         <span className="text-gray-500">Action terminée</span>
                     )}
                   </div>
-                </td>
+                </td>)}
                 <td className="text-center">
                   <button
                       onClick={() => navigate(`/demandes/historique/${demande.id}`)}
