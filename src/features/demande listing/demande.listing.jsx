@@ -14,6 +14,7 @@ import axiosInstance from "../../auth/axios.js";
 import { getUser } from "../../auth/auth.js";
 import {FaPlusCircle} from "react-icons/fa";
 import { getClubs_v2 } from "../../repositories/clubs.repository.js";
+import noFindImage from "../../assets/not-items-found.png";
 
 const DemandesListing = () => {
   const [demandes, setDemandes] = useState([]);
@@ -149,44 +150,64 @@ const DemandesListing = () => {
   };
 
   return (
-      <div className="p-6 bg-white shadow-lg rounded-lg">
-        <button
-            onClick={() => navigate("deposer")}
-            className="absolute right-14 flex items-center bg-orange-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-orange-700"
-        >
-          <FaPlusCircle className="mr-2"/>
-          Déposer Demande
-        </button>
-        <h1 className="my-2 text-2xl">Demandes</h1>
-        <div className="mb-4">
-  <label className="mr-2 text-orange-600">Filtrer par type:</label>
-  <select
-    value={filterType}
-    onChange={(e) => {
-      setFilterType(e.target.value);
-      setCurrentPage(1); 
-    }}
-    className="px-3 py-2 border rounded-lg bg-white text-gray-800 hover:border-orange-500 transition-all duration-300"
-  >
-    <option value="ALL">Tous</option>
-    <option value="CREATION_CLUB">Création de club</option>
-    <option value="INTEGRATION_CLUB">Intégration de club</option>
-    <option value="EVENEMENT">Événements</option>
-  </select>
+    <div className="p-6 bg-white shadow-lg rounded-lg relative">
+    <SecureComponenet role="ROLE_USER">
+    <button
+      onClick={() => navigate("deposer")}
+      className="absolute right-14 top-6 flex items-center bg-orange-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-orange-700 transition-all duration-300"
+    >
+      <FaPlusCircle className="mr-2" />
+      Déposer Demande
+    </button>
+    </SecureComponenet>
+    <h1 className="my-4 text-2xl font-semibold text-gray-800">Demandes</h1>
+  
+    <div className="mb-4 flex flex-wrap items-center gap-6 justify-between">
+  <div className="flex items-center gap-2 flex-1">
+    <label className="text-orange-600 font-medium">Filtrer par type :</label>
+    <select
+      value={filterType}
+      onChange={(e) => {
+        setFilterType(e.target.value);
+        setCurrentPage(1);
+      }}
+      className="px-3 py-2 border rounded-lg bg-white text-gray-800 hover:border-orange-500 transition-all duration-300 flex-grow"
+    >
+      <option value="ALL">Tous</option>
+      <option value="CREATION_CLUB">Création de club</option>
+      <SecureComponenet role="ROLE_USER">
+        <option value="INTEGRATION_CLUB">Intégration de club</option>
+      </SecureComponenet>
+      <option value="EVENEMENT">Événements</option>
+    </select>
+  </div>
 
-  <label className="ml-4 mr-2 text-orange-600">Sélectionner un club:</label>
-  <select
-    value={selectedClub}
-    onChange={(e) => setSelectedClub(e.target.value)}
-    className="px-3 py-2 border rounded-lg bg-white text-gray-800 hover:border-orange-500 transition-all duration-300"
-  >
-    <option value="">Tous les clubs</option>
-    {clubs.map((club) => (
-      <option key={club.uuid} value={club.uuid}>
-        {club.nom}
-      </option>
-    ))}
-  </select>
+  <div className="flex items-center gap-2 flex-1">
+    <label className="text-orange-600 font-medium">Sélectionner un club :</label>
+    <select
+      value={selectedClub}
+      onChange={(e) => setSelectedClub(e.target.value)}
+      className="px-3 py-2 border rounded-lg bg-white text-gray-800 hover:border-orange-500 transition-all duration-300 flex-grow"
+    >
+      <option value="">Tous les clubs</option>
+      {clubs.map((club) => (
+        <option key={club.uuid} value={club.uuid}>
+          {club.nom}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <div className="flex items-center gap-2 flex-1">
+    <label className="sr-only">Rechercher :</label>
+    <input
+      type="text"
+      placeholder="Rechercher par nom..."
+      value={searchQuery}
+      onChange={handleSearch}
+      className="px-4 py-2 border rounded-full w-full bg-white text-gray-800 hover:border-orange-500 transition-all duration-300"
+    />
+  </div>
 </div>
 
         <div className="flex justify-between items-center mb-6">
@@ -212,13 +233,6 @@ const DemandesListing = () => {
             </button>
           </SecureComponenet>
         </div>
-        <input
-          type="text"
-          placeholder="Rechercher un club..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className="p-3 border border-gray-300 rounded-full w-1/3"
-        />
       </div>
         {/* Tableau des demandes */}
         <table className="min-w-full border">
@@ -235,7 +249,23 @@ const DemandesListing = () => {
           </thead>
           
           <tbody>
-          {demandes.map((demande,index) => (
+          {demandes.length === 0 ? (
+    <tr>
+      <td colSpan={isMyDemandes ? 5 : 7} className="text-center py-6">
+        <div className="flex flex-col items-center">
+          <img
+            src={noFindImage}
+            alt="Aucun résultat trouvé"
+            className="w-44 h-auto"
+          />
+          <span className="mt-4 text-xl font-semibold">
+            Aucun demande trouvé pour votre recherche
+          </span>
+        </div>
+      </td>
+    </tr>
+  ) : (
+          demandes.map((demande,index) => (
               <tr
                   key={demande.id}
                   className="cursor-pointer hover:bg-gray-100"
@@ -307,7 +337,7 @@ const DemandesListing = () => {
                   </button>
                 </td>
               </tr>
-          ))}
+          )))}
           </tbody>
         </table>
 

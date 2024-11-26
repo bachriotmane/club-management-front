@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getClubMembers, getMemberRoles } from "../../repositories/clubs.repository";
+import { getClubMembers, getMemberRoles } from "../../repositories/clubs.repository.js";
 import { BiEditAlt } from "react-icons/bi";
 import { RiDeleteBinLine } from "react-icons/ri";
-import apiErrorHandler from "../../shared/components/utili/apiErrorHandler";
-import ErrorMessage from "../../shared/components/utili/ErrorComponent";
-import LoadingSpinner from "../../shared/components/utili/LoadingCompnent";
+import apiErrorHandler from "../../shared/components/utili/apiErrorHandler.jsx";
+import ErrorMessage from "../../shared/components/utili/ErrorComponent.jsx";
+import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
 import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 import { getImage } from "../../repositories/image.repository.js";
 import { IoMdClose } from "react-icons/io";
 import { deleteIntegration, editRoleStudent } from "../../repositories/demande.repository.js";
+import noFindImage from "../../assets/not-items-found.png";
+
 
 const ClubMembersListing = () => {
   const { uuid } = useParams();
@@ -38,7 +40,7 @@ const ClubMembersListing = () => {
 
   useEffect(() => {
     const fetchMembers = async () => {
-      setLoading(true);
+      //setLoading(true);
       setError(null);
       try {
         const data = await getClubMembers({
@@ -70,14 +72,14 @@ const ClubMembersListing = () => {
         const errorMessage = apiErrorHandler(err);
         setError(errorMessage);
       } finally {
-        setLoading(false);
+       // setLoading(false);
       }
     };
     fetchMembers();
   }, [uuid, page, studentName]);
   useEffect(() => {
     const fetchRoles = async () => {
-      setLoading(true);
+    //  setLoading(true);
       try {
         const data = await getMemberRoles();
         setRoles(data); 
@@ -85,7 +87,7 @@ const ClubMembersListing = () => {
         const errorMessage = apiErrorHandler(err);
         setError(errorMessage);
             } finally {
-        setLoading(false);
+     //   setLoading(false);
       }
     };
     fetchRoles();
@@ -219,6 +221,22 @@ const ClubMembersListing = () => {
 
           </tr>
         </thead>
+        {members.length === 0 ? (
+    <tr>
+      <td colSpan={6} className="text-center py-6">
+      <div className="flex flex-col items-center">
+          <img
+            src={noFindImage}
+            alt="Aucun résultat trouvé"
+            className="w-44 h-auto"
+          />
+          <span className="mt-4 text-xl font-semibold">
+            Aucun demande trouvé pour votre recherche
+          </span>
+        </div>
+      </td>
+    </tr>
+  ) : (
         <tbody>
           {members.map((member, index) => (
             <tr
@@ -271,7 +289,7 @@ const ClubMembersListing = () => {
 
             </tr>
           ))}
-        </tbody>
+        </tbody> )}
       </table>
 
       {members.length > 0 && (
@@ -370,11 +388,11 @@ const ClubMembersListing = () => {
           </div>
         </div>
       )}
-         {loading && (
+         {/*loading && (
         <div className="flex justify-center mt-6">
           <LoadingSpinner />
         </div>
-      )}
+         )*/}
  {isConfirmModalOpen && (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-60 z-50">
     <div className="bg-white rounded-lg p-8 w-1/3 max-w-3xl shadow-lg">
