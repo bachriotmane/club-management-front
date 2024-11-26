@@ -58,9 +58,9 @@ export const getDemandesCountByEtudiant = async (etudiantId) => {
   }
 };
 
-export const getIntegrationDemandesCountByEtudiant = async (etudiantId) => {
+export const getIntegrationDemandesCountByEtudiant = async (adminId) => {
   try {
-    const response = await axiosInstance.get(`${apiUrl}/count/integration?etudiantId=${etudiantId}`);
+    const response = await axiosInstance.get(`${apiUrl}/count/integration?adminId=${adminId}`);
     console.log('Réponse de l\'API pour le nombre de demandes pour integratio :', response.data);
 
     return response.data;

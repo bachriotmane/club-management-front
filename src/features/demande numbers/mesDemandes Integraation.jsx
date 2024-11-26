@@ -1,36 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { getIntegrationDemandesCountByEtudiant } from '../../repositories/Demandes.repository.js'; // Importer la fonction pour les demandes d'intégration
+import { getIntegrationDemandesCountByEtudiant } from '../../repositories/Demandes.repository.js'; 
 import { getUser } from '../../auth/auth'; // Récupérer l'utilisateur actuel
-import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx"; // Optionnel, si tu veux afficher un loader
+import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx"; 
 
 const IntegrationDemandesCount = () => {
-    const [integrationDemandesCount, setIntegrationDemandesCount] = useState(null);  // Stocke le nombre de demandes d'intégration
-    const [isLoading, setIsLoading] = useState(true);  // Indicateur de chargement
-    const [error, setError] = useState(null);  // Pour gérer les erreurs
+    const [integrationDemandesCount, setIntegrationDemandesCount] = useState(null);  
+    const [isLoading, setIsLoading] = useState(true); 
+    const [error, setError] = useState(null);  
 
-    const userId = getUser().id;  // Récupérer l'ID utilisateur actuel
-
+    const userId = getUser().id;  
     useEffect(() => {
         const fetchIntegrationDemandesCount = async () => {
             try {
                 const count = await getIntegrationDemandesCountByEtudiant(userId);  // Récupérer le nombre de demandes d'intégration
-                setIntegrationDemandesCount(count);  // Mettre à jour le state
-                setIsLoading(false);  // Fin du chargement
+                setIntegrationDemandesCount(count);  
+                setIsLoading(false);  
             } catch (err) {
-                setError('Erreur lors de la récupération des demandes d\'intégration.');
-                setIsLoading(false);  // Fin du chargement même en cas d'erreur
+                setError('?');
+                setIsLoading(false);  
             }
         };
 
-        fetchIntegrationDemandesCount();  // Lancer le fetch
-    }, [userId]);  // Effectue le fetch chaque fois que l'ID utilisateur change
+        fetchIntegrationDemandesCount();  
+    }, [userId]);  
 
     if (isLoading) {
-        return <LoadingSpinner />;  // Affiche un spinner pendant le chargement
+        return <LoadingSpinner />;  
     }
 
     if (error) {
-        return <div>{error}</div>;  // Affiche un message d'erreur si un problème survient
+        return <div>{error}</div>;  
     }
 
     return (
