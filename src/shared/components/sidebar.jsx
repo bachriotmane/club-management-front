@@ -31,7 +31,7 @@ export function Sidebar() {
   const handleItemClick = (index) => {
     setActiveIndex(index);
     sessionStorage.setItem("activeIndex", index); // Sauvegarder l'index dans sessionStorage
-    setIsOpened(!isOpened);
+    setIsOpened(false);
   };
 
   const toggleSidebar = () => {
@@ -51,7 +51,9 @@ export function Sidebar() {
         )}
       </div>
       <Card
-        className={`hidden md:flex flex-col bg-[#E49F13] h-full transition-width duration-300 ${
+        className={`${
+          isOpened ? "block" : "hidden"}
+          md:flex flex-col bg-[#E49F13] h-full transition-width duration-300 ${
           isSidebarCollapsed ? "w-16" : "w-64"
         }`}
       >
