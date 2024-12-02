@@ -259,7 +259,7 @@ const ClubMembersListing = () => {
                 </span>
               </td>
               <td className="px-4 py-2 border text-center">
-                {member.dateIntegration || "Non spécifiée"}
+                { new Date(member.dateIntegration).toLocaleDateString()|| "Non spécifiée"}
               </td>
               <td className="px-4 py-2 border text-center">
                 {member.filiere || "Non spécifiée"}
