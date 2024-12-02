@@ -1,135 +1,139 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import {
-  getDemandeById,
-  updateDemandeStatus,
-} from "../../repositories/Demandes.repository";
+import React, { useState, useEffect } from "react";
+import { getDemandeDetails } from "../../repositories/demande.repository.js";
+import { useParams } from "react-router-dom";
 
 const DemandeDetails = () => {
-  const { id } = useParams(); // ID récupéré depuis l'URL
-  const navigate = useNavigate();
-
   const [demande, setDemande] = useState(null);
   const [error, setError] = useState(null);
+  const params = useParams();
 
-  // Charger les détails de la demande
+  // Fetch data for a single demande
   useEffect(() => {
     const fetchDemande = async () => {
       try {
-        const data = await getDemandeById(id); // Récupération via l'API ou méthode simulée
-        setDemande(data);
+        const response = await getDemandeDetails(params.id);
+        setDemande(response);
       } catch (err) {
-        setError("Erreur lors de la récupération de la demande.");
+        setError(err.message);
       }
     };
 
     fetchDemande();
-  }, [id]);
-
-  // Gestion de l'action Accepter ou Refuser
-  const handleAction = async (status) => {
-    try {
-      await updateDemandeStatus(id, status); // Appel API pour mettre à jour le statut
-      setDemande((prev) => ({ ...prev, statutDemande: status })); // Mettre à jour localement
-    } catch (err) {
-      setError("Erreur lors de la mise à jour du statut.");
-    }
-  };
+  }, [params.id]);
 
   if (error) {
-    return <div className="p-6 text-center text-red-500">{error}</div>;
+    return <div className="text-center text-red-600 mt-4">{error}</div>;
   }
 
   if (!demande) {
-    return <div className="p-6 text-center">Chargement...</div>;
+    return <div className="text-center text-orange-600 mt-4">Chargement...</div>;
   }
 
   return (
-    <div className="w-full h-screen p-6 bg-gray-50">
-      <button
-        onClick={() => navigate("/demandes")}
-        className="text-blue-500 mb-4"
-      >
-        &larr; Retour
-      </button>
-      <h2 className="text-2xl font-bold mb-4">Détails de la demande</h2>
-      <div className="mb-6 p-2 rounded-2xl flex items-center space-x-4 bg-gray-200">
-        <img
-          src={demande.image || "https://via.placeholder.com/150"}
-          alt="Demandeur"
-          className="w-16 h-16 rounded-full"
-        />
-        <div>
-          <p className="font-semibold">{demande.demandeur || "Anonyme"}</p>
-        </div>
-      </div>
-      <div className="mb-6">
-        <p>
-          <span className="font-semibold">ID:</span> #{demande.id}
-        </p>
-        <p className="my-3">
-          <span className="font-semibold">Date:</span>{" "}
-          {new Date(demande.date).toLocaleDateString()}
-        </p>
-        <p>
-          <span className="font-semibold">Status:</span>
+      <div className="container mx-auto px-6 py-8">
+        <h1 className="text-3xl font-bold text-orange-700 text-center mb-6">
+          Détails de la Demande
+        </h1>
+        <div className="text-black p-6 rounded-lg shadow-lg">
+          {/* Entête : Demandeur */}
+          <div className="flex items-center mb-4 border-b border-orange-500 pb-4">
+            <img
+                src={""}
+                alt={demande.demandeurUserName}
+                className="w-16 h-16 rounded-full mr-4 border-2 border-orange-500"
+            />
+            <div>
+              <h2 className="text-xl font-semibold text-orange-500">
+                {demande.demandeurUserName}
+              </h2>
+            </div>
+          </div>
+
+          {/* Contenu basé sur le type */}
+          <div className="mb-4">
+            {demande.typeDemande === "CREATION_CLUB" && (
+                <div>
+                  <h3 className="text-lg font-semibold text-orange-500 mb-2">
+                    Création de Club
+                  </h3>
+                  <p>
+                    <span className="font-medium">Instagram :</span>{" "}
+                    <a
+                        href={demande.instagrammeLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-orange-400 underline"
+                    >
+                      {demande.instagrammeLink}
+                    </a>
+                  </p>
+                  <p>
+                    <span className="font-medium">Description :</span> {demande.creationDesc}
+                  </p>
+                  {(!(demande.activities) || demande.activities.length !== 0) && (
+                      <p>
+                        <span className="font-medium">Activités :</span> {demande.activities.join(", ")}
+                      </p>
+                  )}
+                </div>
+            )}
+
+            {demande.typeDemande === "INTEGRATION_CLUB" && (
+                <div>
+                  <h3 className="text-lg font-semibold text-orange-500 mb-2">
+                    Intégration à un Club
+                  </h3>
+                  <p>
+                    <span className="font-medium">Nom du Club :</span> {demande.clubName}
+                  </p>
+                  <p>
+                    <span className="font-medium">Motivation :</span> {demande.motivation}
+                  </p>
+                </div>
+            )}
+
+            {demande.typeDemande === "EVENEMENT" && (
+                <div>
+                  <h3 className="text-lg font-semibold text-orange-500 mb-2">
+                    Événement
+                  </h3>
+                  <p>
+                    <span className="font-medium">Nom de l'Événement :</span> {demande.eventName}
+                  </p>
+                  <p>
+                    <span className="font-medium">Lieu :</span> {demande.location}
+                  </p>
+                  <p>
+                    <span className="font-medium">Budget :</span> ${demande.budget.toLocaleString()}
+                  </p>
+                  <p>
+                    <span className="font-medium">Date :</span>{" "}
+                    {new Date(demande.eventDate).toLocaleDateString()}
+                  </p>
+                  <p>
+                    <span className="font-medium">Description :</span> {demande.eventDesc}
+                  </p>
+                </div>
+            )}
+          </div>
+
+          {/* Statut */}
+          <div className="mt-4 text-center">
           <span
-            className={`ml-2 px-3 py-1 rounded-full text-white ${getStatusClass(
-              demande.statutDemande
-            )}`}
+              className={`px-6 py-2 rounded-full text-sm font-medium ${
+                  demande.statutDemande === "ACCEPTE"
+                      ? "bg-green-600"
+                      : demande.statutDemande === "REFUSE"
+                          ? "bg-red-600"
+                          : "bg-orange-600"
+              }`}
           >
             {demande.statutDemande}
           </span>
-        </p>
-      </div>
-      <div className="mb-6">
-        <h3 className="font-semibold text-lg">Description:</h3>
-        <p>{demande.description || "Pas de description disponible."}</p>
-      </div>
-
-      {/* Affichage conditionnel en fonction du statut */}
-      {demande.statutDemande === "EN_COURS" ? (
-        // Afficher les boutons pour Accepter ou Refuser si le statut est "EN_COURS"
-        <div className="flex space-x-4">
-          <button
-            onClick={() => handleAction("ACCEPTE")}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-          >
-            Accepter
-          </button>
-          <button
-            onClick={() => handleAction("REFUSE")}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-          >
-            Refuser
-          </button>
+          </div>
         </div>
-      ) : (
-        // Afficher un message si la demande est déjà traitée
-        <div className="p-4 bg-gray-100 text-center rounded">
-          <p className="text-gray-700 font-semibold">
-            {demande.statutDemande === "ACCEPTE"
-              ? "La demande a déjà été acceptée."
-              : "La demande a déjà été refusée."}
-          </p>
-        </div>
-      )}
-    </div>
+      </div>
   );
-};
-
-// Classe CSS pour le statut
-const getStatusClass = (status) => {
-  switch (status) {
-    case "ACCEPTE":
-      return "bg-green-400";
-    case "EN_COURS":
-      return "bg-yellow-400";
-    case "REFUSE":
-      return "bg-red-400";
-    default:
-      return "bg-gray-200";
-  }
 };
 
 export default DemandeDetails;

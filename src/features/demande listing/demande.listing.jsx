@@ -26,7 +26,8 @@ const DemandesListing = () => {
   const [isMyDemandes, setIsMyDemandes] = useState(false);
   const handleSearch = (e) => setSearchQuery(e.target.value);
   const [clubs, setClubs] = useState([]); 
-  const [selectedClub, setSelectedClub] = useState(""); 
+  const [selectedClub, setSelectedClub] = useState("");
+  const [comment, setComment] = useState(null);
 
 
   const { id } = useParams();
@@ -102,10 +103,11 @@ const DemandesListing = () => {
 
   const handleStatusChange = async (demandeId, newStatus, event) => {
     event.stopPropagation();
+
     const result = await Swal.fire({
       title: "Êtes-vous sûr ?",
       text: `Voulez-vous vraiment ${
-        newStatus === "ACCEPTE" ? "accepter" : "refuser"
+          newStatus === "ACCEPTE" ? "accepter" : "refuser"
       } cette demande ?`,
       icon: "warning",
       showCancelButton: true,
@@ -114,24 +116,44 @@ const DemandesListing = () => {
     });
 
     if (result.isConfirmed) {
-      try {
-        const demande = await getDemandeById2(demandeId);
+      let comment = null;
 
-        await updateDemandeStatus(demandeId, newStatus, user.fullName);
+      if (newStatus === "REFUSE") {
+        const { value } = await Swal.fire({
+          title: "Raison du refus",
+          input: "text",
+          inputLabel: "Commentaire",
+          inputPlaceholder: "Entrez un commentaire",
+          showCancelButton: true,
+          confirmButtonText: "Enregistrer",
+          cancelButtonText: "Annuler",
+        });
+
+        if (value) {
+          comment = value;
+          console.log("Fetched comment:", comment); // Debugging
+        } else {
+          Swal.fire("Action annulée", "Le refus n'a pas été enregistré.", "info");
+          return;
+        }
+      }
+
+      try {
+        await updateDemandeStatus(demandeId, newStatus, user.fullName, comment || "");
 
         const updatedDemandes = demandes.map((demande) =>
-          demande.id === demandeId
-            ? { ...demande, statutDemande: newStatus }
-            : demande
+            demande.id === demandeId
+                ? { ...demande, statutDemande: newStatus }
+                : demande
         );
         setDemandes(updatedDemandes);
 
         Swal.fire(
-          "Succès!",
-          `La demande a été ${
-            newStatus === "ACCEPTE" ? "acceptée" : "refusée"
-          } avec succès.`,
-          "success"
+            "Succès!",
+            `La demande a été ${
+                newStatus === "ACCEPTE" ? "acceptée" : "refusée"
+            } avec succès.`,
+            "success"
         );
       } catch (error) {
         console.error("Erreur lors du traitement de la demande :", error);
@@ -141,7 +163,8 @@ const DemandesListing = () => {
   };
 
 
- 
+
+
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {

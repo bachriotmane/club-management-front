@@ -18,13 +18,15 @@ export const getDemandes = async ({ page, size, type }) => {
 };
 
 // Mettre à jour le statut d'une demande
-export const updateDemandeStatus = async (id, statutDemande, agent) => {
+export const updateDemandeStatus = async (id, statutDemande, agent, comment) => {
   try {
+    console.log(comment)
     const response = await axiosInstance.put(
       `http://localhost:8080/demandes/${id}/status`,
         {
           statutDemande : statutDemande ,
-          agent : agent
+          agent : agent,
+          comment : comment,
         },
       {
         headers: {

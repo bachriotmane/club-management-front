@@ -104,3 +104,17 @@ export const deleteIntegration = async (id) => {
     throw error; 
   }
 };
+
+
+export const getDemandeDetails = async (id) => {
+  try {
+    console.log(id)
+    const resp = await axiosInstance.get(
+        `${apiUrl}/demande-details/${id}`,
+    );
+    return resp.data;
+  } catch (error) {
+    console.log("ERROR",error)
+    throw error;
+  }
+};
