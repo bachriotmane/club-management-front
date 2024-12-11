@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import backgroundImage from "../../../assets/fst_background.png";
-import campusImage from "../../../assets/fstsImg.jpg";
+import campusImage from "../../../assets/fsts-login.png";
 
 import { toast, ToastContainer } from "react-toastify";
 import { getUser, login } from "../../../auth/auth";

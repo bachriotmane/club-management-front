@@ -62,7 +62,7 @@ function SideBarLayout() {
       </header>
 
       <div className="flex pt-[3.75rem] h-full mt-1">
-        <aside className="w-[21%] h-full bg-white shadow-md">
+        <aside >
           <Sidebar />
         </aside>
         <main className="flex-1 overflow-y-auto p-6 bg-white scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent scrollbar-thumb-rounded-full">

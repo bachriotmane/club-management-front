@@ -18,6 +18,7 @@ import { sidebar } from "../../util";
 export function Sidebar() {
   const [isOpened, setIsOpened] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Charger l'index actif depuis sessionStorage au montage
   useEffect(() => {
@@ -30,13 +31,16 @@ export function Sidebar() {
   const handleItemClick = (index) => {
     setActiveIndex(index);
     sessionStorage.setItem("activeIndex", index); // Sauvegarder l'index dans sessionStorage
-    setIsOpened(!isOpened);
+    setIsOpened(false);
   };
 
   const toggleSidebar = () => {
     setIsOpened(!isOpened);
   };
 
+  const toggleDesktopSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
   return (
     <div className={`m-2 h-full`}>
       <div className="md:hidden p-4 absolute top-0 left-0 z-50 text-[#00407D]">
@@ -47,10 +51,28 @@ export function Sidebar() {
         )}
       </div>
       <Card
-        className={`md:block flex flex-row justify-center items-center ${
-          isOpened ? "" : "hidden"
-        } md:w-64 h-full w-full md:max-w-[16rem] rounded-t-2xl rounded-b-none  p-4 bg-[#E49F13]`}
+        className={`${
+          isOpened ? "block" : "hidden"}
+          md:flex flex-col bg-[#E49F13] h-full transition-width duration-300 ${
+          isSidebarCollapsed ? "w-16" : "w-64"
+        }`}
       >
+          <div className="flex items-center justify-between p-4">
+          <button
+            onClick={toggleDesktopSidebar}
+            className="text-white text-lg font-bold flex items-center gap-1"
+          >
+            {isSidebarCollapsed ? (
+              <>
+                <span>&gt;&gt;</span>
+              </>
+            ) : (
+              <>
+                <span>&lt;&lt;</span>
+              </>
+            )}
+          </button>
+        </div>
         <List className="flex flex-col justify-between h-full">
           <div>
             {sidebar.map((item, index) => (
@@ -59,13 +81,13 @@ export function Sidebar() {
                   onClick={() => handleItemClick(index)}
                   className={`flex justify-start mr-3 gap-6 ${
                     activeIndex === index
-                      ? "bg-white w-[235px] rounded-l-3xl font-bold mr-3"
+                      ? `bg-white rounded-l-3xl font-bold mr-3 ${isSidebarCollapsed ? "w-16" : "w-[235px]"}`
                       : ""
-                  }`}
+                  }`}                  
                   key={index}
                 >
                   <ListItemPrefix>{item.icon}</ListItemPrefix>
-                  {item.title}
+                  {!isSidebarCollapsed && item.title}
                 </ListItem>
               </Link>
             ))}
@@ -75,13 +97,13 @@ export function Sidebar() {
               <ListItemPrefix>
                 <Cog8ToothIcon className="h-5 w-5" />
               </ListItemPrefix>
-              <Link to="/parametre">Paramètres</Link>
+              <Link to="/parametre">{!isSidebarCollapsed && "Paramètres"}</Link>
             </ListItem>
             <ListItem className="flex justify-start gap-6 bg-[#00407D] text-[#E49F13] rounded-2xl">
               <ListItemPrefix>
                 <PowerIcon className="h-5 w-5" />
               </ListItemPrefix>
-              Déconnexion
+              {!isSidebarCollapsed && "Déconnexion"}
             </ListItem>
           </div>
         </List>

@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../auth/axios.js";
 
 const apiUrl = "/images";
@@ -65,3 +66,17 @@ export const editImage = async (dto, file) => {
 };
 
 
+
+export const useGetAlbumImage = (imageId) => {
+  const { isLoading, data, isError, error } = useQuery({
+      queryKey: ['clubsList',imageId],
+      queryFn: async () => {
+      const {data,headers} = await axiosInstance.get(`${apiUrl}/${imageId}`, {
+        responseType: 'arraybuffer', 
+      });
+      const blob = new Blob([data], { type: headers['content-type'] });
+      return URL.createObjectURL(blob);
+    },
+  });
+  return { isLoading, isError, data ,error};
+};
