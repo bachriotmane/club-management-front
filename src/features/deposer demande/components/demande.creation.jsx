@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { useCreateClubDemande } from "../../../repositories/demande.repository";
+import { toast } from "react-toastify";
 
 const DemandeCreation = () => {
   const [demandeCreation, setDemandeCreation] = useState({
@@ -51,7 +52,7 @@ const DemandeCreation = () => {
 
     createClubDemande(demandeCreation, {
       onSuccess: () => {
-        alert("Votre demande a été soumise avec succès !");
+        toast.success("Votre demande a été soumise avec succès !");
         setDemandeCreation({
           nomClub: "",
           description: "",
