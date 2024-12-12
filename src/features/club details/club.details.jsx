@@ -24,6 +24,8 @@ import { fetchClubData } from "./services/clubServices.jsx";
 
 import { IoMdClose } from "react-icons/io";
 import { IoAlbums } from "react-icons/io5";
+import { getUser } from "../../auth/auth.js";
+
 
 const ClubDetails = () => {
   const { uuid } = useParams();
@@ -45,7 +47,6 @@ const ClubDetails = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditClubModalOpen, setIsEditClubModalOpen] = useState(false);
   const [isEditImageModalOpen, setIsEditImageModalOpen] = useState(false);
-
 
   const activityColors = [
     "bg-blue-100 text-blue-700",
@@ -230,7 +231,9 @@ const ClubDetails = () => {
         <button onClick={() => navigate(-1)} className="text-blue-500 mb-4">
           &larr; Retour
         </button>
+        <SecureComponenet role="ROLE_USER" >
         <ClubIntegration club={club} navigate={navigate} />
+        </SecureComponenet>
       </div>
 
 
