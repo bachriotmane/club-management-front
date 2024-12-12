@@ -22,6 +22,14 @@ const ChangePasswordPage = () => {
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
 
+
+        const passwordRex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+
+        if(passwordRex.test(passwords.newPassword) === false){
+            toast.error('Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule et un chiffre');
+            return;
+        }
+
         if (passwords.newPassword !== passwords.confirmNewPassword) {
             toast.error('Les mots de passe ne correspondent pas');
             return;

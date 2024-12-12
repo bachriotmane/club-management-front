@@ -56,7 +56,6 @@ export const useCreateClubDemande = () => {
   const { mutate: createClubDemande, isPending } = useMutation({
     mutationFn: (demandeCreation) => axiosInstance.post(`/demandes/creation/depose`, demandeCreation ),
     onSuccess: () => {
-      toast.success('Demande hhhhh');
     },
     onError: (error) => {
       toast.error(error.response.data.msg);
@@ -68,9 +67,6 @@ export const useCreateClubDemande = () => {
 export const useCreateEventDemande = () => {
   const { mutate: createEventDemande, isPending } = useMutation({
     mutationFn: ({clubId,formattedDemande}) => axiosInstance.post(`/demandes/organization/depose?clubId=${clubId}`, formattedDemande ),
-    onSuccess: () => {
-      toast.success('Demande hhhhh');
-    },
     onError: (error) => {
       toast.error(error.response.data.msg);
     },
