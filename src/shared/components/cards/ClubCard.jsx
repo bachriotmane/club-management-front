@@ -16,7 +16,7 @@ const ClubCard = ({ item, size = "petit" }) => {
             <img 
                 src={item.logo || "default-image.jpg"}      
                 alt={`${item.nom} logo`} 
-                className="w-full h-48 object-cover rounded-md mb-4"
+                className="w-full h-48 object-contain rounded-md mb-4"
                 onClick={handleNavigation}
             />
             

@@ -138,7 +138,7 @@ const PublicationCard = ({ item, image, isClickable = false }) => {
         <img
           src={image || "default-image.jpg"}
           alt={item.title}
-          className="object-cover w-full h-48 rounded-md"
+          className="object-contain w-full h-48 rounded-md" 
         />
       </div>
       <h3 className="mt-4 text-sm sm:text-lg md:text-xl font-semibold text-gray-800 truncate cursor-pointer" onClick={handleNavigation}>

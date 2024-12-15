@@ -21,7 +21,7 @@ const EventCard = ({ item, size = "grand" , image}) => {
       <img
         src={image || "default-image.jpg"}
         alt={item.nom}
-        className="w-full h-48 object-cover rounded-md mb-4"
+        className="w-full h-48 object-contain rounded-md mb-4"
       />
 
       <h3
