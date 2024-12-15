@@ -16,7 +16,6 @@ const HomeEventsListing = () => {
       setLoading(true);
       try {
         const data = await getEventsHome({ limit: 7 });
-
         setEvents(data); 
       } catch (error) {
         console.error("HomeEventsListing: Erreur lors du fetch des événements:", error);

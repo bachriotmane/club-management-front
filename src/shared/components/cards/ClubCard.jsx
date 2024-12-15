@@ -2,7 +2,7 @@ import React from 'react';
 import { FaInstagram, FaCalendarAlt } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
 
-const ClubCard = ({ item, size = "grand" }) => {
+const ClubCard = ({ item, size = "petit" }) => {
     const navigate = useNavigate();
     const cardHeight = "h-[400px]"; 
     const widthClass = size === "petit" ? "max-w-xs" : "max-w-md"; 
@@ -28,7 +28,7 @@ const ClubCard = ({ item, size = "grand" }) => {
             </h3>
 
             <div className="relative mt-3 h-18 overflow-hidden">
-                <p className="text-gray-600 text-xs sm:text-sm md:text-base">
+                <p className="text-gray-600 text-xs sm:text-sm md:text-base line-clamp-3">
                     {item.description || ""}
                 </p>
             </div>
