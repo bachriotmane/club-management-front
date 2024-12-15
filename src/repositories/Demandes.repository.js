@@ -4,11 +4,11 @@ const apiUrl = "/demandes";
 // Récupérer toutes les demandes
 // Récupérer toutes les demandes avec pagination
 export const getDemandes = async ({ page, size, type }) => {
-  let url = `http://localhost:8080/demandes?page=${page}&size=${size}`;
+  let url = `http://localhost:8088/demandes?page=${page}&size=${size}`;
 
   // Si le type est spécifié, on ajoute le paramètre de filtrage
   if (type && type !== "ALL") {
-    url = `http://localhost:8080/demandes/filter?type=${type}&page=${page}&size=${size}`;
+    url = `http://localhost:8088/demandes/filter?type=${type}&page=${page}&size=${size}`;
   }
 
   // Effectuer la requête
@@ -22,7 +22,7 @@ export const getDemandes = async ({ page, size, type }) => {
 export const updateDemandeStatus = async (id, statutDemande, agent, comment) => {
   try {
     const response = await axiosInstance.put(
-      `http://localhost:8080/demandes/${id}/status`,
+      `http://localhost:8088/demandes/${id}/status`,
         {
           statutDemande : statutDemande ,
           agent : agent,
