@@ -28,7 +28,7 @@ const ClubCard = ({ item, size = "grand" }) => {
             </h3>
 
             <div className="relative mt-3 h-18 overflow-hidden">
-                <p className="text-gray-600 text-xs sm:text-sm md:text-base">
+                <p className="text-gray-600 text-xs sm:text-sm md:text-base ">
                     {item.description || ""}
                 </p>
             </div>
