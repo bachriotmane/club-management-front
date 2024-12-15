@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 
-const Carousel = ({ items, CardComponent, title }) => {
+const Carousel = ({ items, CardComponent, title, redirectUrl }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(5); 
   const [itemWidth, setItemWidth] = useState(250); 
   const marginRight = 16; 
   const carouselRef = useRef(null);
+  const navigate = useNavigate(); // Hook pour rediriger
 
   useEffect(() => {
     const updateItemsPerPage = () => {
@@ -42,7 +44,6 @@ const Carousel = ({ items, CardComponent, title }) => {
     }
   };
 
-  // Vérification 
   if (!items || !Array.isArray(items) || items.length === 0) {
     return (
       <div className="relative w-full mx-auto">
@@ -58,7 +59,7 @@ const Carousel = ({ items, CardComponent, title }) => {
         <h2 className="text-left text-[28px] font-bold">{title}</h2>
         <button
           className="text-yellow-500 font-bold hover:underline"
-          onClick={() => console.log('Voir tous clicked')}
+          onClick={() => navigate(redirectUrl)} // Redirection
         >
           Voir tous
         </button>

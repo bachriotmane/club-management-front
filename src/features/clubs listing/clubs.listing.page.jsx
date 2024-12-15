@@ -109,7 +109,7 @@ const ClubsListingPage = () => {
                 : "bg-orange-100 text-black shadow-md"
             }`}
           >
-            Tous les clubs
+            Tous les clubs 
           </button>
           <SecureComponenet role="ROLE_USER">
             <button
