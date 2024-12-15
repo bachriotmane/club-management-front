@@ -47,7 +47,8 @@ const DemandeHistorique = () => {
                     { historique.raison &&
                         <p className="w-1/3 mb-4 px-4 py-2 text-base italic font-bold text-gray-800 bg-gray-100 border rounded-bl-2xl rounded-br-2xl rounded-tr-2xl dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600">
                             {historique.raison}
-                        </p>}
+                        </p>
+                    }
 
                 </li>
             );

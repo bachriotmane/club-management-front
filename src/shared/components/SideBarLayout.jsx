@@ -41,14 +41,14 @@ function SideBarLayout() {
           </div>
 
           <div className="flex items-center space-x-6">
-            <div className="relative">
-              <BellIcon className="h-8 w-8 text-gray-600" />
-              {count > 0 && (
-                <span className="absolute top-0 right-0 text-xs text-white bg-[#E49F13] rounded-full px-1">
-                  {count}
-                </span>
-              )}
-            </div>
+            {/*<div className="relative">*/}
+            {/*  <BellIcon className="h-8 w-8 text-gray-600" />*/}
+            {/*  {count > 0 && (*/}
+            {/*    <span className="absolute top-0 right-0 text-xs text-white bg-[#E49F13] rounded-full px-1">*/}
+            {/*      {count}*/}
+            {/*    </span>*/}
+            {/*  )}*/}
+            {/*</div>*/}
 
             <UserProfile
               user={{
