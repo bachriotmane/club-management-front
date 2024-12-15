@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
+import ClubCard from '../../../shared/components/cards/ClubCard';
 
 const Carousel = ({ items, CardComponent, title, redirectUrl }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -79,7 +80,7 @@ const Carousel = ({ items, CardComponent, title, redirectUrl }) => {
               className="flex-shrink-0 mr-4"
               style={{ width: `${itemWidth}px` }} 
             >
-              <CardComponent item={item}  />
+              <CardComponent item={item}  image={CardComponent !== ClubCard ? item.image : null}/>
             </div>
           ))}
         </div>

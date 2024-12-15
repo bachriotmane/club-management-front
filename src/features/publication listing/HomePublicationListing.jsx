@@ -1,21 +1,54 @@
 import React, { useState, useEffect } from "react";
-import { getPublicationsHome } from "../../repositories/publications.repository"; // Assurez-vous d'importer correctement la fonction d'API
-import Carousel from "../home/components/Carousel"; // Assurez-vous que Carousel est bien importé
-import PublicationCard from "../../shared/components/cards/PublicationCard"; // Assurez-vous que PublicationCard est bien importé
+import { getPublicationsHome } from "../../repositories/publications.repository"; 
+import { getImage } from "../../repositories/image.repository.js"; 
+import Carousel from "../home/components/Carousel"; 
+import PublicationCard from "../../shared/components/cards/PublicationCard"; 
+import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx"; 
 
 const HomePublicationListing = () => {
-  const [publications, setPublications] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [publications, setPublications] = useState([]); // Liste des publications
+  const [images, setImages] = useState({}); // Dictionnaire des images par ID
+  const [loading, setLoading] = useState(false); // Indicateur de chargement
+  const [error, setError] = useState(null); // Gestion des erreurs
 
+  /**
+   * Récupère les images associées aux publications.
+   * Si aucune image n'est disponible, une image par défaut est utilisée.
+   */
+  const fetchImages = async (publications) => {
+    const defaultImage = "default-image.jpg"; 
+    const fetchedImages = {};
+  
+    for (const pub of publications) {
+      if (pub.imageId) {
+        try {
+          console.log(`Fetching image for publication ID: ${pub.id}, image ID: ${pub.imageId}`);
+          const image = await getImage(pub.imageId);
+          fetchedImages[pub.imageId] = image;
+        } catch (error) {
+          console.error(`Error fetching image for image ID ${pub.imageId}:`, error);
+          fetchedImages[pub.imageId] = defaultImage; 
+        }
+      } else {
+        fetchedImages[pub.imageId] = defaultImage; 
+      }
+    }
+    setImages(fetchedImages); // Mise à jour des images
+  };
+
+  /**
+   * Récupère les données des publications et leurs images au montage du composant.
+   */
   useEffect(() => {
     const fetchPublicationsData = async () => {
       setLoading(true);
       try {
-        const data = await getPublicationsHome({ limit: 7 }); // Limite à 7 publications
-
-        setPublications(data); // Stocke directement les publications (puisque data est déjà les publications)
+        console.log("Fetching publications with limit 7...");
+        const data = await getPublicationsHome({ limit: 7 }); 
+        setPublications(data); 
+        await fetchImages(data); 
       } catch (error) {
+        console.error("Erreur lors du chargement des publications:", error);
         setError("Erreur lors du chargement des publications");
       } finally {
         setLoading(false);
@@ -23,15 +56,41 @@ const HomePublicationListing = () => {
     };
 
     fetchPublicationsData();
-  }, []); // Appel de l'API au montage du composant
+  }, []); // Exécuté uniquement au montage du composant
 
-  if (loading) return <div>Chargement...</div>;
-  if (error) return <div>{error}</div>;
+  // Gestion du chargement et des erreurs
+  if (loading) {
+    return (
+      <div className="flex justify-center mt-20">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="text-center mt-20 text-red-600">
+        {error}
+      </div>
+    );
+  }
+
+  // Journalisation pour le débogage
+  console.log("Rendering publications with images:", publications.map((pub) => ({
+    ...pub,
+    image: images[pub.imageId], // Associe chaque publication à son image
+  })));
 
   return (
     <div className="space-y-10">
-      {/* Affichage des publications dans un Carousel */}
-      <Carousel items={publications} CardComponent={PublicationCard} title="Liste des Publications" />
+      <Carousel 
+        items={publications.map((pub) => ({
+          ...pub,
+          image: images[pub.imageId], // Ajoute l'image à chaque publication
+        }))}
+        CardComponent={PublicationCard}
+        title="Publications récentes"
+        redirectUrl="/publications"
+      />
     </div>
   );
 };
