@@ -224,7 +224,7 @@ const DemandesListing = () => {
     </select>
   </div>
 
-  <div className="flex items-center gap-2 flex-1">
+  { !isMyDemandes &&(<div className="flex items-center gap-2 flex-1">
     <label className="sr-only">Rechercher :</label>
     <input
       type="text"
@@ -233,7 +233,7 @@ const DemandesListing = () => {
       onChange={handleSearch}
       className="px-4 py-2 border rounded-full w-full bg-white text-gray-800 hover:border-orange-500 transition-all duration-300"
     />
-  </div>
+  </div>)}
 </div>
 
         <div className="flex justify-between items-center mb-6">

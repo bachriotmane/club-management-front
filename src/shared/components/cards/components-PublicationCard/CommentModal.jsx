@@ -15,7 +15,6 @@ const CommentModal = ({
         <div className="bg-white p-4 rounded-lg max-w-md w-full">
           <h2 className="text-lg font-semibold text-center mb-4">Comments</h2>
 
-          {/* Liste des commentaires avec scroll activé et hauteur réduite */}
           <ul className="max-h-40 overflow-y-auto">
             {comments && Array.isArray(comments) && comments.map((comment) => (
               <li
@@ -39,18 +38,16 @@ const CommentModal = ({
             ))}
           </ul>
 
-          {/* Zone de saisie du commentaire */}
           <div className="mt-4">
             <textarea
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              rows="3"  // Réduire la hauteur de la zone de saisie
+              rows="3"  
               value={commentContent}
               onChange={(e) => setCommentContent(e.target.value)}
               placeholder="Add a comment..."
             />
           </div>
 
-          {/* Boutons */}
           <div className="mt-4 flex justify-between">
             <button
               onClick={handleAddComment}

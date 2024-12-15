@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
+import ClubCard from '../../../shared/components/cards/ClubCard';
 
 const Carousel = ({ items, CardComponent, title, redirectUrl }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -39,7 +40,7 @@ const Carousel = ({ items, CardComponent, title, redirectUrl }) => {
   };
 
   const handleNext = () => {
-    if (currentIndex < items.length - itemsPerPage) {
+    if (currentIndex < items.length + 1 - itemsPerPage) {
       setCurrentIndex(currentIndex + 1);
     }
   };
@@ -59,7 +60,7 @@ const Carousel = ({ items, CardComponent, title, redirectUrl }) => {
         <h2 className="text-left text-[28px] font-bold">{title}</h2>
         <button
           className="text-yellow-500 font-bold hover:underline"
-          onClick={() => navigate(redirectUrl)} // Redirection
+          onClick={() => navigate(redirectUrl)}
         >
           Voir tous
         </button>
@@ -79,7 +80,7 @@ const Carousel = ({ items, CardComponent, title, redirectUrl }) => {
               className="flex-shrink-0 mr-4"
               style={{ width: `${itemWidth}px` }} 
             >
-              <CardComponent item={item} size="petit" />
+              <CardComponent item={item}  image={CardComponent !== ClubCard ? item.image : null}/>
             </div>
           ))}
         </div>
@@ -93,7 +94,7 @@ const Carousel = ({ items, CardComponent, title, redirectUrl }) => {
           </button>
         )}
 
-        {currentIndex < items.length - itemsPerPage && (
+        {currentIndex < items.length +1 - itemsPerPage && (
           <button
             onClick={handleNext}
             className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-500 text-white px-3 py-2 rounded-full"
