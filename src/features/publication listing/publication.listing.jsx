@@ -157,7 +157,7 @@ const PublicationsList = () => {
                             {
                                 pubs.map((item, index) => {
                                     const image = images[item.imageId];
-                                    return <PublicationCard key={index} item={item} image={image} />;
+                                    return <PublicationCard key={index} item={item} image={image} isClickable={true} />;
                                 })
                             }
                         </div>

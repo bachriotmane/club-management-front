@@ -4,7 +4,7 @@ import { getCommentsByPublication, addComment, deleteComment } from "../../../re
 import { useNavigate } from "react-router-dom";
 import ReactionModal from "./components-PublicationCard/ReactionModal.jsx";
 import CommentModal from "./components-PublicationCard/CommentModal";
-import { FaComment, FaShareAlt, FaCalendarAlt, FaRegClock, FaRegHeart } from "react-icons/fa";
+import { FaComment, FaShareAlt, FaCalendarAlt, FaRegClock, FaRegHeart,FaRegSadTear, FaRegMeh, FaRegGrinStars, FaRegAngry  } from "react-icons/fa";
 import ConfirmationModal from "./components-PublicationCard/ConfirmationModal";
 
 const getFormattedTime = (date) => {
@@ -14,9 +14,16 @@ const getFormattedTime = (date) => {
   return `${hours}:${minutes}`;
 };
 
-const PublicationCard = ({ item, image }) => {
+const PublicationCard = ({ item, image ,isClickable = false }) => {
   const [userReaction, setUserReaction] = useState(null);
-  const [reactionCount, setReactionCount] = useState(0);
+  const [reactionCounts, setReactionCounts] = useState({
+    totalReactions: 0,
+    love: 0,
+    like: 0,
+    wow: 0,
+    sad: 0,
+    angry: 0
+  });
   const [comments, setComments] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
@@ -29,7 +36,7 @@ const PublicationCard = ({ item, image }) => {
 
   const fetchReactionStatus = () => {
     getReactionsStatus(item.id).then(response => {
-      setReactionCount(response.data.totalReactions); 
+      setReactionCounts(response.data.reactionCounts); 
       setUserReaction(response.data.userReaction);
     });
   };
@@ -110,6 +117,23 @@ const PublicationCard = ({ item, image }) => {
     fetchReactionStatus();
     fetchComments();
   }, [item.id]);
+  const getReactionIcon = (reactionType) => {
+    switch (reactionType) {
+      case "LOVE":
+        return <FaRegHeart className={`text-2xl ${userReaction === "LOVE" ? "text-pink-600" : "text-gray-400"}`} />;
+      case "SAD":
+        return <FaRegSadTear className={`text-2xl ${userReaction === "SAD" ? "text-blue-600" : "text-gray-400"}`} />;
+      case "WOW":
+        return <FaRegMeh className={`text-2xl ${userReaction === "WOW" ? "text-yellow-600" : "text-gray-400"}`} />;
+      case "LIKE":
+        return <FaRegGrinStars className={`text-2xl ${userReaction === "LIKE" ? "text-green-600" : "text-gray-400"}`} />;
+      case "ANGRY":
+        return <FaRegAngry className={`text-2xl ${userReaction === "ANGRY" ? "text-red-600" : "text-gray-400"}`} />;
+      default:
+        return <FaRegHeart className="text-2xl text-gray-400" />;
+    }
+  };
+  
 
   return (
     <div className="bg-white shadow-lg rounded-lg p-4 mb-6 mx-auto w-full max-w-full sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl h-auto hover:shadow-xl transition-shadow duration-300 ease-in-out">
@@ -138,11 +162,11 @@ const PublicationCard = ({ item, image }) => {
       </div>
 <div className="flex justify-between items-center mt-4">
   <div className="flex space-x-4">
-    <button onClick={openModal} className="flex items-center hover:text-pink-600">
-      <FaRegHeart className={`text-lg ${userReaction === "LOVE" ? "text-pink-600" : "text-gray-400"}`} />
-      <span className="ml-2 text-xs sm:text-sm text-gray-600">{reactionCount}</span>
+    <button   onClick={isClickable ? openModal : null}  className="flex items-center hover:text-pink-600">
+       {getReactionIcon(userReaction)}
+      <span className="ml-2 text-xs sm:text-sm text-gray-600">{reactionCounts.totalReactions}</span>
     </button>
-    <button onClick={openCommentModal} className="text-gray-600 hover:text-blue-500 flex items-center">
+    <button onClick={isClickable ? openCommentModal : null} className="text-gray-600 hover:text-blue-500 flex items-center">
       <FaComment className="text-sm sm:text-base md:text-lg text-blue-500 hover:text-blue-700"/>
       <span className="ml-2 text-xs sm:text-sm text-gray-600">{commentCount}</span> 
     </button>
@@ -158,6 +182,7 @@ const PublicationCard = ({ item, image }) => {
         closeModal={closeModal}
         handleReaction={handleReaction}
         userReaction={userReaction}
+        reactionCounts={reactionCounts}
       />
 
       <CommentModal
