@@ -1,4 +1,5 @@
 import axiosInstance from "../auth/axios.js";
+const apiUrl = "/demandes";
 
 // Récupérer toutes les demandes
 // Récupérer toutes les demandes avec pagination
@@ -20,7 +21,6 @@ export const getDemandes = async ({ page, size, type }) => {
 // Mettre à jour le statut d'une demande
 export const updateDemandeStatus = async (id, statutDemande, agent, comment) => {
   try {
-    console.log(comment)
     const response = await axiosInstance.put(
       `http://localhost:8080/demandes/${id}/status`,
         {
@@ -90,5 +90,29 @@ export const getDemandes_v2 = async ({ page, size = 5,type ="ALL" ,nom = "", isM
   } catch (error) {
     throw error;
   }
+};
+
+export const getDemandesCountByEtudiant = async (etudiantId) => {
+    try {
+        const response = await axiosInstance.get(`${apiUrl}/count?etudiantId=${etudiantId}`);
+        console.log(etudiantId);
+        console.log('oussamaRéponse de l\'API pour le nombre de demandes:', response.data);
+        return response.data;  // Retourne le nombre de demandes pour l'étudiant
+    } catch (error) {
+        console.error("Erreur lors de la récupération du nombre de demandes:", error);
+        throw error;
+    }
+};
+
+export const getIntegrationDemandesCountByEtudiant = async (adminId) => {
+    try {
+        const response = await axiosInstance.get(`${apiUrl}/count/integration?adminId=${adminId}`);
+        console.log('Réponse de l\'API pour le nombre de demandes pour integratio :', response.data);
+
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching integration demandes count:", error);
+        throw error;
+    }
 };
 

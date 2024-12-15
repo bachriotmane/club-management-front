@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatCard from '../../../shared/components/cards/StatCard';
 import SecureComponenet from "../../../shared/components/utili/SecureComponenet.jsx";
+import DemandesCount from '../../demande numbers/mesDemandesCount.jsx';
+import IntegrationDemandesCount from '../../demande numbers/mesDemandes Integraation.jsx';
 
 const StatSection = () => {
     const navigate = useNavigate();
@@ -16,7 +18,7 @@ const StatSection = () => {
                 <div className="flex-1 min-w-[calc(33.33%-1rem)] md:min-w-[calc(25%-1rem)] flex-grow">
                     <StatCard
                         title="Demandes d'intégration"
-                        number="120"
+                        number={<IntegrationDemandesCount />}
                         color="orange"
                         onClick={() => handleCardClick('#')}
                     />
@@ -26,7 +28,7 @@ const StatSection = () => {
                 <div className="flex-1 min-w-[calc(33.33%-1rem)] md:min-w-[calc(25%-1rem)] flex-grow">
                     <StatCard
                         title="Mes demandes"
-                        number="45"
+                        number={<DemandesCount />}
                         color="blue"
                         onClick={() => handleCardClick('mes-demandes')}
                     />
