@@ -95,7 +95,7 @@ export const getDemandes_v2 = async ({ page, size = 5,type ="ALL" ,nom = "", isM
 export const getDemandesCountByEtudiant = async (etudiantId) => {
     try {
         const response = await axiosInstance.get(`${apiUrl}/count?etudiantId=${etudiantId}`);
-        console.log(etudiantId);
+        console.log("id etudi" ,etudiantId);
         console.log('oussamaRéponse de l\'API pour le nombre de demandes:', response.data);
         return response.data;  // Retourne le nombre de demandes pour l'étudiant
     } catch (error) {
@@ -115,4 +115,27 @@ export const getIntegrationDemandesCountByEtudiant = async (adminId) => {
         throw error;
     }
 };
+
+export const getCreationClubDemandesCount = async () => {
+  try {
+    const response = await axiosInstance.get(`${apiUrl}/count/creation-en-cours`);
+    console.log('Réponse de l\'API pour le nombre de demandes de création de club:', response.data);
+    return response.data; // Retourne le nombre total de demandes de création de club
+  } catch (error) {
+    console.error("Erreur lors de la récupération du nombre de demandes de création de club:", error);
+    throw error;
+  }
+};
+
+export const getEvenementDemandesCountEnCours = async () => {
+  try {
+      const response = await axiosInstance.get(`${apiUrl}/count/evenement-en-cours`);
+      return response.data; // Retourne le nombre de demandes en cours pour les événements
+  } catch (error) {
+      console.error("Erreur lors de la récupération des demandes d'événements en cours :", error);
+      throw error;
+  }
+};
+
+
 
