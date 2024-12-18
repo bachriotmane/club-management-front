@@ -13,6 +13,15 @@ export const useFetchNotJoinedClubs = () => {
   });
   return { isLoading, isError, data ,error};
 };
+export const useDeactivateUser = () =>{
+  const { mutate: deactivateUser, isPending, isError } = useMutation({
+    mutationFn: (integrationId ) => axiosInstance.patch(`/clubs/deactivate/${integrationId}`),
+    onError: (error) => {
+      toast.error(error?.response?.data?.msg || 'Une erreur est survenue.');
+    },
+  })
+  return {deactivateUser,isError,isPending};
+}
 
 export const useFetchDemandeHistorique = (demandeId) => {
   const { isLoading, data, isError, error } = useQuery({
