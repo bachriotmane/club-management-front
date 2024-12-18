@@ -38,4 +38,9 @@ export const sidebar = [
     to: "/publications",
     icon: <DocumentTextIcon className="h-5 w-5" />,
   },
+  {
+    title: "Users", 
+    to: "/users",
+    icon: <UserCircleIcon className="h-5 w-5" />,
+  },
 ];

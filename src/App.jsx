@@ -35,6 +35,7 @@ import React from "react";
 import UpdateEvent from "./features/update event/update.event.jsx";
 import Albums from "./features/AlbumListing/Albums.jsx";
 import CreateAlbum from "./features/addAlbum/CreateAlbum.jsx";
+import UsersListing from "./features/users/users.jsx";
 
 function App() {
   return (
@@ -71,6 +72,8 @@ function App() {
           <Route path="/publication/create" element={<CreatePublication />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/users" element={<UsersListing />} />
+
         </Route>
         </Route>
         <Route path="*" element={<NotFound />} />
