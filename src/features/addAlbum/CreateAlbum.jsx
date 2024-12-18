@@ -12,9 +12,6 @@ const CreateAlbum = () => {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
 
-  const handleFilesChange = (selectedFiles) => {
-    setImages(selectedFiles);
-  };
 
   const { mutate: createAlbum, isPending} = useMutation({
     mutationFn: (album) => axiosInstance.post(`/album/${clubId}`, album, { 
@@ -87,7 +84,7 @@ const CreateAlbum = () => {
           
           <div>
             <label className="block text-gray-700 pl-1">Upload image<span className="text-red-600">*</span></label>
-            <FileUpload onFilesChange={handleFilesChange} />
+            <FileUpload setImages={setImages} images={images} />
           </div>
         </div>
 
