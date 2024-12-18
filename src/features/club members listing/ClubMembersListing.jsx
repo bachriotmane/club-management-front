@@ -9,8 +9,11 @@ import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
 import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 import { getImage } from "../../repositories/image.repository.js";
 import { IoMdClose } from "react-icons/io";
-import { deleteIntegration, editRoleStudent } from "../../repositories/demande.repository.js";
+import { deleteIntegration, editRoleStudent, useDeactivateUser } from "../../repositories/demande.repository.js";
 import noFindImage from "../../assets/not-items-found.png";
+import { getUser } from "../../auth/auth.js";
+import { data } from "autoprefixer";
+import { button } from "@material-tailwind/react";
 
 
 const ClubMembersListing = () => {
@@ -34,8 +37,9 @@ const ClubMembersListing = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-
-
+  const currentUser = getUser();
+  const showToAdmin = currentUser.authorities.includes("ROLE_ADMIN");
+  const {deactivateUser,isError,isPending} = useDeactivateUser();
   const clubId = useParams().uuid;
 
   useEffect(() => {
@@ -49,7 +53,6 @@ const ClubMembersListing = () => {
           size: 10,
           studentName: studentName,
         });
-
         const { nomClub, logo, nbrStudent ,} = data.data;
         setNom(nomClub);
         if (logo) {
@@ -218,7 +221,9 @@ const ClubMembersListing = () => {
             <SecureComponenet role='ROLE_USER' clubId={clubId} requiredClubRole={"ADMIN"}>
               <th className="px-4 py-2 border text-center">Actions</th>
             </SecureComponenet>
-
+            {
+              showToAdmin?<th className="px-4 py-2 border">Actions</th>:null
+            }
           </tr>
         </thead>
         {members.length === 0 ? (
@@ -239,7 +244,7 @@ const ClubMembersListing = () => {
   ) : (
         <tbody>
           {members.map((member, index) => (
-            <tr
+              !(member.deactivate && !showToAdmin)?<tr
               key={member.uuid}
               className={index % 2 === 0 ? "bg-blue-100" : "bg-blue-150"}
             >
@@ -286,8 +291,26 @@ const ClubMembersListing = () => {
                   </button>
                 </td>
               </SecureComponenet>
-
-            </tr>
+                
+              {
+                showToAdmin?
+                <td className="px-4 py-2 border ">
+                  {
+                    <button className={`${member.deactivate?"bg-green-600 hover:bg-green-400":"bg-red-600 hover:bg-red-400"} rounded-lg py-1 px-2 text-white w-24`}
+                    onClick={()=>{
+                      deactivateUser(member.uuidIntegration)
+                      if(!isError){
+                        member.deactivate = !member.deactivate;
+                      }
+                    }}
+                    >
+                      {member.deactivate?"Activer":"Désactiver"}
+                    </button>
+                  }
+                </td>
+                :null
+              }
+            </tr>:null
           ))}
         </tbody> )}
       </table>
