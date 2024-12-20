@@ -21,6 +21,7 @@ const UsersListing = () => {
   const [file, setFile] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
+  const [errorValidation, setErrorValidation] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -30,7 +31,7 @@ const UsersListing = () => {
         const data = await getUsers({
             page: page,
             size: 10, 
-            userName: filterValue, 
+            userName: filterValue && filterType !== "cin" && filterType !== "cne" ? filterValue : "", 
             role: roleFilter, 
             cin: filterType === "cin" ? filterValue : "",
             cne: filterType === "cne" ? filterValue : "", 
@@ -122,17 +123,19 @@ const UsersListing = () => {
   const handleSaveUser = async (updatedUser) => {
     try {
       const savedUser = await editUser(updatedUser.id, updatedUser); 
+      console.log("savedUser",savedUser)
       setUsers((prevUsers) =>
         prevUsers.map((user) => (user.id === savedUser.id ? savedUser : user))
       );
       toast.success("User updated successfully!");
       setEditingUser(null);
       setFilterValue(""); 
+      setErrorValidation("");
     } catch (error) {
-      toast.error(error.message || "An error occurred during the update.");
+      setErrorValidation(error.message || "An error occurred during the update.");
     }
   };
-
+  
   if (error) {
     return <ErrorMessage title="Error" description={error} />;
   }
@@ -269,8 +272,16 @@ const UsersListing = () => {
       </div>
       
       {editingUser && (
-        <UserEditModal user={editingUser} onSave={handleSaveUser} onClose={() => {setEditingUser(null);    setFilterValue("");         }} />
+        <UserEditModal 
+          user={editingUser} 
+          onSave={handleSaveUser} 
+          onClose={() => { setEditingUser(null); setFilterValue(""); setErrorValidation("");
+            
+           }} 
+           errorValidation ={errorValidation}
+        />
       )}
+      
     </div>
   );
 };

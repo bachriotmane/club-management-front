@@ -65,7 +65,7 @@ export const downloadStudentsCsv = async () => {
   export const editUser = async (userId, userEditRequest) => {
     try {
       const response = await axiosInstance.put(`${apiUrl}/users/${userId}`, userEditRequest);
-      return response.data;  
+      return response.data.data;  
     } catch (error) {
       if (error.response && error.response.data) {
         const errorMessage = error.response.data.errorMessage || "Une erreur est survenue lors de la modification.";

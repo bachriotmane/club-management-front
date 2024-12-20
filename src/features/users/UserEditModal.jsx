@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { Roles } from "../../shared/constantes/Roles";
 
-const UserEditModal = ({ user, onSave, onClose }) => {
+const UserEditModal = ({ user, onSave, onClose ,errorValidation }) => {
   const [editedUser, setEditedUser] = useState(user);
+  const [newPassword, setNewPassword] = useState("");  
 
   useEffect(() => {
     setEditedUser(user);
@@ -9,14 +11,30 @@ const UserEditModal = ({ user, onSave, onClose }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditedUser((prevUser) => ({
-      ...prevUser,
-      [name]: value,
-    }));
+  
+    if (name === "accountLocked") {
+      setEditedUser((prevUser) => ({
+        ...prevUser,
+        [name]: value === "true", 
+      }));
+    } else {
+      setEditedUser((prevUser) => ({
+        ...prevUser,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    setNewPassword(e.target.value);  
   };
 
   const handleSave = () => {
-    onSave(editedUser);
+    const updatedUser = { ...editedUser };
+    if (newPassword) {
+      updatedUser.password = newPassword; 
+    }
+    onSave(updatedUser);
   };
 
   return (
@@ -92,21 +110,24 @@ const UserEditModal = ({ user, onSave, onClose }) => {
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm">Role</label>
-            <input
-              type="text"
-              name="role"
-              value={editedUser.role || ''}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded-md text-sm"
-            />
-          </div>
+          <label className="block text-gray-700 text-sm">Role</label>
+          <select
+            name="role"
+            value={editedUser.role || ''}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border rounded-md text-sm"
+          >
+            <option value={Roles.ROLE_USER}>User</option>
+            <option value={Roles.ROLE_ADMIN}>Admin</option>
+            <option value={Roles.ROLE_SUPERADMIN}>Super Admin</option>
+          </select>
+        </div>
 
           <div>
             <label className="block text-gray-700 text-sm">Account Locked</label>
             <select
               name="accountLocked"
-              value={editedUser.accountLocked || ''}
+              value={editedUser.accountLocked === true || editedUser.accountLocked === false ? editedUser.accountLocked : ''}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border rounded-md text-sm"
             >
@@ -116,17 +137,22 @@ const UserEditModal = ({ user, onSave, onClose }) => {
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm">Password</label>
+            <label className="block text-gray-700 text-sm">Change Password</label>
             <input
               type="password"
               name="password"
-              value={''}
-              onChange={handleInputChange}
+              value={newPassword} 
+              onChange={handlePasswordChange}  
               className="w-full px-3 py-2 border rounded-md text-sm"
+              placeholder="Enter new password" 
             />
           </div>
         </div>
-
+        {errorValidation  && (
+        <div className="mb-4 text-red-500 text-sm">
+            <p>{errorValidation}</p>
+        </div>
+      )}
         <div className="flex justify-end space-x-4">
           <button onClick={onClose} className="px-4 py-2 bg-gray-500 text-white rounded-md">Cancel</button>
           <button onClick={handleSave} className="px-4 py-2 bg-blue-500 text-white rounded-md">Save</button>
