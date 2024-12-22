@@ -63,3 +63,12 @@ export const updateEvent = async (id, eventBody)=>{
         throw error;
     }
 }
+
+export const getChartForClubsEvents = async (year)=>{
+    try {
+        const response = await axiosInstance.get(`${apiUrl}/chart/events/${year}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
