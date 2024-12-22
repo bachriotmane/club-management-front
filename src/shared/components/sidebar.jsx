@@ -81,14 +81,14 @@ export function Sidebar() {
                             <SecureComponent role="ROLE_SUPERADMIN">
                                 <NavLink className={({isActive})=>`flex justify-start mr-2 p-2 gap-6 ${isSidebarCollapsed ? "w-16" : "w-[235px]"} ${isActive ? 'bg-white rounded-l-3xl font-bold mr-3' : ''}`} to={item.to} key={index}>
 
-                                    <ListItemPrefix>{item.icon}</ListItemPrefix>
+                                    <ListItemPrefix key={index}>{item.icon}</ListItemPrefix>
                                     {!isSidebarCollapsed && item.title}
                                 </NavLink>
                             </SecureComponent>
                                 :
-                            <NavLink className={({isActive})=>`flex justify-start mr-2 p-2 gap-6 ${isSidebarCollapsed ? "w-16" : "w-[235px]"} ${isActive ? 'bg-white rounded-l-3xl font-bold mr-3' : ''}`} to={item.to} key={index}>
+                            <NavLink  className={({isActive})=>`flex justify-start mr-2 p-2 gap-6 ${isSidebarCollapsed ? "w-16" : "w-[235px]"} ${isActive ? 'bg-white rounded-l-3xl font-bold mr-3' : ''}`} to={item.to} key={index}>
 
-                                    <ListItemPrefix>{item.icon}</ListItemPrefix>
+                                    <ListItemPrefix key={index}>{item.icon}</ListItemPrefix>
                                     {!isSidebarCollapsed && item.title}
                             </NavLink>
                         ))}
