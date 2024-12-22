@@ -2,23 +2,26 @@ import axiosInstance from "../auth/axios.js";
 
 const apiUrl = "/Students";
 
-export const downloadStudentsCsv = async () => {
-    try {
+export const downloadStudentsCsv = async ({ uuidClub =""}) => {
+  try {
+    console.log("uuidClub",uuidClub)
+
       const response = await axiosInstance.get(`${apiUrl}/csv`, {
-        responseType: 'arraybuffer', 
+          params: { uuidClub },  
+          responseType: 'arraybuffer', 
       });
-      return response.data; 
-    } catch (error) {
+      return response.data;  
+  } catch (error) {
       if (error.response) {
-        const errorText = new TextDecoder().decode(error.response.data);
-  
-        const errorDetails = JSON.parse(errorText);
-        throw new Error(errorDetails.errorMessage || "Une erreur est survenue.");
+          const errorText = new TextDecoder().decode(error.response.data);
+          const errorDetails = JSON.parse(errorText);
+          throw new Error(errorDetails.errorMessage || "Une erreur est survenue.");
       } else {
-        throw new Error("Erreur réseau ou serveur, impossible de récupérer les données.");
+          throw new Error("Erreur réseau ou serveur, impossible de récupérer les données.");
       }
-    }
-  };
+  }
+};
+
   
   export const uploadStudentsCsv = async (file) => {
     try {
@@ -43,7 +46,7 @@ export const downloadStudentsCsv = async () => {
   };
   
 
-  export const getUsers = async ({ page, size = 10, userName = "", role = "", cin = "", cne = "" }) => {
+  export const getUsers = async ({ page, size = 10, userName = "", role = "", cin = "", cne = "",uuidClub ="" }) => {
     try {
       const response = await axiosInstance.get(`${apiUrl}/users/`, {
         params: {
@@ -52,7 +55,8 @@ export const downloadStudentsCsv = async () => {
           userName: userName,
           role: role,
           cin: cin, 
-          cne: cne  
+          cne: cne  ,
+          uuidClub : uuidClub
         },
       });
       return response.data; 

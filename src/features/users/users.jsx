@@ -8,6 +8,8 @@ import { Roles } from "../../shared/constantes/Roles.jsx";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserEditModal from './UserEditModal'; 
+import { getClubs_v2 } from "../../repositories/clubs.repository.js";
+import { useNavigate } from "react-router-dom";
 
 const UsersListing = () => {
   const [users, setUsers] = useState([]);
@@ -22,6 +24,9 @@ const UsersListing = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
   const [errorValidation, setErrorValidation] = useState("");
+  const [clubs, setClubs] = useState([]); 
+  const [selectedClub, setSelectedClub] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -35,8 +40,8 @@ const UsersListing = () => {
             role: roleFilter, 
             cin: filterType === "cin" ? filterValue : "",
             cne: filterType === "cne" ? filterValue : "", 
-          });
-
+            uuidClub: selectedClub,
+         });
         setUsers(data.data);
         setTotalPages(data.totalPages);
       } catch (err) {
@@ -47,7 +52,22 @@ const UsersListing = () => {
     };
 
     fetchUsers();
-  }, [page, filterValue, filterType, roleFilter]);
+  }, [page, filterValue, filterType, roleFilter, selectedClub]);
+
+    useEffect(() => {
+      const fetchClubs = async () => {
+        try {
+          const clubList = await getClubs_v2();
+          console.log(clubList)
+
+          setClubs(clubList); 
+        } catch (error) {
+          console.error("Error fetching clubs:", error);
+        }
+      };
+  
+      fetchClubs();
+    }, []);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 0 && newPage < totalPages) {
@@ -99,13 +119,16 @@ const UsersListing = () => {
 
   const handleDownloadCsv = async () => {
     try {
-      const csvData = await downloadStudentsCsv();
+      console.log("selectedClub", selectedClub); 
+      const csvData = await downloadStudentsCsv({ uuidClub: selectedClub });
       const blob = new Blob([csvData], { type: "text/csv" });
       const url = window.URL.createObjectURL(blob);
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = "students.csv";
+      const selectedClubData = clubs.find(club => club.uuid === selectedClub);
+      const fileName = selectedClub && selectedClub !== "" ? `students_${selectedClubData.nom}.csv` : "students.csv";
+      link.download = fileName;
       link.click();
 
       toast.success("CSV downloaded successfully!");
@@ -135,6 +158,15 @@ const UsersListing = () => {
       setErrorValidation(error.message || "An error occurred during the update.");
     }
   };
+  const handleClubChange = (e) => {
+    const selectedValue = e.target.value; 
+
+    setSelectedClub(selectedValue);  
+  };
+  const handleShowProfile = (userId) => {
+    navigate(`/profile/${userId}`);
+  };
+
   
   if (error) {
     return <ErrorMessage title="Error" description={error} />;
@@ -145,7 +177,7 @@ const UsersListing = () => {
       <ToastContainer />
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-4 rounded-lg shadow">
         <h1 className="text-2xl font-semibold text-gray-800">Users</h1>
-        <div className="flex flex-col md:flex-row items-center mt-4 md:mt-0 space-y-4 md:space-y-0 md:space-x-4">
+        {(roleFilter ==="" || roleFilter === Roles.ROLE_USER) && (<div className="flex flex-col md:flex-row items-center mt-4 md:mt-0 space-y-4 md:space-y-0 md:space-x-4">
           <button
             onClick={handleDownloadCsv}
             className="flex items-center justify-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow transition-all duration-200"
@@ -174,37 +206,70 @@ const UsersListing = () => {
           >
             Upload CSV
           </button>
-        </div>
+        </div>)}
       </div>
 
-      <div className="flex justify-between items-center mb-4">
-        <select
-          value={filterType}
-          onChange={handleFilterTypeChange}
-          className="px-4 py-2 border rounded-md"
-        >
-          <option value="username">Search by Name</option>
-          <option value="cin">Search by CIN</option>
-          <option value="cne">Search by CNE</option>
-        </select>
-        <input
-          type="text"
-          placeholder={`Search by ${filterType}`}
-          value={filterValue}
-          onChange={handleFilterChange}
-          className="px-4 py-2 border rounded-md"
-        />
-        <select
-          value={roleFilter}
-          onChange={handleRoleChange}
-          className="px-4 py-2 border rounded-md"
-        >
-          <option value="">Select Role</option>
-          <option value={Roles.ROLE_USER}>User</option>
-          <option value={Roles.ROLE_ADMIN}>Admin</option>
-          <option value={Roles.ROLE_SUPERADMIN}>Super Admin</option>
-        </select>
-      </div>
+    <div className="flex flex-wrap justify-between gap-4 mb-4">
+      
+    <div className="flex flex-col w-full sm:w-auto">
+    <label htmlFor="roleFilter" className="mb-1 text-sm font-medium text-gray-700">Role</label>
+    <select
+      id="roleFilter"
+      value={roleFilter}
+      onChange={handleRoleChange}
+      className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300"
+    >
+      <option value="">Select Role</option>
+      <option value={Roles.ROLE_USER}>User</option>
+      <option value={Roles.ROLE_ADMIN}>Admin</option>
+      <option value={Roles.ROLE_SUPERADMIN}>Super Admin</option>
+    </select>
+  </div>
+   {(roleFilter ==="" || roleFilter === Roles.ROLE_USER) && (<div className="flex flex-col w-full sm:w-auto">
+    <label htmlFor="filterType" className="mb-1 text-sm font-medium text-gray-700">Filter by</label>
+    <select
+      id="filterType"
+      value={filterType}
+      onChange={handleFilterTypeChange}
+      className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300"
+    >
+      <option value="username">Search by Name</option>
+      <option value="cin">Search by CIN</option>
+      <option value="cne">Search by CNE</option>
+    </select>
+  </div>)}
+
+  {(roleFilter ==="" || roleFilter === Roles.ROLE_USER) && (<div className="flex flex-col w-full sm:w-auto">
+    <label htmlFor="filterValue" className="mb-1 text-sm font-medium text-gray-700">Search</label>
+    <input
+      id="filterValue"
+      type="text"
+      placeholder={`Search by ${filterType}`}
+      value={filterValue}
+      onChange={handleFilterChange}
+      className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300"
+    />
+  </div>)}
+
+  {(roleFilter ==="" || roleFilter === Roles.ROLE_USER) && (<div className="flex flex-col w-full sm:w-auto">
+    <label htmlFor="selectedClub" className="mb-1 text-sm font-medium text-gray-700">Club</label>
+    <select
+      id="selectedClub"
+      value={selectedClub}
+      onChange={handleClubChange}
+      className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300"
+    >
+      <option value="">Tous les clubs</option>
+      {clubs.map((club) => (
+        <option key={club.uuid} value={club.uuid}>
+          {club.nom}
+        </option>
+      ))}
+    </select>
+  </div>)}
+
+</div>
+
 
       {users.length === 0 ? (
         <div className="flex flex-col items-center">
@@ -228,7 +293,12 @@ const UsersListing = () => {
             {users.map((user, index) => (
               <tr key={user.id} className={index % 2 === 0 ? "bg-blue-100" : "bg-blue-150"}>
                 <td className="px-4 py-2 border text-center">{index + 1}</td>
-                <td className="px-4 py-2 border">{user.firstName} {user.lastName}</td>
+                <td 
+                    className="px-4 py-2 border cursor-pointer hover:bg-blue-200 hover:text-blue-700 transition-all duration-200"
+                    onClick={() => handleShowProfile(user.id)}
+                >
+                    {user.firstName} {user.lastName}
+                </td>
                 <td className="px-4 py-2 border">{user.cne || "No CNE"}</td>
                 <td className="px-4 py-2 border">{user.cin || "No CIN"}</td>
                 <td className="px-4 py-2 border">{user.role}</td>
