@@ -14,6 +14,7 @@ import {
 } from "@heroicons/react/24/solid";
 import {Link, NavLink} from "react-router-dom";
 import {sidebar} from "../../util";
+import SecureComponent from "./utili/SecureComponenet.jsx";
 
 export function Sidebar() {
     const [isOpened, setIsOpened] = useState(false);
@@ -76,6 +77,15 @@ export function Sidebar() {
                 <List className="flex flex-col justify-between h-full">
                     <div>
                         {sidebar.map((item, index) => (
+                            item.to === "/users" ?
+                            <SecureComponent role="ROLE_SUPERADMIN">
+                                <NavLink className={({isActive})=>`flex justify-start mr-2 p-2 gap-6 ${isSidebarCollapsed ? "w-16" : "w-[235px]"} ${isActive ? 'bg-white rounded-l-3xl font-bold mr-3' : ''}`} to={item.to} key={index}>
+
+                                    <ListItemPrefix>{item.icon}</ListItemPrefix>
+                                    {!isSidebarCollapsed && item.title}
+                                </NavLink>
+                            </SecureComponent>
+                                :
                             <NavLink className={({isActive})=>`flex justify-start mr-2 p-2 gap-6 ${isSidebarCollapsed ? "w-16" : "w-[235px]"} ${isActive ? 'bg-white rounded-l-3xl font-bold mr-3' : ''}`} to={item.to} key={index}>
 
                                     <ListItemPrefix>{item.icon}</ListItemPrefix>
