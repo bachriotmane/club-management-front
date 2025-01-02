@@ -197,11 +197,8 @@ const DemandesListing = () => {
       className="px-3 py-2 border rounded-lg bg-white text-gray-800 hover:border-orange-500 transition-all duration-300 flex-grow"
     >
       <option value="ALL">Tous</option>
-      <SecureComponenet role="ROLE_ADMIN">
         <option value="CREATION_CLUB">Création de club</option>
         <option value="EVENEMENT">Événements</option>
-      </SecureComponenet>
-
       <SecureComponenet role="ROLE_USER">
       <option value="INTEGRATION_CLUB">Intégration de club</option>
       </SecureComponenet>

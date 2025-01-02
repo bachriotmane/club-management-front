@@ -25,7 +25,7 @@ const UsersListing = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [errorValidation, setErrorValidation] = useState("");
   const [clubs, setClubs] = useState([]); 
-  const [selectedClub, setSelectedClub] = useState("");
+  const [selectedClub, setSelectedClub ] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
