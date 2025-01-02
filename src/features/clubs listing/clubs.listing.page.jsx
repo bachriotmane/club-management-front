@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import ClubCard from "../../shared/components/cards/ClubCard";
-import { getClubs } from "../../repositories/clubs.repository";
+import ClubCard from "../../shared/components/cards/ClubCard.jsx";
+import { getClubs } from "../../repositories/clubs.repository.js";
 import noFindImage from "../../assets/not-items-found.png";
 import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
 import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
@@ -17,7 +17,6 @@ const ClubsListingPage = () => {
 
   const fetchClubs = useCallback(
     async (page, size, nomClub = "", isMyClubs = false) => {
-      setLoading(true);
       try {
         const data = await getClubs({ page, size, nomClub, isMyClubs });
 
@@ -46,7 +45,7 @@ const ClubsListingPage = () => {
       } catch (error) {
         setError(error.message);
       } finally {
-        setLoading(false);
+        //setLoading(false);
       }
     },
     []
@@ -55,7 +54,7 @@ const ClubsListingPage = () => {
   const handleScroll = (e) => {
     const bottom =
       e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + 10;
-    if (bottom && !loading && currentPage < totalPages - 1) {
+    if (bottom  && currentPage < totalPages - 1) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
   };
@@ -126,15 +125,16 @@ const ClubsListingPage = () => {
           </SecureComponenet>
         </div>
         <input
-          type="text"
-          placeholder="Rechercher un club..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className="p-3 border border-gray-300 rounded-full w-1/3"
-        />
+           type="text"
+           placeholder="Rechercher un club..."
+           value={searchQuery}
+           onChange={handleSearch}
+           className="px-4 py-2 border border-gray-300 rounded-md w-full max-w-md bg-white text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300"
+       />
+
       </div>
 
-      {clubs.length === 0 && !loading ? (
+      {clubs.length === 0  ? (
         <div className="flex flex-col items-center mt-6">
           <img src={noFindImage} alt="Aucun résultat trouvé" className="w-80 h-auto" />
           <span className="mt-4 text-xl font-semibold">
@@ -144,16 +144,16 @@ const ClubsListingPage = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {clubs.map((club) => (
-            <ClubCard key={club.uuid} item={club} />
+            <ClubCard key={club.uuid} item={club}  size = "grand"/>
           ))}
         </div>
       )}
 
-      {loading && (
+      {/*loading && (
         <div className="flex justify-center mt-6">
           <LoadingSpinner />
         </div>
-      )}
+      )*/}
     </div>
   );
 };

@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getClubMembers, getMemberRoles } from "../../repositories/clubs.repository";
+import { getClubMembers, getMemberRoles } from "../../repositories/clubs.repository.js";
 import { BiEditAlt } from "react-icons/bi";
 import { RiDeleteBinLine } from "react-icons/ri";
-import apiErrorHandler from "../../shared/components/utili/apiErrorHandler";
-import ErrorMessage from "../../shared/components/utili/ErrorComponent";
-import LoadingSpinner from "../../shared/components/utili/LoadingCompnent";
+import apiErrorHandler from "../../shared/components/utili/apiErrorHandler.jsx";
+import ErrorMessage from "../../shared/components/utili/ErrorComponent.jsx";
+import LoadingSpinner from "../../shared/components/utili/LoadingCompnent.jsx";
 import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
 import { getImage } from "../../repositories/image.repository.js";
 import { IoMdClose } from "react-icons/io";
-import { deleteIntegration, editRoleStudent } from "../../repositories/demande.repository.js";
+import { deleteIntegration, editRoleStudent, useDeactivateUser } from "../../repositories/demande.repository.js";
+import noFindImage from "../../assets/not-items-found.png";
+import { getUser } from "../../auth/auth.js";
+import { data } from "autoprefixer";
+import { button } from "@material-tailwind/react";
+
 
 const ClubMembersListing = () => {
   const { uuid } = useParams();
@@ -32,13 +37,14 @@ const ClubMembersListing = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-
-
+  const currentUser = getUser();
+  const showToAdmin = currentUser.authorities.includes("ROLE_ADMIN");
+  const {deactivateUser,isError,isPending} = useDeactivateUser();
   const clubId = useParams().uuid;
 
   useEffect(() => {
     const fetchMembers = async () => {
-      setLoading(true);
+      //setLoading(true);
       setError(null);
       try {
         const data = await getClubMembers({
@@ -47,7 +53,6 @@ const ClubMembersListing = () => {
           size: 10,
           studentName: studentName,
         });
-
         const { nomClub, logo, nbrStudent ,} = data.data;
         setNom(nomClub);
         if (logo) {
@@ -70,14 +75,14 @@ const ClubMembersListing = () => {
         const errorMessage = apiErrorHandler(err);
         setError(errorMessage);
       } finally {
-        setLoading(false);
+       // setLoading(false);
       }
     };
     fetchMembers();
   }, [uuid, page, studentName]);
   useEffect(() => {
     const fetchRoles = async () => {
-      setLoading(true);
+    //  setLoading(true);
       try {
         const data = await getMemberRoles();
         setRoles(data); 
@@ -85,7 +90,7 @@ const ClubMembersListing = () => {
         const errorMessage = apiErrorHandler(err);
         setError(errorMessage);
             } finally {
-        setLoading(false);
+     //   setLoading(false);
       }
     };
     fetchRoles();
@@ -145,6 +150,7 @@ const ClubMembersListing = () => {
     } catch (error) {
       const errorMessage = apiErrorHandler(error);
       setErrorRed(errorMessage);
+      setIsConfirmModalOpen(false); 
     }
   };
   const handleCancel = () => {
@@ -156,7 +162,7 @@ const ClubMembersListing = () => {
       const timer = setTimeout(() => {
         setStatusMessage(null);
         setErrorRed(null);
-      }, 2000);
+      }, 4000);
       return () => clearTimeout(timer); 
     }
   }, [statusMessage, errorRed]);
@@ -215,12 +221,30 @@ const ClubMembersListing = () => {
             <SecureComponenet role='ROLE_USER' clubId={clubId} requiredClubRole={"ADMIN"}>
               <th className="px-4 py-2 border text-center">Actions</th>
             </SecureComponenet>
-
+            {
+              showToAdmin?<th className="px-4 py-2 border">Actions</th>:null
+            }
           </tr>
         </thead>
+        {members.length === 0 ? (
+    <tr>
+      <td colSpan={6} className="text-center py-6">
+      <div className="flex flex-col items-center">
+          <img
+            src={noFindImage}
+            alt="Aucun résultat trouvé"
+            className="w-44 h-auto"
+          />
+          <span className="mt-4 text-xl font-semibold">
+            Aucun demande trouvé pour votre recherche
+          </span>
+        </div>
+      </td>
+    </tr>
+  ) : (
         <tbody>
           {members.map((member, index) => (
-            <tr
+              !(member.deactivate && !showToAdmin)?<tr
               key={member.uuid}
               className={index % 2 === 0 ? "bg-blue-100" : "bg-blue-150"}
             >
@@ -240,7 +264,7 @@ const ClubMembersListing = () => {
                 </span>
               </td>
               <td className="px-4 py-2 border text-center">
-                {member.dateIntegration || "Non spécifiée"}
+                { new Date(member.dateIntegration).toLocaleDateString()|| "Non spécifiée"}
               </td>
               <td className="px-4 py-2 border text-center">
                 {member.filiere || "Non spécifiée"}
@@ -267,10 +291,28 @@ const ClubMembersListing = () => {
                   </button>
                 </td>
               </SecureComponenet>
-
-            </tr>
+                
+              {
+                showToAdmin?
+                <td className="px-4 py-2 border ">
+                  {
+                    <button className={`${member.deactivate?"bg-green-600 hover:bg-green-400":"bg-red-600 hover:bg-red-400"} rounded-lg py-1 px-2 text-white w-24`}
+                    onClick={()=>{
+                      deactivateUser(member.uuidIntegration)
+                      if(!isError){
+                        member.deactivate = !member.deactivate;
+                      }
+                    }}
+                    >
+                      {member.deactivate?"Activer":"Désactiver"}
+                    </button>
+                  }
+                </td>
+                :null
+              }
+            </tr>:null
           ))}
-        </tbody>
+        </tbody> )}
       </table>
 
       {members.length > 0 && (
@@ -369,11 +411,11 @@ const ClubMembersListing = () => {
           </div>
         </div>
       )}
-         {loading && (
+         {/*loading && (
         <div className="flex justify-center mt-6">
           <LoadingSpinner />
         </div>
-      )}
+         )*/}
  {isConfirmModalOpen && (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-60 z-50">
     <div className="bg-white rounded-lg p-8 w-1/3 max-w-3xl shadow-lg">

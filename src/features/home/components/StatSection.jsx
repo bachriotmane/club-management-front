@@ -33,7 +33,17 @@ const StatSection = () => {
                         title="Mes demandes"
                         number={<DemandesCount />}
                         color="blue"
-                        onClick={() => handleCardClick('mes-demandes')}
+                        onClick={() => handleCardClick('#')}
+                    />
+                </div>
+            </SecureComponenet>
+            <SecureComponenet role='ROLE_ADMIN'>
+                <div className="flex-1 min-w-[calc(33.33%-1rem)] md:min-w-[calc(25%-1rem)] flex-grow">
+                    <StatCard
+                        title="Demandes de création club"
+                        number={<CreationClubDemandesCount />}
+                        color="blue"
+                        onClick={() => handleCardClick('#')}
                     />
                 </div>
             </SecureComponenet>
@@ -42,6 +52,7 @@ const StatSection = () => {
                     <StatCard
                         title="Demandes de creation"
                         number={<CreationClubDemandesCount />}
+
                         color="green"
                         onClick={() => handleCardClick('#')}
                     />

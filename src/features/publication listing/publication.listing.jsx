@@ -69,7 +69,7 @@ const PublicationsList = () => {
     const [images, setImages] = useState({}); // Store images with imageId as the key
 
     useEffect(() => {
-        const fetchImages = async () => {
+        const fetchImages = async () => { 
             const fetchedImages = {};
             for (const pub of pubs) {
                 if (pub?.imageId) {
@@ -157,7 +157,7 @@ const PublicationsList = () => {
                             {
                                 pubs.map((item, index) => {
                                     const image = images[item.imageId];
-                                    return <PublicationCard key={index} item={item} image={image} />;
+                                    return <PublicationCard key={`${index}-${item.id}`} item={item} image={image} isClickable={true} />;
                                 })
                             }
                         </div>

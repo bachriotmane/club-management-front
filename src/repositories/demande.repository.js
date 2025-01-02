@@ -13,6 +13,15 @@ export const useFetchNotJoinedClubs = () => {
   });
   return { isLoading, isError, data ,error};
 };
+export const useDeactivateUser = () =>{
+  const { mutate: deactivateUser, isPending, isError } = useMutation({
+    mutationFn: (integrationId ) => axiosInstance.patch(`/clubs/deactivate/${integrationId}`),
+    onError: (error) => {
+      toast.error(error?.response?.data?.msg || 'Une erreur est survenue.');
+    },
+  })
+  return {deactivateUser,isError,isPending};
+}
 
 export const useFetchDemandeHistorique = (demandeId) => {
   const { isLoading, data, isError, error } = useQuery({
@@ -56,7 +65,6 @@ export const useCreateClubDemande = () => {
   const { mutate: createClubDemande, isPending } = useMutation({
     mutationFn: (demandeCreation) => axiosInstance.post(`/demandes/creation/depose`, demandeCreation ),
     onSuccess: () => {
-      toast.success('Demande hhhhh');
     },
     onError: (error) => {
       toast.error(error.response.data.msg);
@@ -68,9 +76,6 @@ export const useCreateClubDemande = () => {
 export const useCreateEventDemande = () => {
   const { mutate: createEventDemande, isPending } = useMutation({
     mutationFn: ({clubId,formattedDemande}) => axiosInstance.post(`/demandes/organization/depose?clubId=${clubId}`, formattedDemande ),
-    onSuccess: () => {
-      toast.success('Demande hhhhh');
-    },
     onError: (error) => {
       toast.error(error.response.data.msg);
     },
@@ -102,5 +107,19 @@ export const deleteIntegration = async (id) => {
     return response.data; 
   } catch (error) {
     throw error; 
+  }
+};
+
+
+export const getDemandeDetails = async (id) => {
+  try {
+    console.log(id)
+    const resp = await axiosInstance.get(
+        `${apiUrl}/demande-details/${id}`,
+    );
+    return resp.data;
+  } catch (error) {
+    console.log("ERROR",error)
+    throw error;
   }
 };

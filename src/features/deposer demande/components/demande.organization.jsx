@@ -3,6 +3,7 @@ import {
   useCreateEventDemande,
   useFetchAdminClubs,
 } from "../../../repositories/demande.repository";
+import { toast } from "react-toastify";
 
 const DemandeOrganization = () => {
   const [demande, setDemande] = useState({
@@ -41,7 +42,7 @@ const DemandeOrganization = () => {
       { clubId,formattedDemande },
       {
         onSuccess: () => {
-          alert("Votre demande a été soumise avec succès !");
+          toast.success('Votre demande a été soumise avec succès !');
           setDemande({
             eventName: "",
             description: "",
@@ -57,6 +58,11 @@ const DemandeOrganization = () => {
         },
       }
     );
+  };
+
+  const getMinDateTime = () => {
+    const now = new Date();
+    return now.toISOString().slice(0, 16); 
   };
 
   if (isLoading) return <p>Chargement des clubs...</p>;
@@ -138,6 +144,7 @@ const DemandeOrganization = () => {
           }
           value={demande.eventDate || ""}
           type="datetime-local"
+          min={getMinDateTime()}
           id="dateTime"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none"
         />

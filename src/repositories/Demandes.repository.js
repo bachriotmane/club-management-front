@@ -19,11 +19,15 @@ export const getDemandes = async ({ page, size, type }) => {
 };
 
 // Mettre à jour le statut d'une demande
-export const updateDemandeStatus = async (id, statutDemande) => {
+export const updateDemandeStatus = async (id, statutDemande, agent, comment) => {
   try {
     const response = await axiosInstance.put(
       `http://localhost:8088/demandes/${id}/status`,
-      JSON.stringify(statutDemande), // Statut envoyé comme une chaîne JSON
+        {
+          statutDemande : statutDemande ,
+          agent : agent,
+          comment : comment,
+        },
       {
         headers: {
           "Content-Type": "application/json",
@@ -45,27 +49,80 @@ export const getDemandeById = async (id) => {
     throw new Error("Erreur lors de la récupération de la demande");
   }
 };
-
-export const getDemandesCountByEtudiant = async (etudiantId) => {
+export const getDemandeById2 = async (id) => {
   try {
-    const response = await axiosInstance.get(`${apiUrl}/count?etudiantId=${etudiantId}`);
-    console.log(etudiantId);
-    console.log('oussamaRéponse de l\'API pour le nombre de demandes:', response.data);
-    return response.data;  // Retourne le nombre de demandes pour l'étudiant
+    const response = await axiosInstance.get(`/demandes/demande/${id}`);
+    return response.data; // Les données sont déjà extraites
   } catch (error) {
-    console.error("Erreur lors de la récupération du nombre de demandes:", error);
+    throw new Error("Erreur lors de la récupération de la demande");
+  }
+};
+
+export const getDemandesByDemandeurId = async (demandeurId) => {
+  try {
+    // Effectuer une requête GET à l'API
+    const response = await axiosInstance.get(
+      `/demandes/demandeur/${demandeurId}`
+    );
+    return response.data; // Retourne les données extraites de la réponse
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération des demandes par ID du demandeur :",
+      error
+    );
+    throw new Error("Erreur lors de la récupération des demandes.");
+  }
+};
+export const getDemandes_v2 = async ({ page, size = 5,type ="ALL" ,nom = "", isMyDemandes = false,uuidClub= "" }) => {
+  try {
+    console.log("ismydomandes  est : "+isMyDemandes);
+    const response = await axiosInstance.get("/demandes/filter", {
+      params: {
+        page: page,
+        size: size,
+        nom: nom,
+        type : type,
+        isMyDemandes: isMyDemandes,
+        uuidClub : uuidClub
+      },
+    });
+    return response.data;
+  } catch (error) {
     throw error;
   }
 };
 
-export const getIntegrationDemandesCountByEtudiant = async (adminId) => {
-  try {
-    const response = await axiosInstance.get(`${apiUrl}/count/integration?adminId=${adminId}`);
-    console.log('Réponse de l\'API pour le nombre de demandes pour integratio :', response.data);
+export const getDemandesCountByEtudiant = async (etudiantId) => {
+    try {
+        const response = await axiosInstance.get(`${apiUrl}/count?etudiantId=${etudiantId}`);
+        console.log("id etudi" ,etudiantId);
+        console.log('oussamaRéponse de l\'API pour le nombre de demandes:', response.data);
+        return response.data;  // Retourne le nombre de demandes pour l'étudiant
+    } catch (error) {
+        console.error("Erreur lors de la récupération du nombre de demandes:", error);
+        throw error;
+    }
+};
 
-    return response.data;
+export const getIntegrationDemandesCountByEtudiant = async (adminId) => {
+    try {
+        const response = await axiosInstance.get(`${apiUrl}/count/integration?adminId=${adminId}`);
+        console.log('Réponse de l\'API pour le nombre de demandes pour integratio :', response.data);
+
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching integration demandes count:", error);
+        throw error;
+    }
+};
+
+export const getCreationClubDemandesCount = async () => {
+  try {
+    const response = await axiosInstance.get(`${apiUrl}/count/creation-en-cours`);
+    console.log('Réponse de l\'API pour le nombre de demandes de création de club:', response.data);
+    return response.data; // Retourne le nombre total de demandes de création de club
   } catch (error) {
-    console.error("Error fetching integration demandes count:", error);
+    console.error("Erreur lors de la récupération du nombre de demandes de création de club:", error);
     throw error;
   }
 };
@@ -85,6 +142,7 @@ export const getCreationClubDemandesCount = async () => {
 export const getEvenementDemandesCountEnCours = async () => {
   try {
       const response = await axiosInstance.get(`${apiUrl}/count-evenement-en-cours`);
+
       return response.data; // Retourne le nombre de demandes en cours pour les événements
   } catch (error) {
       console.error("Erreur lors de la récupération des demandes d'événements en cours :", error);

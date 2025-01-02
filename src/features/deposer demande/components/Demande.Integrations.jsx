@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useCreateIntegrationDemande, useFetchNotJoinedClubs } from "../../../repositories/demande.repository";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const DemandeIntegration = () => {
   const location = useLocation();
@@ -10,10 +10,13 @@ const DemandeIntegration = () => {
   passedClubName ? `Je souhaite rejoindre le club ${passedClubName}` : "" );
   const { data: availableClubs, error, isError, isLoading } = useFetchNotJoinedClubs();
   const { createIntegrationDemande , isPending } = useCreateIntegrationDemande();
+  const navigate = useNavigate();
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
     createIntegrationDemande({clubId, motivation});
+    navigate(-1);
   };
 
   if (isLoading) {

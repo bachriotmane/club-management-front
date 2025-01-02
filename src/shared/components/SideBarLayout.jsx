@@ -22,7 +22,6 @@ function SideBarLayout() {
   useEffect(() => {
       axiosInstance.get(`/user/profile/${userId}`)
       .then((response) => {
-        console.log("response data error" ,response.data);
         getImage(response.data.id).then((res) => {
           setUserImage(res);
         });
@@ -42,20 +41,20 @@ function SideBarLayout() {
           </div>
 
           <div className="flex items-center space-x-6">
-            <div className="relative">
-              <BellIcon className="h-8 w-8 text-gray-600" />
-              {count > 0 && (
-                <span className="absolute top-0 right-0 text-xs text-white bg-[#E49F13] rounded-full px-1">
-                  {count}
-                </span>
-              )}
-            </div>
+            {/*<div className="relative">*/}
+            {/*  <BellIcon className="h-8 w-8 text-gray-600" />*/}
+            {/*  {count > 0 && (*/}
+            {/*    <span className="absolute top-0 right-0 text-xs text-white bg-[#E49F13] rounded-full px-1">*/}
+            {/*      {count}*/}
+            {/*    </span>*/}
+            {/*  )}*/}
+            {/*</div>*/}
 
             <UserProfile
               user={{
                 name: getUser()?.fullName ? getUser().fullName : "Unknown",
                 email: user.sub,
-                avatar: !userImage ? userImage : loadedImageUrl,
+                avatar: !!userImage ? userImage : loadedImageUrl,
               }}
             />
           </div>
@@ -63,7 +62,7 @@ function SideBarLayout() {
       </header>
 
       <div className="flex pt-[3.75rem] h-full mt-1">
-        <aside className="w-[21%] h-full bg-white shadow-md">
+        <aside >
           <Sidebar />
         </aside>
         <main className="flex-1 overflow-y-auto p-6 bg-white scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent scrollbar-thumb-rounded-full">

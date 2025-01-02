@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import backgroundImage from "../../../assets/fst_background.png";
-import campusImage from "../../../assets/fstsImg.jpg";
+import campusImage from "../../../assets/fsts-login.png";
 
 import { toast, ToastContainer } from "react-toastify";
 import { getUser, login } from "../../../auth/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import apiErrorHandler from "../utili/apiErrorHandler";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -21,8 +22,9 @@ const Login = () => {
       await login(email, password, rememberMe);
       navigate("/"); // Ajustez ce chemin si nécessaire
     } catch (error) {
-      console.error("Erreur de connexion", error);
-      toast.error("Email ou mot de passe invalide");
+      const errorMessage = apiErrorHandler(error);
+      console.error("Erreur de connexion", errorMessage);
+      toast.error(errorMessage);
     }
   };
 

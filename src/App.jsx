@@ -33,6 +33,10 @@ import PrivateRoute from "./shared/components/auth/PrivateRoute.jsx";
 import UpdatePublication from "./features/update publication/update.publication.jsx";
 import React from "react";
 import UpdateEvent from "./features/update event/update.event.jsx";
+import Albums from "./features/AlbumListing/Albums.jsx";
+import CreateAlbum from "./features/addAlbum/CreateAlbum.jsx";
+import UsersListing from "./features/users/users.jsx";
+import SecureComponent from "./shared/components/utili/SecureComponenet.jsx";
 
 function App() {
   return (
@@ -55,6 +59,8 @@ function App() {
           <Route path="/demandes/:id" element={<DemandeDetails />} />
           <Route path="/demandes/historique/:id" element={<DemandeHistorique />} />
           <Route path="/club/:uuid" element={<ClubDetails />} />
+          <Route path="/club/albums/:clubId" element={<Albums/>}/>
+          <Route path="/albums/:clubId" element={<CreateAlbum />}/>
           <Route path="/club/:uuid/membres" element={<ClubMembersListing />} />
           <Route path="/events" element={<EventsListing />} />
           <Route path="/event/:id" element={<EventDetails />} />
@@ -67,6 +73,10 @@ function App() {
           <Route path="/publication/create" element={<CreatePublication />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/users" element={<SecureComponent role="ROLE_SUPERADMIN">
+            <UsersListing></UsersListing>
+          </SecureComponent>} />
+
         </Route>
         </Route>
         <Route path="*" element={<NotFound />} />

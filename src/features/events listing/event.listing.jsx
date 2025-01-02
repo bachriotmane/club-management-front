@@ -125,7 +125,7 @@ const EventListing = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {
-                    events.map((item, index) => ( <EventCard key={index} item={item} image={images[item.imageId]}/>
+                    events.map((item, index) => ( <EventCard key={`${index}-${item.id}`} item={item} image={images[item.imageId]}/>
                     ))
                   }
                 </div>

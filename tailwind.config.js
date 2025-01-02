@@ -10,11 +10,12 @@ export default {
     extend: {
       colors: {
         primaryColor: "#E49F13",
+         btnColor:"rgb(249 115 22)"
       },
     },
   },
   plugins: [
     // eslint-disable-next-line no-undef
-    require('tailwind-scrollbar'),
+    //require('tailwind-scrollbar'),
 ],
 }

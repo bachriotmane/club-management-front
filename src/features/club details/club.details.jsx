@@ -1,20 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Typography } from "@material-tailwind/react";
-import { AiOutlineInstagram, AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import { AiOutlineInstagram} from "react-icons/ai";
 import { BiEditAlt } from "react-icons/bi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { BsCalendar, BsPeople, BsPerson } from "react-icons/bs";
 import { useParams, useNavigate } from "react-router-dom";
-import { getClubById, deleteClub ,editClub} from "../../repositories/clubs.repository";
+import {  deleteClub ,editClub} from "../../repositories/clubs.repository";
 import { deleteImage, editImage } from "../../repositories/image.repository";
-import { getImage } from "../../repositories/image.repository";
 import LoadingSpinner from "../../shared/components/utili/LoadingCompnent";
 import ErrorMessage from "../../shared/components/utili/ErrorComponent";
 import apiErrorHandler from "../../shared/components/utili/apiErrorHandler";
 import SecureComponenet from "../../shared/components/utili/SecureComponenet.jsx";
-import { IoMdClose } from "react-icons/io";
-import { FaPlug, FaUserShield } from "react-icons/fa";
 import { toast } from "react-toastify";
+import ClubIntegration from "./components/clubIntegration.jsx";
+import EditImageModal from "./components/EditImageModal.jsx";
+import EditClubModal from "./components/editClubModal.jsx";
+import EditChoiceModal from "./components/editModal.jsx";
+import ConfirmModal from "./components/confirmModal.jsx";
+import DeleteModal from "./components/DeleteModal.jsx";
+import ErrorNotification from "./components/errorMessage.jsx";
+import StatusNotification from "./components/statusMessage.jsx";
+import { fetchClubData } from "./services/clubServices.jsx";
+
+import { IoMdClose } from "react-icons/io";
+import { IoAlbums } from "react-icons/io5";
+import { getUser } from "../../auth/auth.js";
+
 
 const ClubDetails = () => {
   const { uuid } = useParams();
@@ -36,9 +47,6 @@ const ClubDetails = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditClubModalOpen, setIsEditClubModalOpen] = useState(false);
   const [isEditImageModalOpen, setIsEditImageModalOpen] = useState(false);
-  
-
-
 
   const activityColors = [
     "bg-blue-100 text-blue-700",
@@ -48,40 +56,8 @@ const ClubDetails = () => {
     "bg-purple-100 text-purple-700",
     "bg-pink-100 text-pink-700",
   ];
-
   useEffect(() => {
-    const fetchClubData = async () => {
-      try {
-        const data = await getClubById(uuid);
-        if (data.errorCode) {
-          throw new Error(data.errorMessage);
-        }
-        setClub(data.data);
-        setClubFormData(data.data);
-
-        if (data.data.logo) {
-          const imageUrl = await getImage(data.data.logo);
-          setLogoUrl(imageUrl);
-        }
-
-        const studentImages = await Promise.all(
-          data.data.profilsDetailsDto.map(async (student) => {
-            if (student.imgProfile) {
-              return await getImage(student.imgProfile);
-            }
-            return "/default-profile.png"; 
-          })
-        );
-        setStudentsImages(studentImages);
-      } catch (err) {
-        const errorMessage = apiErrorHandler(err);
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchClubData();
+    fetchClubData(uuid, setClub, setClubFormData, setLogoUrl, setStudentsImages, setLoading, setError);
   }, [uuid]);
 
   const handleDeleteClick = () => {
@@ -236,6 +212,11 @@ const ClubDetails = () => {
     }
   }, [statusMessage, errorDelete]);
 
+  const handleAlbumClick = ()=>{
+    const clubId = uuid;
+    navigate(`/club/albums/${clubId}`);
+  }
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -250,30 +231,9 @@ const ClubDetails = () => {
         <button onClick={() => navigate(-1)} className="text-blue-500 mb-4">
           &larr; Retour
         </button>
-
-        <div className="flex items-center space-x-4">
-          {club.isIntegrated ? (
-           <div className="flex items-center space-x-2">
-           <FaUserShield className="text-green-500" size={20} />
-           <Typography variant="body1" className="text-lg text-green-700 font-semibold">
-                Votre rôle dans ce club est : <span className="text-green-900">{club.roleName}</span>
-           </Typography>
-         </div>
-          ) : (
-            <button
-            onClick={() =>
-              navigate("/demandes/deposer", {
-                state: { clubId: club.uuid, clubName: club.nom }
-              })
-            }
-            className="flex items-center px-4 py-2 text-blue-600 rounded-lg border-2 border-blue-600 hover:bg-blue-600 hover:text-white hover:border-blue-700 transition-all duration-300"
-          >
-            <FaPlug className="mr-2" size={20} />
-            Demande d'intégration
-          </button>
-          
-          )}
-        </div>
+        <SecureComponenet role="ROLE_USER" >
+        <ClubIntegration club={club} navigate={navigate} />
+        </SecureComponenet>
       </div>
 
 
@@ -288,33 +248,41 @@ const ClubDetails = () => {
           <Typography variant="h2" color="blue-gray" className="font-bold text-3xl mb-3">
             {club.nom}
           </Typography>
-  
-          <div className="flex items-center mb-4">
-            {club.profilsDetailsDto.map((student, index) => (
-              <div key={student.uuid} className="flex flex-col items-center mr-2">
-                <img
-                  src={studentsImages[index] || "/default-profile.png"}
-                  alt={student.nom}
-                  className="w-12 h-12 rounded-full border-2 border-gray-300 cursor-pointer"
-                  onClick={() => navigate(`/profile/${student.uuid}`)}
-                />
-                <span className="text-xs font-medium mt-1">{student.nom}</span>
-              </div>
-            ))}
+          <div className="flex justify-between">
+            <div className="flex items-center mb-4">
+              {club.profilsDetailsDto.map((student, index) => (
+                <div key={student.uuid} className="flex flex-col items-center mr-2">
+                  <img
+                    src={studentsImages[index] || "/default-profile.png"}
+                    alt={student.nom}
+                    className="w-12 h-12 rounded-full border-2 border-gray-300 cursor-pointer"
+                    onClick={() => navigate(`/profile/${student.uuid}`)}
+                  />
+                  <span className="text-xs font-medium mt-1">{student.nom}</span>
+                </div>
+              ))}
 
-            <div className="flex flex-col items-center ml-4 text-blue-500 cursor-pointer">
-              <span
-                className="text-sm font-medium transition duration-300 ease-in-out transform hover:scale-105 hover:underline"
-                onClick={() => navigate(`/club/${uuid}/membres`)}
-              >
-                Voir tous
-              </span>
-              {club.nbrMembres - club.profilsDetailsDto.length > 0 && (
-                <span className="text-xs font-medium mt-1 text-gray-500">
-                  +{club.nbrMembres - club.profilsDetailsDto.length}
+              <div className="flex flex-col items-center ml-4 text-blue-500 cursor-pointer">
+                <span
+                  className="text-sm font-medium transition duration-300 ease-in-out transform hover:scale-105 hover:underline"
+                  onClick={() => navigate(`/club/${uuid}/membres`)}
+                >
+                  Voir tous
                 </span>
-              )}
+                {club.nbrMembres - club.profilsDetailsDto.length > 0 && (
+                  <span className="text-xs font-medium mt-1 text-gray-500">
+                    +{club.nbrMembres - club.profilsDetailsDto.length}
+                  </span>
+                )}
+              </div>
             </div>
+            <button
+              onClick={()=>handleAlbumClick()}
+              className="bg-btnColor p-3 h-10 rounded-lg flex gap-2 items-center text-white"
+            >
+                <IoAlbums />
+                Album
+            </button>
           </div>
 
           <Typography variant="paragraph" color="gray" className="mb-4">
@@ -382,243 +350,54 @@ const ClubDetails = () => {
           </div>
         </div>
       </div>
-
-   {isDeleteModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg w-[400px]">
-            <h2 className="text-xl font-semibold mb-4">Que souhaitez-vous supprimer ?</h2>
-            <button
-              onClick={() => handleDeleteChoice("image")}
-              className="text-red-600 mb-4 flex items-center"
-            >
-              <AiOutlineDelete className="mr-2" />
-              Supprimer l'image
-            </button>
-            <button
-              onClick={() => handleDeleteChoice("club")}
-              className="text-red-600 flex items-center"
-            >
-              <AiOutlineDelete className="mr-2" />
-              Supprimer le club
-            </button>
-            <button
-              onClick={handleCancel}
-              className="text-gray-600 mt-4 flex items-center justify-center"
-            >
-              <IoMdClose className="mr-2" />
-              Annuler
-            </button>
-          </div>
-        </div>
-      )}
-
-      {isConfirmModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-8 w-96">
-            <h2 className="text-lg font-bold mb-4">Êtes-vous sûr ?</h2>
-            <p>{deleteChoice === "image" ? "Confirmer la suppression de l'image ?" : "Confirmer la suppression du club ?"}</p>
-            <button
-              onClick={handleConfirmDelete}
-              className="bg-green-500 text-white px-4 py-2 rounded-lg mr-4"
-            >
-              Confirmer
-            </button>
-            <button
-              onClick={handleCancel}
-              className="bg-gray-400 text-white px-4 py-2 rounded-lg"
-            >
-              Annuler
-            </button>
-          </div>
-        </div>
-      )}
-{isEditModalOpen && (
-  <div
-    className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50"
-    onClick={handleCancel}
-  >
-    <div
-      className="bg-white p-6 rounded shadow-lg w-[90%] max-w-sm relative"
-      onClick={(e) => e.stopPropagation()} 
-    >
-      <h2 className="text-xl font-semibold mb-4 text-center">
-        Que souhaitez-vous modifier ?
-      </h2>
-      <button
-        onClick={() => handleEditChoice("image")}
-        className="text-blue-600 mb-4 flex items-center hover:bg-blue-100 hover:text-blue-800 p-2 rounded"
-      >
-        <AiOutlineEdit className="mr-2" />
-        Modifier l'image
-      </button>
-      <button
-        onClick={() => handleEditChoice("club")}
-        className="text-blue-600 flex items-center hover:bg-blue-100 hover:text-blue-800 p-2 rounded"
-      >
-        <AiOutlineEdit className="mr-2" />
-        Modifier les infos du club
-      </button>
-      <button
-        onClick={handleCancel}
-        className="text-gray-600 mt-4 flex items-center justify-center hover:bg-gray-100 p-2 rounded"
-      >
-        <IoMdClose className="mr-2" />
-        Annuler
-      </button>
-    </div>
-  </div>
-)}
-
-
-{isEditClubModalOpen && (
-  <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
-    <div className="bg-white p-6 rounded shadow-lg w-[400px]">
-      <h2 className="text-xl font-semibold mb-4">Modifier les informations du club</h2>
-
-      <div className="mb-4">
-        <label htmlFor="nom" className="block text-sm font-semibold">
-          Nom du club <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          name="nom"
-          value={clubFormData.nom}
-          onChange={handleChange}
-          placeholder="Nom du club"
-          className="block w-full p-2 border rounded"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="description" className="block text-sm font-semibold">
-          Description <span className="text-red-500">*</span>
-        </label>
-        <textarea
-          name="description"
-          value={clubFormData.description}
-          onChange={handleChange}
-          placeholder="Description"
-          className="block w-full p-2 border rounded"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="instagramme" className="block text-sm font-semibold">
-          Instagram du club
-        </label>
-        <input
-          type="text"
-          name="instagramme"
-          value={clubFormData.instagramme}
-          onChange={handleChange}
-          placeholder="Instagram du club"
-          className="block w-full p-2 border rounded"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="activites" className="block text-sm font-semibold">
-          Activités <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          name="activites"
-          value={Array.isArray(clubFormData.activites) ? clubFormData.activites.join(",") : ""}
-          onChange={handleActivitesChange}
-          placeholder="Activités (séparées par des virgules)"
-          className="block w-full p-2 border rounded"
-        />
-      </div>
-
-      {Array.isArray(errorValidation) && errorValidation.length > 0 && (
-        <div className="mb-4 text-red-500 text-sm">
-          {errorValidation.map((error, index) => (
-            <p key={index}>{error}</p>
-          ))}
-        </div>
-      )}
-
-      <div className="flex justify-end">
-        <button
-          onClick={handleEditClubInfo}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-        >
-          Enregistrer
-        </button>
-        <button
-          onClick={handleCancel}
-          className="ml-2 bg-gray-500 text-white px-4 py-2 rounded-lg"
-        >
-          Annuler
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-{isEditImageModalOpen && (
-  <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
-    <div className="bg-white p-6 rounded shadow-lg w-[400px]">
-      <h2 className="text-xl font-semibold mb-4">Modifier l'image du club</h2>
-
-      <div className="mb-4">
-        <img
-          src={selectedImage ? URL.createObjectURL(selectedImage) : (imageUrl || "/default-image.jpg")}
-          alt="Aperçu de l'image"
-          className="w-full h-[15rem] rounded"
-        />
-      </div>
-
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => setSelectedImage(e.target.files[0])}
-        className="mb-4 border p-2 w-full rounded"
+ <DeleteModal
+        isOpen={isDeleteModalOpen}
+        handleCancel={handleCancel}
+        handleDeleteChoice={handleDeleteChoice}
+      />
+  <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        handleCancel={handleCancel}
+        handleConfirmDelete={handleConfirmDelete}
+        deleteChoice={deleteChoice}
+      />
+  <EditChoiceModal
+        isOpen={isEditModalOpen}
+        handleCancel={handleCancel}
+        handleEditChoice={handleEditChoice}
       />
 
-      {Array.isArray(errorValidation) && errorValidation.length > 0 && (
-        <div className="mb-4 text-red-500 text-sm">
-          {errorValidation.map((error, index) => (
-            <p key={index}>{error}</p>
-          ))}
-        </div>
-      )}
+ <EditClubModal
+        isOpen={isEditClubModalOpen}
+        clubFormData={clubFormData}
+        errorValidation={errorValidation}
+        handleChange={handleChange}
+        handleActivitesChange={handleActivitesChange}
+        handleEditClubInfo={handleEditClubInfo}
+        handleCancel={handleCancel}
+      />
+ <EditImageModal
+        isOpen={isEditImageModalOpen}
+        selectedImage={selectedImage}
+        imageUrl={imageUrl}
+        errorValidation={errorValidation}
+        setSelectedImage={setSelectedImage}
+        handleSubmitImageEdit={handleSubmitImageEdit}
+        handleCancel={handleCancel}
+      />
 
-      <div className="flex justify-end">
-        <button
-          onClick={handleSubmitImageEdit}
-          disabled={!selectedImage}
-          className={`px-4 py-2 rounded-lg text-white ${selectedImage ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 cursor-not-allowed'}`}
-        >
-          Sauvegarder
-        </button>
-        <button
-          onClick={handleCancel}
-          className="ml-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-        >
-          Annuler
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+<StatusNotification
+        statusMessage={statusMessage}
+        closeMessage={closeMessage}
+        setStatusMessage={setStatusMessage}
+      />
 
-{statusMessage && (
-  <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg flex items-center">
-    <span>{statusMessage}</span>
-    <button className="ml-2" onClick={() => closeMessage(setStatusMessage)}>
-      <IoMdClose size={20} />
-    </button>
-  </div>
-)}
+<ErrorNotification
+        errorDelete={errorDelete}
+        closeMessage={closeMessage}
+        setErrorDelete={setErrorDelete}
+      />
 
-{errorDelete && (
-  <div className="fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg flex items-center">
-    <span>{errorDelete}</span>
-    <button className="ml-2" onClick={() => closeMessage(setErrorDelete)}>
-      <IoMdClose size={20} />
-    </button>
-  </div>
-)}
 </header>
   );
 };
