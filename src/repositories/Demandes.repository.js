@@ -127,9 +127,22 @@ export const getCreationClubDemandesCount = async () => {
   }
 };
 
+export const getCreationClubDemandesCount = async () => {
+  try {
+    const response = await axiosInstance.get(`${apiUrl}/count-creation-club`);
+    console.log('Réponse de l\'API pour le nombre de demandes de création de club:', response.data);
+    return response.data; 
+  } catch (error) {
+    console.error("Erreur lors de la récupération du nombre de demandes de création de club:", error);
+    throw error;
+  }
+};
+
+
 export const getEvenementDemandesCountEnCours = async () => {
   try {
-      const response = await axiosInstance.get(`${apiUrl}/count/evenement-en-cours`);
+      const response = await axiosInstance.get(`${apiUrl}/count-evenement-en-cours`);
+
       return response.data; // Retourne le nombre de demandes en cours pour les événements
   } catch (error) {
       console.error("Erreur lors de la récupération des demandes d'événements en cours :", error);

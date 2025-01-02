@@ -12,18 +12,19 @@ const CreationClubDemandesCount = () => {
             try {
                 const count = await getCreationClubDemandesCount(); // Récupérer le nombre de demandes via l'API
                 setCreationClubDemandesCount(count); // Mettre à jour l'état avec le nombre
-                setIsLoading(false); // Terminer le chargement
+                setIsLoading(false); 
             } catch (err) {
-                setError('?'); // Message d'erreur
-                setIsLoading(false); // Terminer le chargement
+                setError('?'); 
+                setIsLoading(false); 
             }
         };
 
         fetchCreationClubDemandesCount(); // Appeler la fonction pour récupérer les données
-    }, []); // [] : Ce useEffect s'exécute une seule fois au montage du composant
+    }, []); 
 
     if (isLoading) {
-        return <LoadingSpinner />; // Afficher un spinner pendant le chargement
+        return <LoadingSpinner />; 
+
     }
 
     if (error) {
@@ -32,7 +33,7 @@ const CreationClubDemandesCount = () => {
 
     return (
         <div>
-            <p> {creationClubDemandesCount}</p> {/* Afficher le résultat */}
+            <p>{creationClubDemandesCount}</p> 
         </div>
     );
 };

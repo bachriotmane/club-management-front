@@ -70,7 +70,7 @@ const ClubCard = ({ item, size = "petit", onStatusChange }) => {
 
             {/* Club Description */}
             <div className="relative mt-3 h-18 overflow-hidden">
-                <p className="text-gray-600 text-xs sm:text-sm md:text-base line-clamp-3">
+                <p className="text-gray-600 text-xs sm:text-sm md:text-base ">
                     {item.description || ""}
                 </p>
             </div>

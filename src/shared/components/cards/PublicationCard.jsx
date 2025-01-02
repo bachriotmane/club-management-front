@@ -14,6 +14,7 @@ const getFormattedTime = (date) => {
   return `${hours}:${minutes}`;
 };
 
+
 const PublicationCard = ({ item, image, isClickable = false }) => {
   const [userReaction, setUserReaction] = useState(null);
   const [reactionCounts, setReactionCounts] = useState({
